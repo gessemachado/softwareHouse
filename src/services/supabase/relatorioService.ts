@@ -18,22 +18,22 @@ export async function fetchRelatorioSH(
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1
 
-  const applyFilters = (q: any) => {
+  const buildQuery = (base: any) => {
     if (filters.search)
-      q = q.or(`software_house.ilike.%${filters.search}%,credenciado.ilike.%${filters.search}%`)
+      base = base.ilike('busca', `%${filters.search.toLowerCase()}%`)
     if (filters.mes_ano)
-      q = q.eq('periodo', filters.mes_ano)
-    return q
+      base = base.eq('periodo', filters.mes_ano)
+    return base
   }
 
   // Página atual
-  const { data, error, count } = await applyFilters(
+  const { data, error, count } = await buildQuery(
     supabase.from('vw_relatorio_sh').select('*', { count: 'exact' }).order('software_house').range(from, to)
   )
   if (error) throw error
 
   // Totais gerais (sem paginação)
-  const { data: allRows, error: e2 } = await applyFilters(
+  const { data: allRows, error: e2 } = await buildQuery(
     supabase.from('vw_relatorio_sh').select('valor_taxa,imposto,valor_sh')
   )
   if (e2) throw e2
@@ -58,22 +58,22 @@ export async function fetchRelatorioFingers(
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1
 
-  const applyFilters = (q: any) => {
+  const buildQuery = (base: any) => {
     if (filters.search)
-      q = q.or(`finger.ilike.%${filters.search}%,software_house.ilike.%${filters.search}%`)
+      base = base.ilike('busca', `%${filters.search.toLowerCase()}%`)
     if (filters.mes_ano)
-      q = q.eq('periodo', filters.mes_ano)
-    return q
+      base = base.eq('periodo', filters.mes_ano)
+    return base
   }
 
   // Página atual
-  const { data, error, count } = await applyFilters(
+  const { data, error, count } = await buildQuery(
     supabase.from('vw_relatorio_fingers').select('*', { count: 'exact' }).order('finger').range(from, to)
   )
   if (error) throw error
 
   // Totais gerais (sem paginação)
-  const { data: allRows, error: e2 } = await applyFilters(
+  const { data: allRows, error: e2 } = await buildQuery(
     supabase.from('vw_relatorio_fingers').select('valor_finger,porcentagem,finger')
   )
   if (e2) throw e2
