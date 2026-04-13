@@ -1,22 +1,17 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type {
   RelatorioFilters,
   RelatorioRegistro,
   RelatorioTotais,
   RelatorioFingerRegistro,
   RelatorioFingerTotais,
-  PaginationState,
 } from '../types/sh.types'
 import { fetchRelatorioSH, fetchRelatorioFingers } from '../services/supabase/relatorioService'
 
 const emptyFilters: RelatorioFilters = { search: '', grupo_economico: '', mes_ano: '' }
-
 const emptyTotais: RelatorioTotais = { valor_taxa: 0, imposto: 0, valor_sh: 0, variacao_pct: 0 }
 const emptyFingerTotais: RelatorioFingerTotais = {
-  valor_total_fingers: 0,
-  valor_medio_porcentagem: 0,
-  qtd_fingers: 0,
-  variacao_pct: 0,
+  valor_total_fingers: 0, valor_medio_porcentagem: 0, qtd_fingers: 0, variacao_pct: 0,
 }
 
 export function useRelatorio() {
@@ -25,36 +20,38 @@ export function useRelatorio() {
   const [appliedFilters, setAppliedFilters] = useState<RelatorioFilters>(emptyFilters)
   const [registros, setRegistros] = useState<RelatorioRegistro[]>([])
   const [totais, setTotais] = useState<RelatorioTotais>(emptyTotais)
-  const [pagination, setPagination] = useState<PaginationState>({ page: 1, pageSize: 20, total: 0 })
+  const [shPage, setShPage] = useState(1)
+  const shPageSize = 20
+  const [shTotal, setShTotal] = useState(0)
   const [loadingSH, setLoadingSH] = useState(false)
 
-  const fetchSH = useCallback(async () => {
-    setLoadingSH(true)
-    try {
-      const result = await fetchRelatorioSH(appliedFilters, {
-        page: pagination.page,
-        pageSize: pagination.pageSize,
-      })
-      setRegistros(result.data)
-      setTotais(result.totais)
-      setPagination(p => ({ ...p, total: result.total }))
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoadingSH(false)
-    }
-  }, [appliedFilters, pagination.page, pagination.pageSize])
+  // Referência para os filtros aplicados (evita stale closure)
+  const appliedRef = useRef(appliedFilters)
+  appliedRef.current = appliedFilters
 
-  useEffect(() => { fetchSH() }, [fetchSH])
+  useEffect(() => {
+    let cancelled = false
+    setLoadingSH(true)
+    fetchRelatorioSH(appliedRef.current, { page: shPage, pageSize: shPageSize })
+      .then(result => {
+        if (cancelled) return
+        setRegistros(result.data)
+        setTotais(result.totais)
+        setShTotal(result.total)
+      })
+      .catch(console.error)
+      .finally(() => { if (!cancelled) setLoadingSH(false) })
+    return () => { cancelled = true }
+  }, [appliedFilters, shPage])
 
   function applyFilters() {
     setAppliedFilters({ ...filters })
-    setPagination(p => ({ ...p, page: 1 }))
+    setShPage(1)
   }
   function clearFilters() {
     setFilters(emptyFilters)
     setAppliedFilters(emptyFilters)
-    setPagination(p => ({ ...p, page: 1 }))
+    setShPage(1)
   }
 
   // ── Fingers ─────────────────────────────────────────────────────────────────
@@ -62,40 +59,37 @@ export function useRelatorio() {
   const [appliedFingerFilters, setAppliedFingerFilters] = useState<RelatorioFilters>(emptyFilters)
   const [fingerRegistros, setFingerRegistros] = useState<RelatorioFingerRegistro[]>([])
   const [fingerTotais, setFingerTotais] = useState<RelatorioFingerTotais>(emptyFingerTotais)
-  const [fingerPagination, setFingerPagination] = useState<PaginationState>({
-    page: 1,
-    pageSize: 20,
-    total: 0,
-  })
+  const [fingerPage, setFingerPage] = useState(1)
+  const fingerPageSize = 20
+  const [fingerTotal, setFingerTotal] = useState(0)
   const [loadingFinger, setLoadingFinger] = useState(false)
 
-  const fetchFingers = useCallback(async () => {
-    setLoadingFinger(true)
-    try {
-      const result = await fetchRelatorioFingers(appliedFingerFilters, {
-        page: fingerPagination.page,
-        pageSize: fingerPagination.pageSize,
-      })
-      setFingerRegistros(result.data)
-      setFingerTotais(result.totais)
-      setFingerPagination(p => ({ ...p, total: result.total }))
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoadingFinger(false)
-    }
-  }, [appliedFingerFilters, fingerPagination.page, fingerPagination.pageSize])
+  const appliedFingerRef = useRef(appliedFingerFilters)
+  appliedFingerRef.current = appliedFingerFilters
 
-  useEffect(() => { fetchFingers() }, [fetchFingers])
+  useEffect(() => {
+    let cancelled = false
+    setLoadingFinger(true)
+    fetchRelatorioFingers(appliedFingerRef.current, { page: fingerPage, pageSize: fingerPageSize })
+      .then(result => {
+        if (cancelled) return
+        setFingerRegistros(result.data)
+        setFingerTotais(result.totais)
+        setFingerTotal(result.total)
+      })
+      .catch(console.error)
+      .finally(() => { if (!cancelled) setLoadingFinger(false) })
+    return () => { cancelled = true }
+  }, [appliedFingerFilters, fingerPage])
 
   function applyFingerFilters() {
     setAppliedFingerFilters({ ...fingerFilters })
-    setFingerPagination(p => ({ ...p, page: 1 }))
+    setFingerPage(1)
   }
   function clearFingerFilters() {
     setFingerFilters(emptyFilters)
     setAppliedFingerFilters(emptyFilters)
-    setFingerPagination(p => ({ ...p, page: 1 }))
+    setFingerPage(1)
   }
 
   // ── Export ──────────────────────────────────────────────────────────────────
@@ -124,12 +118,12 @@ export function useRelatorio() {
   return {
     totais, registros, loadingSH,
     filters, setFilters, applyFilters, clearFilters,
-    pagination: { ...pagination, total: pagination.total },
-    setPage: (page: number) => setPagination(p => ({ ...p, page })),
+    pagination: { page: shPage, pageSize: shPageSize, total: shTotal },
+    setPage: setShPage,
     fingerTotais, fingerRegistros, loadingFinger,
     fingerFilters, setFingerFilters, applyFingerFilters, clearFingerFilters,
-    fingerPagination: { ...fingerPagination, total: fingerPagination.total },
-    setFingerPage: (page: number) => setFingerPagination(p => ({ ...p, page })),
+    fingerPagination: { page: fingerPage, pageSize: fingerPageSize, total: fingerTotal },
+    setFingerPage,
     exportarCSV,
   }
 }
