@@ -18,24 +18,19 @@ export async function fetchRelatorioSH(
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1
 
-  const buildQuery = (base: any) => {
-    if (filters.search)
-      base = base.ilike('busca', `%${filters.search.toLowerCase()}%`)
-    if (filters.mes_ano)
-      base = base.eq('periodo', filters.mes_ano)
-    return base
-  }
-
-  // Página atual
-  const { data, error, count } = await buildQuery(
-    supabase.from('vw_relatorio_sh').select('*', { count: 'exact' }).order('software_house').range(from, to)
-  )
+  // Página atual — filtros aplicados ANTES do range
+  let pageQ = supabase.from('vw_relatorio_sh').select('*', { count: 'exact' })
+  if (filters.search)  pageQ = pageQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
+  if (filters.mes_ano) pageQ = pageQ.eq('periodo', filters.mes_ano)
+  pageQ = pageQ.order('software_house').range(from, to)
+  const { data, error, count } = await pageQ
   if (error) throw error
 
   // Totais gerais (sem paginação)
-  const { data: allRows, error: e2 } = await buildQuery(
-    supabase.from('vw_relatorio_sh').select('valor_taxa,imposto,valor_sh')
-  )
+  let totQ = supabase.from('vw_relatorio_sh').select('valor_taxa,imposto,valor_sh')
+  if (filters.search)  totQ = totQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
+  if (filters.mes_ano) totQ = totQ.eq('periodo', filters.mes_ano)
+  const { data: allRows, error: e2 } = await totQ
   if (e2) throw e2
 
   const totais: RelatorioTotais = {
@@ -58,24 +53,19 @@ export async function fetchRelatorioFingers(
   const from = (page - 1) * pageSize
   const to = from + pageSize - 1
 
-  const buildQuery = (base: any) => {
-    if (filters.search)
-      base = base.ilike('busca', `%${filters.search.toLowerCase()}%`)
-    if (filters.mes_ano)
-      base = base.eq('periodo', filters.mes_ano)
-    return base
-  }
-
-  // Página atual
-  const { data, error, count } = await buildQuery(
-    supabase.from('vw_relatorio_fingers').select('*', { count: 'exact' }).order('finger').range(from, to)
-  )
+  // Página atual — filtros aplicados ANTES do range
+  let pageQ = supabase.from('vw_relatorio_fingers').select('*', { count: 'exact' })
+  if (filters.search)  pageQ = pageQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
+  if (filters.mes_ano) pageQ = pageQ.eq('periodo', filters.mes_ano)
+  pageQ = pageQ.order('finger').range(from, to)
+  const { data, error, count } = await pageQ
   if (error) throw error
 
   // Totais gerais (sem paginação)
-  const { data: allRows, error: e2 } = await buildQuery(
-    supabase.from('vw_relatorio_fingers').select('valor_finger,porcentagem,finger')
-  )
+  let totQ = supabase.from('vw_relatorio_fingers').select('valor_finger,porcentagem,finger')
+  if (filters.search)  totQ = totQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
+  if (filters.mes_ano) totQ = totQ.eq('periodo', filters.mes_ano)
+  const { data: allRows, error: e2 } = await totQ
   if (e2) throw e2
 
   const all = (allRows ?? []) as any[]
