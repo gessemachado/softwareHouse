@@ -1,0 +1,43 @@
+import type { Finger } from '../types/sh.types'
+
+export const mockFingers: Finger[] = [
+  {
+    id: 'finger-1',
+    software_house_id: 'sh-1',
+    nome_completo: 'Paulo Henrique',
+    email: 'paulo.henrique@email.com',
+    telefone: '(11) 98765-4321',
+    cpf: '555.666.777-88',
+    porcentagem: 15,
+    prazo_meses: 12,
+    cidade: 'São Paulo',
+    estado: 'SP',
+    data_vinculo: '2024-01-15T10:00:00Z',
+  },
+  {
+    id: 'finger-2',
+    software_house_id: 'sh-1',
+    nome_completo: 'Amanda Silva',
+    email: 'amanda.silva@pencil.com',
+    telefone: '(11) 97654-3210',
+    cpf: '666.777.888-99',
+    porcentagem: 20,
+    prazo_meses: 24,
+    cidade: 'Guarulhos',
+    estado: 'SP',
+    data_vinculo: '2024-02-10T10:00:00Z',
+  },
+  {
+    id: 'finger-3',
+    software_house_id: 'sh-1',
+    nome_completo: 'Rodrigo Costa',
+    email: 'rodrigo.costa@email.com',
+    telefone: '(11) 96543-2109',
+    cpf: '777.888.999-00',
+    porcentagem: 10,
+    prazo_meses: 6,
+    cidade: 'Osasco',
+    estado: 'SP',
+    data_vinculo: '2023-10-05T10:00:00Z',
+  },
+]

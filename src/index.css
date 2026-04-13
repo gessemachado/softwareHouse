@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-bh-bg text-bh-text font-sans m-0;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-bh-surface;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-bh-border rounded-full;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-bh-primary hover:bg-bh-primary-hover text-white font-medium px-4 py-2 rounded transition-colors inline-flex items-center gap-2 text-sm cursor-pointer;
+  }
+
+  .btn-secondary {
+    @apply bg-bh-surface2 hover:bg-bh-border text-bh-text font-medium px-4 py-2 rounded transition-colors inline-flex items-center gap-2 text-sm border border-bh-border cursor-pointer;
+  }
+
+  .btn-ghost {
+    @apply text-bh-muted hover:text-bh-text px-3 py-2 rounded transition-colors inline-flex items-center gap-2 text-sm cursor-pointer;
+  }
+
+  .input-bh {
+    @apply w-full bg-bh-surface2 border border-bh-border text-bh-text placeholder-bh-subtle rounded px-3 py-2 text-sm focus:outline-none focus:border-bh-primary transition-colors;
+  }
+
+  .card-bh {
+    @apply bg-bh-surface border border-bh-border rounded-lg;
+  }
+
+  .label-bh {
+    @apply text-bh-muted text-xs font-medium mb-1 block;
+  }
+
+  .error-msg {
+    @apply text-red-400 text-xs mt-1;
+  }
+
+  .table-bh {
+    @apply w-full text-sm;
+  }
+
+  .table-bh thead tr {
+    @apply border-b border-bh-border;
+  }
+
+  .table-bh thead th {
+    @apply text-bh-muted text-xs font-medium uppercase tracking-wider py-3 px-4 text-left;
+  }
+
+  .table-bh tbody tr {
+    @apply border-b border-bh-border hover:bg-bh-surface2 transition-colors;
+  }
+
+  .table-bh tbody td {
+    @apply py-3 px-4 text-bh-text;
+  }
+}

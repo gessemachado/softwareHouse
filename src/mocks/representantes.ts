@@ -1,0 +1,48 @@
+import type { Representante } from '../types/sh.types'
+
+export const mockRepresentantes: Representante[] = [
+  {
+    id: 'rep-1',
+    software_house_id: 'sh-1',
+    nome_completo: 'João Silva',
+    email: 'joao.silva@email.com',
+    telefone: '(11) 98765-4321',
+    cpf: '123.456.789-09',
+    cidade: 'São Paulo',
+    estado: 'SP',
+    data_vinculo: '2024-01-15T10:00:00Z',
+  },
+  {
+    id: 'rep-2',
+    software_house_id: 'sh-1',
+    nome_completo: 'Maria Santos',
+    email: 'maria.santos@email.com',
+    telefone: '(11) 97654-3210',
+    cpf: '987.654.321-00',
+    cidade: 'Campinas',
+    estado: 'SP',
+    data_vinculo: '2024-02-20T10:00:00Z',
+  },
+  {
+    id: 'rep-3',
+    software_house_id: 'sh-1',
+    nome_completo: 'Pedro Costa',
+    email: 'pedro.costa@email.com',
+    telefone: '(11) 96543-2109',
+    cpf: '111.222.333-44',
+    cidade: 'Santo André',
+    estado: 'SP',
+    data_vinculo: '2024-03-10T10:00:00Z',
+  },
+  {
+    id: 'rep-4',
+    software_house_id: 'sh-2',
+    nome_completo: 'Ana Oliveira',
+    email: 'ana.oliveira@email.com',
+    telefone: '(11) 95432-1098',
+    cpf: '444.555.666-77',
+    cidade: 'São Paulo',
+    estado: 'SP',
+    data_vinculo: '2024-02-01T10:00:00Z',
+  },
+]
