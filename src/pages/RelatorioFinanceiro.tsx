@@ -148,7 +148,7 @@ export function RelatorioFinanceiro() {
               </thead>
               <tbody>
                 {registros.map(r => (
-                  <tr key={r.id}>
+                  <tr key={`${r.id}-${r.periodo}`}>
                     <td>
                       <p className="font-medium">{r.software_house}</p>
                       <p className="text-bh-muted text-xs">{r.cnpj_sh}</p>
@@ -291,7 +291,7 @@ export function RelatorioFinanceiro() {
               </thead>
               <tbody>
                 {fingerRegistros.map(r => (
-                  <tr key={r.id}>
+                  <tr key={`${r.id}-${r.periodo}-${r.finger}`}>
                     <td>
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full bg-bh-primary/20 flex items-center justify-center text-bh-primary text-xs font-semibold flex-shrink-0">
