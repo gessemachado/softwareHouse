@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Store, ChevronLeft } from 'lucide-react'
 import { AppLayout } from '../components/layout/AppLayout'
@@ -9,7 +9,11 @@ import { Step3Representantes } from '../components/wizard-steps/Step3Representan
 import { Step4Fingers } from '../components/wizard-steps/Step4Fingers'
 import { Step5Credenciados } from '../components/wizard-steps/Step5Credenciados'
 import { useWizardState } from '../hooks/useWizardState'
-import { useSoftwareHouses } from '../hooks/useSoftwareHouses'
+import { getSoftwareHouseById, createSoftwareHouse, updateSoftwareHouse } from '../services/supabase/softwareHouseService'
+import { createRepresentantesLote } from '../services/supabase/representanteService'
+import { createFingersLote } from '../services/supabase/fingerService'
+import { createSHCredenciadosLote } from '../services/supabase/credenciadoService'
+import type { SoftwareHouse } from '../types/sh.types'
 
 interface Props {
   mode: 'create' | 'edit'
@@ -18,7 +22,6 @@ interface Props {
 export function SoftwareHouseWizard({ mode }: Props) {
   const navigate = useNavigate()
   const { id } = useParams()
-  const { getSoftwareHouse, addSoftwareHouse, updateSoftwareHouse } = useSoftwareHouses()
   const {
     state, goToStep,
     updateDadosBasicos, updateDadosOperacionais,
@@ -29,9 +32,19 @@ export function SoftwareHouseWizard({ mode }: Props) {
   } = useWizardState()
 
   const [isLoading, setIsLoading] = useState(false)
+  const [loadingEdit, setLoadingEdit] = useState(mode === 'edit')
+  const [existingSH, setExistingSH] = useState<SoftwareHouse | undefined>()
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
 
-  const existingSH = mode === 'edit' && id ? getSoftwareHouse(id) : undefined
+  // Carrega dados da SH existente no modo edit
+  useEffect(() => {
+    if (mode !== 'edit' || !id) return
+    setLoadingEdit(true)
+    getSoftwareHouseById(id)
+      .then(sh => setExistingSH(sh))
+      .catch(() => showToast('error', 'Erro ao carregar Software House'))
+      .finally(() => setLoadingEdit(false))
+  }, [mode, id])
 
   function showToast(type: 'success' | 'error', msg: string) {
     setToast({ type, msg })
@@ -41,31 +54,47 @@ export function SoftwareHouseWizard({ mode }: Props) {
   async function handleFinalize() {
     setIsLoading(true)
     try {
-      await new Promise(r => setTimeout(r, 800))
-
-      const shData = {
-        ...state.dadosBasicos as Required<typeof state.dadosBasicos>,
-        ...state.dadosOperacionais as Required<typeof state.dadosOperacionais>,
-        status: 'ativa' as const,
-        qtd_lojas_vinculadas: state.credenciados.length,
-        qtd_representantes: state.representantes.length,
-      }
+      const dadosBasicos = state.dadosBasicos as Required<typeof state.dadosBasicos>
+      const dadosOp = state.dadosOperacionais as Required<typeof state.dadosOperacionais>
 
       if (mode === 'edit' && id) {
-        updateSoftwareHouse(id, shData)
+        await updateSoftwareHouse(id, { ...dadosBasicos, ...dadosOp })
         showToast('success', 'Software House atualizada com sucesso!')
       } else {
-        addSoftwareHouse(shData)
+        // 1. Cria a SH
+        const sh = await createSoftwareHouse({ ...dadosBasicos, ...dadosOp })
+
+        // 2. Cria representantes e fingers em lote
+        const [reps, fingers] = await Promise.all([
+          createRepresentantesLote(sh.id, state.representantes),
+          createFingersLote(sh.id, state.fingers),
+        ])
+
+        // 3. Cria vínculos de credenciados
+        const repIds = reps.map(r => r.id)
+        const fingerIds = fingers.map(f => f.id)
+        await createSHCredenciadosLote(sh.id, state.credenciados, repIds, fingerIds)
+
         showToast('success', 'Software House criada com sucesso!')
       }
 
       reset()
       setTimeout(() => navigate('/software-house'), 1200)
-    } catch {
-      showToast('error', 'Erro ao salvar. Tente novamente.')
+    } catch (e: any) {
+      showToast('error', e?.message ?? 'Erro ao salvar. Tente novamente.')
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (loadingEdit) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-64 text-bh-muted">
+          Carregando...
+        </div>
+      </AppLayout>
+    )
   }
 
   return (
@@ -95,7 +124,9 @@ export function SoftwareHouseWizard({ mode }: Props) {
           <h2 className="text-bh-text font-semibold">
             {mode === 'edit' ? 'Editar Software House' : 'Nova Software House'}
           </h2>
-          <p className="text-bh-muted text-sm">Preencha os dados para a {mode === 'edit' ? 'edição' : 'criação'} de uma nova software house</p>
+          <p className="text-bh-muted text-sm">
+            Preencha os dados para a {mode === 'edit' ? 'edição' : 'criação'} de uma nova software house
+          </p>
         </div>
       </div>
 
