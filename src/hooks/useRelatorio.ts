@@ -124,11 +124,11 @@ export function useRelatorio() {
   return {
     totais, registros, loadingSH,
     filters, setFilters, applyFilters, clearFilters,
-    pagination: { ...pagination },
+    pagination: { ...pagination, total: pagination.total },
     setPage: (page: number) => setPagination(p => ({ ...p, page })),
     fingerTotais, fingerRegistros, loadingFinger,
     fingerFilters, setFingerFilters, applyFingerFilters, clearFingerFilters,
-    fingerPagination: { ...fingerPagination },
+    fingerPagination: { ...fingerPagination, total: fingerPagination.total },
     setFingerPage: (page: number) => setFingerPagination(p => ({ ...p, page })),
     exportarCSV,
   }

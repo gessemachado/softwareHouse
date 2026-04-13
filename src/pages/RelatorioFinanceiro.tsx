@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, AlignJustify, Fingerprint, SlidersHorizontal, Search, X, Download, TrendingUp, CircleDollarSign } from 'lucide-react'
 import { AppLayout } from '../components/layout/AppLayout'
+import { Pagination } from '../components/ui/Pagination'
 import { useRelatorio } from '../hooks/useRelatorio'
 
 function formatBRL(v: number) {
@@ -11,8 +12,10 @@ function formatBRL(v: number) {
 export function RelatorioFinanceiro() {
   const navigate = useNavigate()
   const {
-    totais, registros, filters, setFilters, applyFilters, clearFilters,
-    fingerTotais, fingerRegistros, fingerFilters, setFingerFilters, applyFingerFilters, clearFingerFilters,
+    totais, registros, loadingSH, filters, setFilters, applyFilters, clearFilters,
+    pagination, setPage,
+    fingerTotais, fingerRegistros, loadingFinger, fingerFilters, setFingerFilters, applyFingerFilters, clearFingerFilters,
+    fingerPagination, setFingerPage,
     exportarCSV,
   } = useRelatorio()
 
@@ -117,7 +120,7 @@ export function RelatorioFinanceiro() {
                 <button onClick={clearFilters} className="btn-ghost"><X size={13} /> Limpar</button>
                 <button onClick={() => exportarCSV('sh')} className="btn-secondary"><Download size={13} /> Exportar</button>
               </div>
-              <span className="text-bh-muted text-sm">{registros.length} resultado{registros.length !== 1 ? 's' : ''}</span>
+              <span className="text-bh-muted text-sm">{pagination.total} resultado{pagination.total !== 1 ? 's' : ''}</span>
             </div>
           </div>
 
@@ -173,9 +176,18 @@ export function RelatorioFinanceiro() {
                 )}
               </tbody>
             </table>
-            {registros.length === 0 && (
+            {registros.length === 0 && !loadingSH && (
               <div className="py-10 text-center text-bh-muted">Nenhum registro encontrado.</div>
             )}
+            <div className="px-5 pb-4">
+              <Pagination
+                page={pagination.page}
+                pageSize={pagination.pageSize}
+                total={pagination.total}
+                onPageChange={setPage}
+                pageSizeOptions={[10, 20, 50]}
+              />
+            </div>
           </div>
         </>
       )}
@@ -253,7 +265,7 @@ export function RelatorioFinanceiro() {
                 <button onClick={clearFingerFilters} className="btn-ghost"><X size={13} /> Limpar</button>
                 <button onClick={() => exportarCSV('finger')} className="btn-secondary"><Download size={13} /> Exportar</button>
               </div>
-              <span className="text-bh-muted text-sm">{fingerRegistros.length} resultado{fingerRegistros.length !== 1 ? 's' : ''}</span>
+              <span className="text-bh-muted text-sm">{fingerPagination.total} resultado{fingerPagination.total !== 1 ? 's' : ''}</span>
             </div>
           </div>
 
@@ -318,9 +330,18 @@ export function RelatorioFinanceiro() {
                 )}
               </tbody>
             </table>
-            {fingerRegistros.length === 0 && (
+            {fingerRegistros.length === 0 && !loadingFinger && (
               <div className="py-10 text-center text-bh-muted">Nenhum registro encontrado.</div>
             )}
+            <div className="px-5 pb-4">
+              <Pagination
+                page={fingerPagination.page}
+                pageSize={fingerPagination.pageSize}
+                total={fingerPagination.total}
+                onPageChange={setFingerPage}
+                pageSizeOptions={[10, 20, 50]}
+              />
+            </div>
           </div>
         </>
       )}
