@@ -106,7 +106,7 @@ export function RelatorioFinanceiro() {
               />
               <input
                 className="input-bh"
-                placeholder="Mês / Ano (ex: Jan/2024)"
+                placeholder="Mês / Ano (ex: 01/2026)"
                 value={filters.mes_ano}
                 onChange={e => setFilters({ ...filters, mes_ano: e.target.value })}
               />
@@ -242,7 +242,7 @@ export function RelatorioFinanceiro() {
               />
               <input
                 className="input-bh"
-                placeholder="Mês / Ano (ex: Jan/2024)"
+                placeholder="Mês / Ano (ex: 01/2026)"
                 value={fingerFilters.mes_ano}
                 onChange={e => setFingerFilters({ ...fingerFilters, mes_ano: e.target.value })}
               />
