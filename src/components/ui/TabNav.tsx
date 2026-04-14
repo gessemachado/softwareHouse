@@ -11,7 +11,7 @@ export function TabNav() {
   const location = useLocation()
 
   return (
-    <div className="flex items-center gap-1 mb-6">
+    <div className="flex items-center gap-1 mb-6 mt-4">
       {tabs.map(({ label, path, icon: Icon }) => {
         const active = location.pathname === path
         return (
