@@ -62,42 +62,42 @@ export function CadastrosSection() {
           <div className="flex-1">
             <div className="flex gap-5">
               {/* Novos */}
-              <div className="flex items-start gap-2">
-                <div className="w-9 h-9 rounded-lg bg-orange-500/20 flex items-center justify-center mt-0.5">
-                  <TrendingUp size={16} className="text-orange-500" />
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center mt-0.5">
+                  <TrendingUp size={18} className="text-orange-500" />
                 </div>
                 <div>
-                  <p className="text-[#999] text-[8px]">Cadastrados</p>
-                  <p className="text-orange-500 text-[10px] font-medium">{cur.novos}</p>
-                  <p className={`text-[9px] font-mono ${cur.novos >= prev.novos ? 'text-green-400' : 'text-red-400'}`}>
+                  <p className="text-[#999] text-sm mb-1">Cadastrados</p>
+                  <p className="text-orange-500 text-3xl font-bold">{cur.novos}</p>
+                  <p className={`text-sm font-mono mt-1 ${cur.novos >= prev.novos ? 'text-green-400' : 'text-red-400'}`}>
                     {pctStr(cur.novos, prev.novos)}
                   </p>
                 </div>
               </div>
 
               {/* Perdidos */}
-              <div className="flex items-start gap-2">
-                <div className="w-9 h-9 rounded-lg bg-red-500/20 flex items-center justify-center mt-0.5">
-                  <TrendingDown size={16} className="text-red-500" />
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center mt-0.5">
+                  <TrendingDown size={18} className="text-red-500" />
                 </div>
                 <div>
-                  <p className="text-[#999] text-[8px]">Perdidos</p>
-                  <p className="text-red-400 text-[10px] font-medium">{cur.perdidos}</p>
-                  <p className={`text-[9px] font-mono ${cur.perdidos <= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>
+                  <p className="text-[#999] text-sm mb-1">Perdidos</p>
+                  <p className="text-red-400 text-3xl font-bold">{cur.perdidos}</p>
+                  <p className={`text-sm font-mono mt-1 ${cur.perdidos <= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>
                     {pctStr(cur.perdidos, prev.perdidos)}
                   </p>
                 </div>
               </div>
 
               {/* Recuperados */}
-              <div className="flex items-start gap-2">
-                <div className="w-9 h-9 rounded-lg bg-cyan-500/20 flex items-center justify-center mt-0.5">
-                  <RefreshCw size={16} className="text-cyan-400" />
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center mt-0.5">
+                  <RefreshCw size={18} className="text-cyan-400" />
                 </div>
                 <div>
-                  <p className="text-[#999] text-[8px]">Recuperados</p>
-                  <p className="text-cyan-400 text-[10px] font-medium">{cur.recuperados}</p>
-                  <p className={`text-[9px] font-mono ${cur.recuperados >= prev.recuperados ? 'text-green-400' : 'text-red-400'}`}>
+                  <p className="text-[#999] text-sm mb-1">Recuperados</p>
+                  <p className="text-cyan-400 text-3xl font-bold">{cur.recuperados}</p>
+                  <p className={`text-sm font-mono mt-1 ${cur.recuperados >= prev.recuperados ? 'text-green-400' : 'text-red-400'}`}>
                     {pctStr(cur.recuperados, prev.recuperados)}
                   </p>
                 </div>
