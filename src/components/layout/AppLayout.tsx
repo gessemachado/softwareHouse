@@ -15,14 +15,18 @@ export function AppLayout({ title = 'BuyHelp Desconto', subtitle = 'Gestão e an
       <Header />
 
       {/* Page header */}
-      <div className="px-8 pt-6 pb-4">
-        <div className="flex items-center gap-2 text-bh-muted text-sm mb-3">
-          <AlignJustify size={14} />
-          <span>{breadcrumb}</span>
+      {title && (
+        <div className="px-8 pt-6 pb-4">
+          {breadcrumb && (
+            <div className="flex items-center gap-2 text-bh-muted text-sm mb-3">
+              <AlignJustify size={14} />
+              <span>{breadcrumb}</span>
+            </div>
+          )}
+          <h1 className="text-bh-text text-2xl font-semibold">{title}</h1>
+          {subtitle && <p className="text-bh-muted text-sm mt-1">{subtitle}</p>}
         </div>
-        <h1 className="text-bh-text text-2xl font-semibold">{title}</h1>
-        <p className="text-bh-muted text-sm mt-1">{subtitle}</p>
-      </div>
+      )}
 
       {/* Content */}
       <main className="flex-1 px-8 pb-8">

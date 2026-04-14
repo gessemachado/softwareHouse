@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom'
-import { Search, X, FileText, Plus, SlidersHorizontal, LayoutGrid, BarChart2, Pencil, AlignJustify } from 'lucide-react'
+import { Search, X, FileText, Plus, SlidersHorizontal, LayoutGrid, BarChart2, Pencil } from 'lucide-react'
 import { AppLayout } from '../components/layout/AppLayout'
 import { SHStatusBadge } from '../components/sh/SHStatusBadge'
 import { Pagination } from '../components/ui/Pagination'
+import { TabNav } from '../components/ui/TabNav'
 import { useSoftwareHouses } from '../hooks/useSoftwareHouses'
 
 export function SoftwareHouseList() {
@@ -10,13 +11,8 @@ export function SoftwareHouseList() {
   const { data, total, filters, setFilters, applyFilters, clearFilters, pagination, setPage } = useSoftwareHouses()
 
   return (
-    <AppLayout>
-      {/* Botão Software House */}
-      <div className="mb-6">
-        <button className="btn-primary">
-          <AlignJustify size={15} /> Software House
-        </button>
-      </div>
+    <AppLayout title="">
+      <TabNav />
 
       {/* Filtros */}
       <div className="card-bh p-5 mb-6">
