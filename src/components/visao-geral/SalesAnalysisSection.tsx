@@ -4,56 +4,53 @@ import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Cell, Tooltip
 } from 'recharts'
 import { AvaliacaoResultadosInline } from './AvaliacaoResultadosInline'
-import { useDashboardFilter } from '../../contexts/DashboardFilterContext'
+import { useDashboardFilter, MONTHS_SHORT } from '../../contexts/DashboardFilterContext'
+import { MESES, METRICAS, mesIdx } from '../../mocks/dashboardData'
 
-const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-
-type MetricKey = 'Total de Vendas' | 'Pedidos' | 'Intermediações' | 'Total de Intermediações' | 'Cadastro' | 'Ativações' | 'Taxa' | 'Total de Desconto'
+type MetricKey = keyof typeof METRICAS
 
 const METRICS: MetricKey[] = [
-  'Pedidos', 'Total de Vendas', 'Intermediações', 'Total de Intermediações',
-  'Cadastro', 'Ativações', 'Taxa', 'Total de Desconto',
+  'Total de Vendas',
+  'Qtd de Pedidos',
+  'Qtd de Intermediações',
+  'Total de Intermediações',
+  'Ticket Médio',
+  'Desconto Usado',
 ]
 
-const DATA: Record<MetricKey, number[]> = {
-  'Total de Vendas':          [312400, 289600, 354800, 321000, 398200, 276500, 415300, 362700, 298100, 441600, 387900, 378662],
-  'Pedidos':                  [218,    231,    205,    244,    198,    227,    251,    239,    263,    221,    235,    262],
-  'Intermediações':           [3,      4,      3,      5,      2,      4,      6,      4,      3,      5,      4,      4],
-  'Total de Intermediações':  [5800,   6200,   5400,   6900,   4800,   6100,   7400,   6500,   5200,   7100,   6400,   6900],
-  'Cadastro':                 [142,    158,    135,    171,    128,    149,    178,    162,    144,    183,    165,    172],
-  'Ativações':                [89,     97,     82,     108,    76,     93,     114,    101,    86,     119,    104,    110],
-  'Taxa':                     [1240,   1380,   1190,   1520,   1080,   1340,   1680,   1450,   1210,   1740,   1560,   1620],
-  'Total de Desconto':        [18400,  16900,  20200,  17800,  22600,  15400,  24100,  21000,  17200,  25800,  22400,  21900],
-}
-
-// Mês anterior simulado = Março 2026 (penúltimo mês, índice 10)
-const PREV_DATA: Record<MetricKey, number> = {
-  'Total de Vendas':         424360,
-  'Pedidos':                 244,
-  'Intermediações':          5,
-  'Total de Intermediações': 7100,
-  'Cadastro':                165,
-  'Ativações':               104,
-  'Taxa':                    1560,
-  'Total de Desconto':       22400,
+const METRIC_LABELS: Record<MetricKey, string> = {
+  'Total de Vendas':          'Total de Vendas',
+  'Qtd de Pedidos':           'Pedidos',
+  'Clientes que Compraram':   'Clientes',
+  'Ticket Médio':             'Ticket Médio',
+  'Qtd de Intermediações':    'Intermediações',
+  'Total de Intermediações':  'Total de Intermediações',
+  'Desconto Usado':           'Desconto Usado',
 }
 
 function isCurrency(m: MetricKey) {
-  return ['Total de Vendas', 'Total de Intermediações', 'Taxa', 'Total de Desconto'].includes(m)
+  return ['Total de Vendas', 'Total de Intermediações', 'Desconto Usado'].includes(m)
 }
+function isTicket(m: MetricKey) { return m === 'Ticket Médio' }
 
 function formatY(metric: MetricKey, v: number) {
   if (isCurrency(metric)) return `R$${Math.round(v / 1000)}k`
+  if (isTicket(metric))   return `R$${Math.round(v)}`
   return String(v)
 }
 
 function formatFull(metric: MetricKey, v: number) {
-  if (isCurrency(metric)) return `R$ ${v.toLocaleString('pt-BR')}`
+  if (isCurrency(metric)) return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+  if (isTicket(metric))   return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
   return v.toLocaleString('pt-BR')
 }
 
 export function SalesAnalysisSection() {
-  const { compareLabel } = useDashboardFilter()
+  const {
+    selectedMonth, selectedYear,
+    compareMonth, compareYear, compareLabel,
+  } = useDashboardFilter()
+
   const [showAvaliacao, setShowAvaliacao] = useState(false)
   const [metric, setMetric] = useState<MetricKey>('Total de Vendas')
   const [showDropdown, setShowDropdown] = useState(false)
@@ -69,23 +66,26 @@ export function SalesAnalysisSection() {
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  const raw = DATA[metric]
-  const chartData = MONTHS.map((month, i) => ({ month, value: raw[i] }))
-  const avg = Math.round(raw.reduce((s, v) => s + v, 0) / raw.length)
-  const peak = Math.max(...raw)
-  const minVal = Math.min(...raw)
+  const curIdx  = mesIdx(selectedMonth, selectedYear)
+  const prevIdx = mesIdx(compareMonth, compareYear)
 
-  // Valor atual = último mês (Dez/Abr)
-  const current = raw[raw.length - 1]
-  const prevVal = PREV_DATA[metric]
-  const diff = current - prevVal
-  const diffPct = ((diff / prevVal) * 100).toFixed(1)
+  const raw      = METRICAS[metric]
+  const chartData = MESES.map((month, i) => ({ month, value: raw[i], isCur: i === curIdx, isPrev: i === prevIdx }))
+  const avg      = Math.round(raw.reduce((s, v) => s + v, 0) / raw.length)
+  const peak     = Math.max(...raw)
+  const minVal   = Math.min(...raw)
+
+  const current  = raw[curIdx]
+  const prevVal  = raw[prevIdx]
+  const diff     = current - prevVal
+  const diffPct  = prevVal !== 0 ? ((diff / prevVal) * 100).toFixed(1) : '0'
   const diffPositive = diff >= 0
 
-  const avgFormatted = formatFull(metric, avg)
-  const currentLabel = formatFull(metric, current)
-  const prevLabel = formatFull(metric, prevVal)
-  const diffLabel = (diff >= 0 ? '+' : '') + formatFull(metric, diff)
+  const selLabel  = `${MONTHS_SHORT[selectedMonth]}/${selectedYear}`
+  const avgFormatted   = formatFull(metric, avg)
+  const currentLabel   = formatFull(metric, current)
+  const prevLabel      = formatFull(metric, prevVal)
+  const diffLabel      = (diff >= 0 ? '+' : '') + formatFull(metric, Math.abs(diff))
 
   return (
     <div className="rounded-lg border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 p-6 mb-5">
@@ -97,8 +97,8 @@ export function SalesAnalysisSection() {
             <TrendingUp size={20} className="text-orange-500" />
           </div>
           <div>
-            <h2 className="text-white text-xl font-bold">Análise - Últimos 12 Meses</h2>
-            <p className="text-[#999] text-sm mt-0.5">Período de Acompanhamento: Visualização mensal</p>
+            <h2 className="text-white text-xl font-bold">Análise — Últimos 13 Meses</h2>
+            <p className="text-[#999] text-sm mt-0.5">Abr/2025 → Abr/2026 · Visualização mensal</p>
           </div>
         </div>
 
@@ -108,7 +108,7 @@ export function SalesAnalysisSection() {
             onClick={() => setShowDropdown(v => !v)}
             className="flex items-center gap-2 border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/50 text-white px-4 py-2 rounded-lg text-sm hover:border-orange-500/40 transition-colors"
           >
-            {metric}
+            {METRIC_LABELS[metric]}
             <ChevronDown size={14} className={`text-[#999] transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
           </button>
           {showDropdown && (
@@ -124,7 +124,7 @@ export function SalesAnalysisSection() {
                       : 'text-white hover:bg-white/5'
                   }`}
                 >
-                  {m}
+                  {METRIC_LABELS[m]}
                 </button>
               ))}
             </div>
@@ -135,19 +135,19 @@ export function SalesAnalysisSection() {
       <div className="flex gap-4">
         {/* Left card */}
         <div className="w-64 shrink-0 border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/50 rounded-lg p-5">
-          {/* Title */}
           <div className="flex items-center gap-3 mb-5">
             <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: 'linear-gradient(135deg, rgba(255,102,0,0.25) 0%, rgba(255,102,0,0.1) 100%)' }}>
               <TrendingUp size={20} className="text-orange-500" />
             </div>
-            <span className="text-[#999] text-sm font-semibold leading-tight">Valor Acumulado</span>
+            <div>
+              <span className="text-[#999] text-sm font-semibold leading-tight">{METRIC_LABELS[metric]}</span>
+              <p className="text-orange-400 text-[10px] font-mono mt-0.5">{selLabel}</p>
+            </div>
           </div>
 
-          {/* Current value */}
           <p className="text-white text-3xl font-bold mb-4 leading-tight">{currentLabel}</p>
 
-          {/* Diff row */}
           <div className="flex items-start gap-3 mb-4">
             <div className={`flex items-center gap-1.5 rounded px-2 py-1 shrink-0 ${diffPositive ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
               {diffPositive
@@ -160,12 +160,11 @@ export function SalesAnalysisSection() {
             <div>
               <p className="text-[#666] text-xs">Diferença</p>
               <p className={`text-base font-semibold ${diffPositive ? 'text-green-400' : 'text-red-400'}`}>
-                {diffLabel}
+                {diffPositive ? '+' : '-'}{diffLabel}
               </p>
             </div>
           </div>
 
-          {/* Previous month */}
           <div className="pt-3 border-t border-white/5">
             <p className="text-[#666] text-xs mb-1">Período anterior <span className="text-[#555]">({compareLabel})</span></p>
             <p className="text-white text-base font-semibold">{prevLabel}</p>
@@ -178,7 +177,7 @@ export function SalesAnalysisSection() {
             <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 20, left: 10 }}>
               <XAxis
                 dataKey="month"
-                tick={{ fill: '#999', fontSize: 11 }}
+                tick={{ fill: '#999', fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -190,7 +189,7 @@ export function SalesAnalysisSection() {
                 width={50}
               />
               <Tooltip
-                formatter={v => [formatFull(metric, Number(v)), metric]}
+                formatter={v => [formatFull(metric, Number(v)), METRIC_LABELS[metric]]}
                 contentStyle={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: 6, color: '#fff' }}
                 labelStyle={{ color: '#999' }}
               />
@@ -198,15 +197,15 @@ export function SalesAnalysisSection() {
                 y={avg}
                 stroke="#ff6600"
                 strokeDasharray="4 4"
-                label={{ value: `Média 12 Meses: ${avgFormatted}`, fill: '#ff6600', fontSize: 11, position: 'insideTopLeft' }}
+                label={{ value: `Média: ${avgFormatted}`, fill: '#ff6600', fontSize: 10, position: 'insideTopLeft' }}
               />
               <Bar dataKey="value" radius={[2, 2, 0, 0]}>
-                {chartData.map(entry => (
-                  <Cell
-                    key={entry.month}
-                    fill={entry.value >= avg ? '#ff6600' : 'rgba(255,102,0,0.3)'}
-                  />
-                ))}
+                {chartData.map(entry => {
+                  let fill = entry.value >= avg ? '#ff6600' : 'rgba(255,102,0,0.3)'
+                  if (entry.isCur)  fill = '#ff6600'
+                  if (entry.isPrev) fill = 'rgba(255,255,255,0.25)'
+                  return <Cell key={entry.month} fill={fill} />
+                })}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -222,10 +221,14 @@ export function SalesAnalysisSection() {
           <FileText size={14} />
           {showAvaliacao ? 'Ocultar Avaliação de Resultado' : 'Avaliação de Resultado'}
         </button>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-5">
           <div className="flex items-center gap-2">
             <div className="w-3.5 h-3.5 rounded bg-orange-500" />
-            <span className="text-[#999] text-xs">Acima da Média</span>
+            <span className="text-[#999] text-xs">Acima da Média / Selecionado</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3.5 h-3.5 rounded" style={{ background: 'rgba(255,255,255,0.25)' }} />
+            <span className="text-[#999] text-xs">Comparação</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3.5 h-3.5 rounded bg-orange-500/30" />

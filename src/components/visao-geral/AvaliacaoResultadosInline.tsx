@@ -1,90 +1,27 @@
 import { useState } from 'react'
 import { BarChart2, TrendingUp, TrendingDown, History } from 'lucide-react'
 import { DREHistoricoModal } from './DREHistoricoModal'
-
-const rows = [
-  {
-    label: 'Vendas +', badge: 'orange', indent: 0, bold: true,
-    antes: 81329965.53, antesDir: 'up', antesP: null,
-    depois: 79969333.70, depoisDir: 'down', depoisP: null,
-    variacao: '1.67 %', variacaoCor: null,
-    desconto: 1360633.83, descontoBadge: 'orange',
-  },
-  {
-    label: 'Base (ICMS - IBS)', badge: null, indent: 1, bold: false,
-    antes: 33740642.99, antesDir: 'up', antesP: null,
-    depois: 31723373.20, depoisDir: 'down', depoisP: null,
-    variacao: null, variacaoCor: null,
-    desconto: 8011269.79, descontoBadge: null,
-  },
-  {
-    label: 'Base (PIS/COFINS - CBS)', badge: null, indent: 1, bold: false,
-    antes: 29705738.34, antesDir: 'up', antesP: null,
-    depois: 23266335.29, depoisDir: 'down', depoisP: null,
-    variacao: null, variacaoCor: null,
-    desconto: 6439403.05, descontoBadge: null,
-  },
-  {
-    label: 'CMV', badge: null, indent: 0, bold: true,
-    antes: 56148131.82, antesDir: 'down', antesP: '69.04 %',
-    depois: 56148131.82, depoisDir: 'up', depoisP: '70.21 %',
-    variacao: '0.00 %', variacaoCor: null,
-    desconto: null, descontoBadge: null,
-  },
-  {
-    label: 'Margem Bruta', badge: null, indent: 0, bold: true,
-    antes: 25186183.13, antesDir: 'up', antesP: null,
-    depois: 22805501.30, depoisDir: 'down', depoisP: null,
-    variacao: null, variacaoCor: null,
-    desconto: null, descontoBadge: null,
-  },
-  {
-    label: 'Débito', badge: null, indent: 0, bold: true,
-    antes: 6713729.69, antesDir: 'up', antesP: '10.71 %',
-    depois: 4905407.44, depoisDir: 'up', depoisP: '8.64 %',
-    variacao: '20.73 %', variacaoCor: 'green',
-    desconto: 1808322.26, descontoBadge: 'teal',
-  },
-  {
-    label: 'Desconto extra Finalizadora', badge: null, indent: 0, bold: false,
-    antes: 15660.58, antesDir: null, antesP: null,
-    depois: 15660.58, depoisDir: null, depoisP: null,
-    variacao: null, variacaoCor: null,
-    desconto: null, descontoBadge: null,
-  },
-  {
-    label: 'Margem Líquida', badge: null, indent: 0, bold: true,
-    antes: 16452463.44, antesDir: 'up', antesP: '20.23 %',
-    depois: 16452463.44, depoisDir: 'up', depoisP: '20.23 %',
-    variacao: '0.00 %', variacaoCor: null,
-    desconto: null, descontoBadge: null,
-  },
-  {
-    label: 'Taxa BuyHelp (i)', badge: 'teal', indent: 0, bold: false,
-    antes: null, antesDir: null, antesP: null,
-    depois: 447690.78, depoisDir: null, depoisP: null,
-    variacao: '0.56%', variacaoCor: null,
-    desconto: 1355116.28, descontoBadge: 'teal',
-  },
-  {
-    label: 'Margem Líquida Final', badge: null, indent: 0, bold: true,
-    antes: 16452463.44, antesDir: null, antesP: '20.23 %',
-    depois: 16452463.44, depoisDir: null, depoisP: '20.23 %',
-    variacao: '0.00 %', variacaoCor: null,
-    desconto: null, descontoBadge: null,
-  },
-]
+import { useDashboardFilter, MONTHS_SHORT } from '../../contexts/DashboardFilterContext'
+import { getPeriodData } from '../../mocks/periodoData'
 
 function fmt(v: number) {
   return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
-function ValueCell({ value, dir }: { value: number | null; dir: string | null }) {
+function ValueCell({ value, dir, varPct }: { value: number | null; dir: string | null; varPct?: string | null }) {
   if (value === null) return <span className="text-[#555]">-</span>
+  const pctColor = dir === 'up' ? 'text-emerald-400' : dir === 'down' ? 'text-red-400' : 'text-[#666]'
   return (
-    <span className="flex items-center gap-1 justify-end">
-      {dir === 'up'   && <TrendingUp   size={11} className="text-emerald-400 shrink-0" />}
-      {dir === 'down' && <TrendingDown size={11} className="text-red-400 shrink-0" />}
+    <span className="flex items-center gap-1.5 justify-end">
+      {(dir || varPct) && (
+        <span className={`flex items-center gap-0.5 text-[10px] font-mono font-semibold shrink-0 ${pctColor}`}>
+          <span className="text-[#444]">(</span>
+          {dir === 'up'   && <TrendingUp   size={10} className="text-emerald-400 shrink-0" />}
+          {dir === 'down' && <TrendingDown size={10} className="text-red-400 shrink-0" />}
+          {varPct && <span>{varPct}</span>}
+          <span className="text-[#444]">)</span>
+        </span>
+      )}
       <span>{fmt(value)}</span>
     </span>
   )
@@ -106,6 +43,12 @@ function DescontoCell({ value, badge }: { value: number | null; badge: string | 
 
 export function AvaliacaoResultadosInline() {
   const [showHistorico, setShowHistorico] = useState(false)
+  const { selectedMonth, selectedYear, compareMonth, compareYear } = useDashboardFilter()
+
+  const analiseLabel = `${MONTHS_SHORT[selectedMonth]}/${selectedYear}`
+  const compareLabel = `${MONTHS_SHORT[compareMonth]}/${compareYear}`
+
+  const { avaliacao: rows } = getPeriodData(selectedMonth, selectedYear, compareMonth, compareYear)
 
   return (
     <div className="mt-5 pt-5 border-t border-white/5">
@@ -118,16 +61,20 @@ export function AvaliacaoResultadosInline() {
           </div>
           <div>
             <h3 className="text-white text-lg font-bold">Avaliação de Resultados</h3>
-            <p className="text-[#666] text-xs mt-0.5">Análise comparativa de indicadores financeiros • Antes vs Depois da Intermediação</p>
+            <p className="text-[#666] text-xs mt-0.5">
+              Análise comparativa de indicadores financeiros • Antes vs Depois da Intermediação
+            </p>
           </div>
         </div>
-        <button
-          onClick={() => setShowHistorico(true)}
-          title="Histórico 12 Meses"
-          className="w-9 h-9 flex items-center justify-center rounded-xl border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
-        >
-          <History size={16} />
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowHistorico(true)}
+            title="Histórico — Análise Fiscal"
+            className="w-9 h-9 flex items-center justify-center rounded-xl border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
+          >
+            <History size={16} />
+          </button>
+        </div>
       </div>
 
       {showHistorico && <DREHistoricoModal onClose={() => setShowHistorico(false)} />}
@@ -138,9 +85,15 @@ export function AvaliacaoResultadosInline() {
           <thead>
             <tr className="border-b border-white/5" style={{ background: 'rgba(255,255,255,0.02)' }}>
               <th className="text-left px-5 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Avaliação Resultado</th>
-              <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Antes</th>
+              <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase whitespace-nowrap">
+                Antes
+                <span className="block text-[9px] font-normal text-[#3a3a3a] normal-case tracking-normal mt-0.5">vs {compareLabel}</span>
+              </th>
               <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">%</th>
-              <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Depois</th>
+              <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase whitespace-nowrap">
+                Depois
+                <span className="block text-[9px] font-normal text-[#3a3a3a] normal-case tracking-normal mt-0.5">vs {compareLabel}</span>
+              </th>
               <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">%</th>
               <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Variação</th>
               <th className="text-right px-5 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Desconto</th>
@@ -168,9 +121,13 @@ export function AvaliacaoResultadosInline() {
                     )}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-right text-white"><ValueCell value={row.antes} dir={row.antesDir} /></td>
+                <td className="px-4 py-3 text-right text-white">
+                  <ValueCell value={row.antes} dir={row.antesDir} varPct={row.antesVarPct} />
+                </td>
                 <td className="px-4 py-3 text-right text-[#666] text-xs">{row.antesP ?? '-'}</td>
-                <td className="px-4 py-3 text-right text-white"><ValueCell value={row.depois} dir={row.depoisDir} /></td>
+                <td className="px-4 py-3 text-right text-white">
+                  <ValueCell value={row.depois} dir={row.depoisDir} varPct={row.depoisVarPct} />
+                </td>
                 <td className="px-4 py-3 text-right text-[#666] text-xs">{row.depoisP ?? '-'}</td>
                 <td className={`px-4 py-3 text-right font-semibold text-xs ${row.variacaoCor === 'green' ? 'text-emerald-400' : 'text-[#aaa]'}`}>
                   {row.variacao ?? '-'}

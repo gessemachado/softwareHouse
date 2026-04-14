@@ -3,28 +3,21 @@ import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Cell, Tooltip
 } from 'recharts'
 
-// Abr/2025 → Abr/2026 (13 meses)
-const MONTHS_LABELS = [
-  'Abr/25','Mai/25','Jun/25','Jul/25','Ago/25','Set/25',
-  'Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26','Abr/26'
-]
+import { MESES, METRICAS } from '../../mocks/dashboardData'
 
-const MOCK_DATA: Record<string, number[]> = {
-  'Qtd de Pedidos':        [218, 231, 205, 244, 198, 227, 251, 239, 263, 221, 235, 244, 262],
-  'Total de Vendas':       [148000, 156000, 139000, 163000, 134000, 151000, 171000, 162000, 178000, 149000, 158000, 163000, 172000],
-  'Clientes que Compraram':[29, 31, 27, 33, 26, 30, 34, 32, 36, 29, 31, 33, 35],
-  'Ticket Médio':          [130.50, 135.00, 128.00, 140.50, 126.00, 133.50, 142.00, 139.00, 148.50, 131.00, 136.50, 140.50, 148.50],
-}
+const MONTHS_LABELS = MESES
+const IDX_2026_START = 9  // Jan/26
+const MOCK_DATA = METRICAS
+
+const CURRENCY_LABELS = new Set(['Total de Vendas', 'Ticket Médio', 'Total de Intermediações', 'Desconto Usado'])
 
 function formatY(label: string, v: number) {
-  if (label === 'Total de Vendas') return `R$${Math.round(v / 1000)}k`
-  if (label === 'Ticket Médio') return `R$${v.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`
+  if (CURRENCY_LABELS.has(label)) return `R$${Math.round(v / 1000)}k`
   return String(v)
 }
 
 function formatTooltip(label: string, v: number) {
-  if (label === 'Total de Vendas') return `R$ ${v.toLocaleString('pt-BR')}`
-  if (label === 'Ticket Médio') return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+  if (CURRENCY_LABELS.has(label)) return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
   return String(v)
 }
 
@@ -32,6 +25,9 @@ interface Props {
   metricLabel: string
   onClose: () => void
 }
+
+// Ticket Médio usa média, demais usam soma
+const AVG_METRICS = new Set(['Ticket Médio'])
 
 export function MetricaChartModal({ metricLabel, onClose }: Props) {
   const raw = MOCK_DATA[metricLabel] ?? []
@@ -46,6 +42,20 @@ export function MetricaChartModal({ metricLabel, onClose }: Props) {
       ? `R$${avg.toLocaleString('pt-BR')}`
       : String(avg)
 
+  // Acumulado 2026 (Jan/26 → Abr/26)
+  const raw2026 = raw.slice(IDX_2026_START)
+  const acum2026 = AVG_METRICS.has(metricLabel)
+    ? raw2026.reduce((s, v) => s + v, 0) / raw2026.length
+    : raw2026.reduce((s, v) => s + v, 0)
+
+  const acum2026Label = CURRENCY_LABELS.has(metricLabel)
+    ? `R$ ${acum2026.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    : AVG_METRICS.has(metricLabel)
+      ? `R$ ${acum2026.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      : String(acum2026)
+
+  const acum2026Sub = AVG_METRICS.has(metricLabel) ? 'Média 2026' : 'Acumulado 2026'
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -53,8 +63,8 @@ export function MetricaChartModal({ metricLabel, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-3xl rounded-2xl border border-white/10 overflow-hidden shadow-2xl"
-        style={{ background: '#0d0d0d' }}
+        className="w-full rounded-2xl border border-white/10 overflow-hidden shadow-2xl"
+        style={{ background: '#0d0d0d', maxWidth: '90vw' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -68,9 +78,28 @@ export function MetricaChartModal({ metricLabel, onClose }: Props) {
           </button>
         </div>
 
+        {/* KPI strip */}
+        <div className="grid grid-cols-3 gap-4 px-6 py-4 border-b border-white/5">
+          <div className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <p className="text-[#555] text-[9px] font-bold tracking-widest uppercase mb-2">{acum2026Sub}</p>
+            <p className="text-orange-400 text-2xl font-bold">{acum2026Label}</p>
+            <p className="text-[#444] text-[10px] mt-1">Jan → Abr/2026</p>
+          </div>
+          <div className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <p className="text-[#555] text-[9px] font-bold tracking-widest uppercase mb-2">Média 13 Meses</p>
+            <p className="text-white text-2xl font-bold">{avgLabel}</p>
+            <p className="text-[#444] text-[10px] mt-1">Abr/2025 → Abr/2026</p>
+          </div>
+          <div className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <p className="text-[#555] text-[9px] font-bold tracking-widest uppercase mb-2">Pico</p>
+            <p className="text-white text-2xl font-bold">{formatTooltip(metricLabel, peak)}</p>
+            <p className="text-[#444] text-[10px] mt-1">Maior valor no período</p>
+          </div>
+        </div>
+
         {/* Chart */}
         <div className="px-4 pt-4 pb-2">
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={420}>
             <BarChart data={data} margin={{ top: 20, right: 10, bottom: 5, left: 10 }}>
               <XAxis
                 dataKey="month"

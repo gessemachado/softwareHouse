@@ -1,75 +1,250 @@
-import { X, Download, TrendingUp, TrendingDown } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts'
+import { X } from 'lucide-react'
 
-// Mai/25 → Abr/26
-const MONTHS = ['Mai/25','Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26','Abr/26']
+// ─── Tipos ────────────────────────────────────────────────────────────────────
 
-type RowDef = {
-  key: string
+interface RowData {
   label: string
-  badge?: 'orange' | 'teal'
-  indent?: number
-  bold?: boolean
-  dim?: boolean
-  highlight?: 'orange' | 'green'
-  isCost?: boolean  // subida = ruim
+  pctAntes: string
+  pctDepois: string
+  valAntes: string
+  valDepois: string
+  reducaoPct: string | null   // negativo = redução, positivo = aumento
+  reducaoVal: string | null
+  tipo: 'normal' | 'margem' | 'ganho'
 }
 
-const ROW_DEFS: RowDef[] = [
-  { key: 'Vendas',            label: 'Vendas +',                   badge: 'orange', bold: true },
-  { key: 'BaseICMS',          label: 'Base (ICMS - IBS)',           indent: 1, dim: true },
-  { key: 'BasePIS',           label: 'Base (PIS/COFINS - CBS)',     indent: 1, dim: true },
-  { key: 'CMV',               label: 'CMV',                        bold: true, isCost: true },
-  { key: 'MargemBruta',       label: 'Margem Bruta',               bold: true },
-  { key: 'Debito',            label: 'Débito',                     bold: true, isCost: true },
-  { key: 'DescontoExtra',     label: 'Desconto extra Finalizadora', dim: true },
-  { key: 'MargemLiquida',     label: 'Margem Líquida',             bold: true, highlight: 'orange' },
-  { key: 'TaxaBuyHelp',       label: 'Taxa BuyHelp (i)',           badge: 'teal' },
-  { key: 'MargemLiquidaFinal',label: 'Margem Líquida Final',       bold: true },
+interface PeriodData {
+  ano: string
+  baseAntes: string
+  baseDepois: string
+  ganho: string | null
+  rows: RowData[]
+}
+
+// ─── KPI ──────────────────────────────────────────────────────────────────────
+
+interface KpiCardProps {
+  ano: string
+  baseAntes: string
+  baseDepois: string
+  ganho: string | null
+}
+
+function KpiCard({ ano, baseAntes, baseDepois, ganho }: KpiCardProps) {
+  const temGanho = ganho !== null && ganho !== 'R$ 0,00'
+  return (
+    <div className="relative rounded-xl border border-white/10 p-6 overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-orange-500/40 group">
+      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        style={{ background: 'linear-gradient(180deg, rgba(245,158,11,0.04) 0%, transparent 100%)' }} />
+      <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        style={{ background: 'linear-gradient(90deg, #ff6600, transparent)' }} />
+
+      {/* Ano fantasma no fundo */}
+      <span className="absolute right-3 bottom-[-6px] font-black text-[64px] leading-none select-none pointer-events-none"
+        style={{ color: 'rgba(255,255,255,0.04)', fontVariantNumeric: 'tabular-nums' }}>
+        {ano.slice(-2)}
+      </span>
+
+      <div className="relative z-10">
+        <p className="text-orange-500 text-[10px] font-bold tracking-[0.16em] uppercase mb-2">Base {ano}</p>
+        <p className="text-white text-xl font-bold leading-tight">{baseAntes}</p>
+        <p className="text-[#666] text-xs mt-0.5">Após: {baseDepois}</p>
+
+        <div className="mt-4 flex items-center gap-2">
+          <span className="text-[#555] text-[10px] tracking-wide">Ganho Cliente</span>
+          {temGanho ? (
+            <span className="bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-bold font-mono px-2.5 py-0.5 rounded-full">
+              {ganho}
+            </span>
+          ) : (
+            <span className="bg-white/5 text-[#555] text-xs font-mono px-2.5 py-0.5 rounded-full">
+              R$ 0,00
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Linha da tabela ──────────────────────────────────────────────────────────
+
+function TableRow({ row }: { row: RowData }) {
+  const isNegPct = row.reducaoPct?.startsWith('-')
+  const isPosPct = row.reducaoPct?.startsWith('+')
+
+  if (row.tipo === 'ganho') {
+    return (
+      <tr className="border-t border-white/[0.06]">
+        <td className="px-5 py-3 text-white font-bold text-xs tracking-wide">Ganho Cliente</td>
+        <td colSpan={4} />
+        <td className="px-4 py-3 text-right">
+          {row.reducaoPct && (
+            <span className="inline-block bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-mono text-xs font-bold px-2 py-0.5 rounded">
+              {row.reducaoPct}
+            </span>
+          )}
+        </td>
+        <td className="px-5 py-3 text-right">
+          {row.reducaoVal && (
+            <span className="text-emerald-400 font-mono font-bold text-sm">{row.reducaoVal}</span>
+          )}
+        </td>
+      </tr>
+    )
+  }
+
+  const isMargem = row.tipo === 'margem'
+
+  return (
+    <tr
+      className="border-t border-white/[0.04] transition-colors hover:bg-white/[0.02]"
+      style={isMargem ? { background: 'rgba(255,102,0,0.04)' } : {}}
+    >
+      <td className={`px-5 py-3 text-sm font-semibold ${isMargem ? 'text-orange-400' : 'text-[#aaa]'}`}>
+        {row.label}
+      </td>
+      <td className="px-4 py-3 text-right font-mono text-xs text-blue-400">{row.pctAntes}</td>
+      <td className="px-4 py-3 text-right font-mono text-xs text-emerald-400">{row.pctDepois}</td>
+      <td className="px-4 py-3 text-right font-mono text-xs text-white/70">{row.valAntes}</td>
+      <td className="px-4 py-3 text-right font-mono text-xs text-white">{row.valDepois}</td>
+      <td className="px-4 py-3 text-right font-mono text-xs font-semibold">
+        <span className={
+          isPosPct ? 'text-emerald-400' :
+          isNegPct ? 'text-red-400' :
+          'text-[#666]'
+        }>
+          {row.reducaoPct ?? '—'}
+        </span>
+      </td>
+      <td className="px-5 py-3 text-right font-mono text-xs">
+        <span className={
+          row.reducaoVal?.startsWith('-') ? 'text-red-400' :
+          row.reducaoVal?.startsWith('R$') ? 'text-emerald-400' :
+          'text-[#555]'
+        }>
+          {row.reducaoVal ?? '—'}
+        </span>
+      </td>
+    </tr>
+  )
+}
+
+// ─── Seção de período ─────────────────────────────────────────────────────────
+
+function PeriodSection({ period }: { period: PeriodData }) {
+  return (
+    <div>
+      {/* Header do período */}
+      <div className="flex items-center gap-4 mb-4">
+        <span className="text-orange-400 font-black text-3xl tracking-widest">{period.ano}</span>
+        <div className="flex gap-5 text-xs text-[#666]">
+          <span>Antes: <strong className="font-mono text-white/70">{period.baseAntes}</strong></span>
+          <span>Depois: <strong className="font-mono text-white">{period.baseDepois}</strong></span>
+        </div>
+        <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+      </div>
+
+      {/* Tabela */}
+      <div className="rounded-xl border border-white/[0.07] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              {/* Linha de grupos */}
+              <tr style={{ background: 'rgba(255,255,255,0.015)' }}>
+                <th className="px-5 py-2 text-left" />
+                <th colSpan={2} className="px-4 py-2 text-center text-[9px] font-bold tracking-[0.16em] uppercase text-blue-400">
+                  % Alíquota
+                </th>
+                <th colSpan={2} className="px-4 py-2 text-center text-[9px] font-bold tracking-[0.16em] uppercase text-emerald-400">
+                  Valor R$
+                </th>
+                <th colSpan={2} className="px-5 py-2 text-center text-[9px] font-bold tracking-[0.16em] uppercase text-orange-500">
+                  Redução
+                </th>
+              </tr>
+              {/* Linha de colunas */}
+              <tr style={{ background: 'rgba(255,255,255,0.025)' }}>
+                <th className="px-5 py-2.5 text-left text-[#555] text-[9px] font-bold tracking-widest uppercase border-t border-white/5">
+                  Rubrica
+                </th>
+                <th className="px-4 py-2.5 text-right text-[#555] text-[9px] font-bold tracking-widest uppercase border-t border-white/5">
+                  Antes
+                </th>
+                <th className="px-4 py-2.5 text-right text-[#555] text-[9px] font-bold tracking-widest uppercase border-t border-white/5">
+                  Depois
+                </th>
+                <th className="px-4 py-2.5 text-right text-[#555] text-[9px] font-bold tracking-widest uppercase border-t border-white/5">
+                  Antes
+                </th>
+                <th className="px-4 py-2.5 text-right text-[#555] text-[9px] font-bold tracking-widest uppercase border-t border-white/5">
+                  Depois
+                </th>
+                <th className="px-4 py-2.5 text-right text-[#555] text-[9px] font-bold tracking-widest uppercase border-t border-white/5">
+                  % Red.
+                </th>
+                <th className="px-5 py-2.5 text-right text-[#555] text-[9px] font-bold tracking-widest uppercase border-t border-white/5">
+                  Valor Red.
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {period.rows.map((row, i) => (
+                <TableRow key={i} row={row} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Dados ────────────────────────────────────────────────────────────────────
+
+const PERIODS: PeriodData[] = [
+  {
+    ano: '2024',
+    baseAntes: 'R$ 2.513.388,64',
+    baseDepois: 'R$ 2.483.562,35',
+    ganho: null,
+    rows: [
+      { label: 'ICMS',        pctAntes: '21,56%', pctDepois: '17,55%', valAntes: 'R$ 541.985,53', valDepois: 'R$ 435.798,00', reducaoPct: '-18,63%', reducaoVal: '—',              tipo: 'normal' },
+      { label: 'PIS/COFINS',  pctAntes: '35,53%', pctDepois: '28,23%', valAntes: 'R$ 893.085,83', valDepois: 'R$ 701.102,61', reducaoPct: '-20,55%', reducaoVal: '-1,40%',         tipo: 'normal' },
+      { label: 'Débitos',     pctAntes: '6,87%',  pctDepois: '5,54%',  valAntes: 'R$ 172.643,68', valDepois: 'R$ 137.554,10', reducaoPct: '-19,37%', reducaoVal: '-R$ 35.089,58', tipo: 'normal' },
+      { label: 'Margem Bruta',pctAntes: '22,41%', pctDepois: '22,89%', valAntes: 'R$ 563.229,84', valDepois: 'R$ 568.493,13', reducaoPct: '+2,15%',  reducaoVal: 'R$ 5.263,29',   tipo: 'margem' },
+      { label: 'Ganho Cliente',pctAntes: '',      pctDepois: '',        valAntes: '',               valDepois: 'R$ 0,00',       reducaoPct: null,      reducaoVal: null,             tipo: 'ganho'  },
+    ],
+  },
+  {
+    ano: '2025',
+    baseAntes: 'R$ 7.467.863,63',
+    baseDepois: 'R$ 7.387.956,24',
+    ganho: 'R$ 9.637,85',
+    rows: [
+      { label: 'ICMS',        pctAntes: '21,23%', pctDepois: '17,02%', valAntes: 'R$ 1.585.756,92', valDepois: 'R$ 1.257.234,15', reducaoPct: '-19,86%', reducaoVal: '—',               tipo: 'normal' },
+      { label: 'PIS/COFINS',  pctAntes: '33,22%', pctDepois: '26,09%', valAntes: 'R$ 2.480.897,52', valDepois: 'R$ 1.927.669,63', reducaoPct: '-21,46%', reducaoVal: '-1,41%',          tipo: 'normal' },
+      { label: 'Débitos',     pctAntes: '6,61%',  pctDepois: '5,26%',  valAntes: 'R$ 493.724,32',   valDepois: 'R$ 388.725,32',   reducaoPct: '-20,42%', reducaoVal: '-R$ 104.999,00',  tipo: 'normal' },
+      { label: 'Margem Bruta',pctAntes: '22,64%', pctDepois: '23,22%', valAntes: 'R$ 1.690.646,42', valDepois: 'R$ 1.715.738,03', reducaoPct: '+2,58%',  reducaoVal: 'R$ 25.091,61',    tipo: 'margem' },
+      { label: 'Ganho Cliente',pctAntes: '',      pctDepois: '',        valAntes: '',                 valDepois: '',               reducaoPct: '-9,18%',  reducaoVal: 'R$ 9.637,85',     tipo: 'ganho'  },
+    ],
+  },
+  {
+    ano: '2026',
+    baseAntes: 'R$ 2.192.644,65',
+    baseDepois: 'R$ 2.161.947,89',
+    ganho: 'R$ 4.094,14',
+    rows: [
+      { label: 'ICMS',        pctAntes: '25,69%', pctDepois: '19,65%', valAntes: 'R$ 563.192,46', valDepois: 'R$ 424.780,71', reducaoPct: '-23,51%', reducaoVal: '—',              tipo: 'normal' },
+      { label: 'PIS/COFINS',  pctAntes: '36,70%', pctDepois: '27,95%', valAntes: 'R$ 804.671,42', valDepois: 'R$ 604.220,95', reducaoPct: '-23,84%', reducaoVal: '-1,87%',         tipo: 'normal' },
+      { label: 'Débitos',     pctAntes: '7,64%',  pctDepois: '5,86%',  valAntes: 'R$ 167.575,23', valDepois: 'R$ 126.643,11', reducaoPct: '-23,35%', reducaoVal: '-R$ 40.932,12', tipo: 'normal' },
+      { label: 'Margem Bruta',pctAntes: '21,95%', pctDepois: '22,73%', valAntes: 'R$ 481.248,81', valDepois: 'R$ 491.484,17', reducaoPct: '+3,58%',  reducaoVal: 'R$ 10.235,36',   tipo: 'margem' },
+      { label: 'Ganho Cliente',pctAntes: '',      pctDepois: '',        valAntes: '',               valDepois: '',              reducaoPct: '-10,00%', reducaoVal: 'R$ 4.094,14',    tipo: 'ganho'  },
+    ],
+  },
 ]
 
-// Valores mensais (em R$ milhões)
-const RAW: Record<string, number[]> = {
-  'Vendas':             [79.2, 74.8, 83.1, 80.5, 76.3, 84.9, 81.7, 86.2, 77.4, 80.1, 82.3, 79.9],
-  'BaseICMS':           [31.4, 29.7, 33.0, 31.9, 30.2, 33.7, 32.4, 34.2, 30.7, 31.8, 32.6, 31.7],
-  'BasePIS':            [22.8, 21.5, 23.9, 23.1, 21.9, 24.4, 23.5, 24.8, 22.2, 23.0, 23.6, 23.0],
-  'CMV':                [54.7, 51.7, 57.4, 55.6, 52.7, 58.6, 56.4, 59.6, 53.5, 55.3, 56.8, 55.2],
-  'MargemBruta':        [24.5, 23.1, 25.7, 24.9, 23.6, 26.3, 25.3, 26.6, 23.9, 24.8, 25.5, 24.7],
-  'Debito':             [6.5,  5.8,  6.9,  6.6,  5.9,  7.1,  6.8,  7.4,  6.1,  6.4,  6.7,  4.9],
-  'DescontoExtra':      [0.016,0.014,0.017,0.016,0.015,0.017,0.016,0.018,0.015,0.016,0.016,0.016],
-  'MargemLiquida':      [16.2, 15.3, 17.0, 16.5, 15.6, 17.4, 16.8, 17.6, 15.8, 16.4, 16.9, 16.5],
-  'TaxaBuyHelp':        [0.41, 0.38, 0.44, 0.42, 0.39, 0.45, 0.43, 0.45, 0.40, 0.42, 0.43, 0.45],
-  'MargemLiquidaFinal': [16.2, 15.3, 17.0, 16.5, 15.6, 17.4, 16.8, 17.6, 15.8, 16.4, 16.9, 16.5],
-}
-
-function pct(curr: number, prev: number) {
-  if (!prev) return null
-  return ((curr - prev) / prev * 100).toFixed(1)
-}
-
-function fmtM(v: number) {
-  if (v < 0.1) return `R$${(v * 1000).toFixed(0)}k`
-  return `R$${v.toFixed(1)}M`
-}
-
-// Chart uses Vendas + Margem Líquida
-const chartData = MONTHS.map((m, i) => ({
-  month: m,
-  Vendas: RAW['Vendas'][i],
-  'Marg. Líquida': RAW['MargemLiquida'][i],
-}))
-
-const ytdVendas  = RAW['Vendas'].reduce((a, b) => a + b, 0)
-const ytdMargem  = RAW['MargemLiquida'].reduce((a, b) => a + b, 0)
-const avgDebito  = RAW['Debito'].reduce((a, b) => a + b, 0) / 12
-const margemPct  = ((ytdMargem / ytdVendas) * 100).toFixed(1)
-
-const kpis = [
-  { label: 'Vendas YTD',         value: fmtM(ytdVendas),  change: '+12.4%', up: true },
-  { label: 'Débito Médio Mensal', value: fmtM(avgDebito),  change: '-20.7%', up: false },
-  { label: 'Margem Líquida %',   value: `${margemPct}%`,  change: '+0.8%',  up: true },
-  { label: 'Margem Líquida YTD', value: fmtM(ytdMargem),  change: '+5.2%',  up: true },
-]
+// ─── Modal principal ──────────────────────────────────────────────────────────
 
 interface Props { onClose: () => void }
 
@@ -81,179 +256,70 @@ export function DREHistoricoModal({ onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[96vw] rounded-2xl border border-white/10 shadow-2xl flex flex-col"
+        className="w-full max-w-5xl rounded-2xl border border-white/10 shadow-2xl flex flex-col"
         style={{ background: '#0d0d0d', maxHeight: '92vh' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-5 border-b border-white/5 shrink-0">
           <div>
-            <h2 className="text-white text-xl font-bold">DRE — Histórico 12 Meses</h2>
-            <p className="text-[#666] text-xs mt-0.5">Mai/2025 → Abr/2026 • Variação mês a mês</p>
+            <h2 className="text-xl font-bold" style={{ color: '#ff6600' }}>Análise de Resultados Fiscais</h2>
+            <p className="text-[#555] text-xs mt-0.5">
+              Comparativo de alíquotas, débitos e margem bruta — Exercícios 2024, 2025 e 2026
+            </p>
           </div>
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 border border-white/10 bg-white/5 text-[#aaa] hover:text-white px-3 py-2 rounded-lg text-xs transition-colors">
-              <Download size={13} /> Exportar
-            </button>
-            <button onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#666] hover:text-white transition-colors">
-              <X size={18} />
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#666] hover:text-white transition-colors"
+          >
+            <X size={18} />
+          </button>
         </div>
 
-        <div className="overflow-auto flex-1 px-8 py-6 space-y-6">
-          {/* KPI Cards */}
-          <div className="grid grid-cols-4 gap-4">
-            {kpis.map(k => (
-              <div key={k.label} className="rounded-xl border border-white/5 p-4"
-                style={{ background: 'rgba(255,255,255,0.02)' }}>
-                <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-3">{k.label}</p>
-                <div className="flex items-end justify-between gap-2">
-                  <p className="text-white text-xl font-bold">{k.value}</p>
-                  <span className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 ${
-                    k.up ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
-                  }`}>
-                    {k.up ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                    {k.change}
-                  </span>
-                </div>
-              </div>
+        <div className="overflow-auto flex-1 px-8 py-6 space-y-8">
+
+          {/* KPI Strip */}
+          <div className="grid grid-cols-3 gap-4">
+            {PERIODS.map(p => (
+              <KpiCard
+                key={p.ano}
+                ano={p.ano}
+                baseAntes={p.baseAntes}
+                baseDepois={p.baseDepois}
+                ganho={p.ganho}
+              />
             ))}
           </div>
 
-          {/* Chart */}
-          <div className="rounded-xl border border-white/5 p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-            <div className="flex items-center gap-6 mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-sm bg-orange-500" />
-                <span className="text-[#aaa] text-xs">Vendas</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-sm bg-emerald-400" />
-                <span className="text-[#aaa] text-xs">Margem Líquida</span>
-              </div>
-            </div>
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }} barGap={2}>
-                <XAxis dataKey="month" tick={{ fill: '#555', fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis tickFormatter={v => `R$${v}M`} tick={{ fill: '#555', fontSize: 9 }} axisLine={false} tickLine={false} width={45} />
-                <Tooltip
-                  formatter={(v, name) => [`R$ ${Number(v).toFixed(1)}M`, name]}
-                  contentStyle={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: 6, color: '#fff' }}
-                  labelStyle={{ color: '#999' }}
-                />
-                <Bar dataKey="Vendas" fill="#ff6600" radius={[2,2,0,0]} opacity={0.85} />
-                <Bar dataKey="Marg. Líquida" fill="#34d399" radius={[2,2,0,0]} opacity={0.85} />
-              </BarChart>
-            </ResponsiveContainer>
+          {/* Legenda de cores */}
+          <div className="flex items-center gap-6 px-1">
+            <span className="flex items-center gap-1.5 text-[9px] font-bold text-[#555] tracking-widest uppercase">
+              <span className="w-2 h-2 rounded-full bg-blue-400" /> Alíquota antes
+            </span>
+            <span className="flex items-center gap-1.5 text-[9px] font-bold text-[#555] tracking-widest uppercase">
+              <span className="w-2 h-2 rounded-full bg-emerald-400" /> Alíquota depois / melhora
+            </span>
+            <span className="flex items-center gap-1.5 text-[9px] font-bold text-[#555] tracking-widest uppercase">
+              <span className="w-2 h-2 rounded-full bg-red-400" /> Piora
+            </span>
+            <span className="flex items-center gap-1.5 text-[9px] font-bold text-[#555] tracking-widest uppercase">
+              <span className="w-2 h-2 rounded-full bg-orange-400" /> Margem bruta
+            </span>
           </div>
 
-          {/* DRE Table */}
-          <div className="rounded-xl border border-white/5 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs border-collapse">
-                <thead>
-                  <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
-                    <th className="sticky left-0 z-10 px-5 py-3 text-left text-[#555] text-[9px] font-bold tracking-widest uppercase whitespace-nowrap min-w-[200px]"
-                      style={{ background: '#111' }}>
-                      Descrição
-                    </th>
-                    {MONTHS.map(m => (
-                      <th key={m} className="px-3 py-3 text-center text-[#555] text-[9px] font-bold tracking-widest uppercase whitespace-nowrap">
-                        {m}
-                      </th>
-                    ))}
-                    <th className="px-4 py-3 text-center text-orange-500 text-[9px] font-bold tracking-widest uppercase whitespace-nowrap bg-orange-500/5">
-                      YTD / Total
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ROW_DEFS.map((row) => {
-                    const values = RAW[row.key]
-                    const ytd = values.reduce((a, b) => a + b, 0)
-                    const isSubtotal = row.highlight === 'orange' || row.bold
+          {/* Períodos */}
+          {PERIODS.map(p => (
+            <PeriodSection key={p.ano} period={p} />
+          ))}
 
-                    return (
-                      <tr
-                        key={row.key}
-                        className="border-t border-white/[0.04] hover:bg-white/[0.02] transition-colors"
-                        style={isSubtotal && !row.badge ? { background: 'rgba(255,255,255,0.015)' } : {}}
-                      >
-                        {/* Label cell */}
-                        <td
-                          className="sticky left-0 z-10 px-5 py-3 whitespace-nowrap"
-                          style={{ background: isSubtotal && !row.badge ? '#111' : '#0d0d0d' }}
-                        >
-                          <span style={{ paddingLeft: (row.indent ?? 0) * 16 }}>
-                            {row.badge === 'orange' && (
-                              <span className="inline-flex items-center bg-orange-500 text-white text-xs font-bold px-2.5 py-0.5 rounded">
-                                {row.label}
-                              </span>
-                            )}
-                            {row.badge === 'teal' && (
-                              <span className="inline-flex items-center bg-teal-500 text-white text-xs font-bold px-2.5 py-0.5 rounded">
-                                {row.label}
-                              </span>
-                            )}
-                            {!row.badge && (
-                              <span className={
-                                row.highlight === 'orange' ? 'text-orange-400 font-bold' :
-                                row.bold ? 'text-white font-semibold' :
-                                'text-[#777]'
-                              }>
-                                {row.label}
-                              </span>
-                            )}
-                          </span>
-                        </td>
-
-                        {/* Month cells */}
-                        {values.map((v, i) => {
-                          const change = i === 0 ? null : pct(v, values[i - 1])
-                          const up = change !== null && parseFloat(change) >= 0
-                          const positive = row.isCost ? !up : up
-
-                          return (
-                            <td key={i} className="px-3 py-3 text-center whitespace-nowrap">
-                              <div className={`font-medium tabular-nums ${row.highlight === 'orange' ? 'text-orange-400' : 'text-white'}`}>
-                                {fmtM(v)}
-                              </div>
-                              {change !== null && (
-                                <div className={`text-[9px] font-semibold mt-0.5 ${positive ? 'text-emerald-400' : 'text-red-400'}`}>
-                                  {up ? '+' : ''}{change}%
-                                </div>
-                              )}
-                            </td>
-                          )
-                        })}
-
-                        {/* YTD */}
-                        <td className="px-4 py-3 text-center whitespace-nowrap bg-orange-500/5">
-                          <span className={`font-bold tabular-nums ${row.highlight === 'orange' ? 'text-orange-400' : 'text-white'}`}>
-                            {fmtM(ytd)}
-                          </span>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="flex items-center justify-between px-5 py-3 border-t border-white/5"
-              style={{ background: 'rgba(255,255,255,0.01)' }}>
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1.5 text-[9px] font-bold text-[#555] tracking-widest uppercase">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" /> Melhora
-                </span>
-                <span className="flex items-center gap-1.5 text-[9px] font-bold text-[#555] tracking-widest uppercase">
-                  <span className="w-2 h-2 rounded-full bg-red-400" /> Piora
-                </span>
-              </div>
-              <p className="text-[#444] text-[9px] italic">Valores em R$ milhões (M). Variação % mês a mês.</p>
-            </div>
+          {/* Rodapé */}
+          <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
+            <span className="text-[#333] text-[10px] font-mono tracking-widest uppercase">
+              Supermercado Maciel — Análise Tributária
+            </span>
+            <span className="text-[#333] text-[10px] font-mono tracking-widest">
+              Exercícios 2024 · 2025 · 2026
+            </span>
           </div>
         </div>
       </div>

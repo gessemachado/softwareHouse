@@ -1,25 +1,58 @@
-import { TrendingUp, TrendingDown, RefreshCw } from 'lucide-react'
+import { useState } from 'react'
+import { TrendingUp, TrendingDown, RefreshCw, LineChart as LineChartIcon } from 'lucide-react'
+import { CadastrosHistoricoModal } from './CadastrosHistoricoModal'
+import { useDashboardFilter } from '../../contexts/DashboardFilterContext'
+import { CADASTROS, mesIdx } from '../../mocks/dashboardData'
+
+function pctStr(cur: number, prev: number) {
+  if (prev === 0) return '+0.0%'
+  const p = ((cur - prev) / prev) * 100
+  return `${p >= 0 ? '+' : ''}${p.toFixed(1)}%`
+}
 
 const composicaoData = [
-  { label: 'Ativos', value: 120, pct: 42, color: '#20bf55' },
-  { label: 'Novos', value: 10, pct: 3.5, color: '#66cdf6' },
-  { label: 'Recuperados', value: 30, pct: 10.5, color: '#2499e4' },
+  { label: 'Ativos',       value: 120, pct: 42,   color: '#20bf55' },
+  { label: 'Novos',        value: 10,  pct: 3.5,  color: '#66cdf6' },
+  { label: 'Recuperados',  value: 30,  pct: 10.5, color: '#2499e4' },
   { label: 'A ser perdidos', value: 50, pct: 17.5, color: '#f1d954' },
-  { label: 'Perdidos', value: 80, pct: 28, color: '#ff5353' },
+  { label: 'Perdidos',     value: 80,  pct: 28,   color: '#ff5353' },
 ]
 
 export function CadastrosSection() {
+  const [showHistorico, setShowHistorico] = useState(false)
+
+  const { selectedMonth, selectedYear, compareMonth, compareYear } = useDashboardFilter()
+  const curIdx  = mesIdx(selectedMonth, selectedYear)
+  const prevIdx = mesIdx(compareMonth, compareYear)
+
+  const cur  = CADASTROS[curIdx]
+  const prev = CADASTROS[prevIdx]
+  const saldo = cur.novos - cur.perdidos + cur.recuperados
+
   return (
     <div className="grid grid-cols-2 gap-5 mb-5">
+      {showHistorico && <CadastrosHistoricoModal onClose={() => setShowHistorico(false)} />}
+
       {/* Cadastros Ativos */}
       <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 p-5">
-        <p className="text-white text-base mb-4">Cadastros Ativos</p>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-white text-base">Cadastros Ativos</p>
+          <button
+            onClick={() => setShowHistorico(true)}
+            title="Histórico 13 Meses"
+            className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
+          >
+            <LineChartIcon size={15} />
+          </button>
+        </div>
         <div className="flex gap-6">
-          {/* Total */}
+          {/* Saldo */}
           <div className="min-w-[100px]">
-            <p className="text-white text-2xl font-semibold">5235</p>
-            <p className="text-[#999] text-[10px] mt-1">Total de clientes cadastros</p>
-            <p className="text-[#999] text-[10px]">em 21/03/2025</p>
+            <p className={`text-2xl font-semibold ${saldo >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {saldo >= 0 ? '+' : ''}{saldo}
+            </p>
+            <p className="text-[#999] text-[10px] mt-1">Saldo do mês</p>
+            <p className="text-[#999] text-[10px]">(novos – perdidos + recup.)</p>
           </div>
 
           {/* Divider */}
@@ -27,18 +60,18 @@ export function CadastrosSection() {
 
           {/* Right side */}
           <div className="flex-1">
-            <p className="text-orange-500 text-base font-semibold">+20 clientes</p>
-            <p className="text-[#999] text-[10px] mb-4">Saldo no dia</p>
-
             <div className="flex gap-5">
-              {/* Cadastrados */}
+              {/* Novos */}
               <div className="flex items-start gap-2">
                 <div className="w-9 h-9 rounded-lg bg-orange-500/20 flex items-center justify-center mt-0.5">
                   <TrendingUp size={16} className="text-orange-500" />
                 </div>
                 <div>
                   <p className="text-[#999] text-[8px]">Cadastrados</p>
-                  <p className="text-orange-500 text-[10px] font-medium">20 clientes</p>
+                  <p className="text-orange-500 text-[10px] font-medium">{cur.novos}</p>
+                  <p className={`text-[9px] font-mono ${cur.novos >= prev.novos ? 'text-green-400' : 'text-red-400'}`}>
+                    {pctStr(cur.novos, prev.novos)}
+                  </p>
                 </div>
               </div>
 
@@ -49,7 +82,10 @@ export function CadastrosSection() {
                 </div>
                 <div>
                   <p className="text-[#999] text-[8px]">Perdidos</p>
-                  <p className="text-[#ff2e00] text-[10px] font-medium">5 clientes</p>
+                  <p className="text-red-400 text-[10px] font-medium">{cur.perdidos}</p>
+                  <p className={`text-[9px] font-mono ${cur.perdidos <= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>
+                    {pctStr(cur.perdidos, prev.perdidos)}
+                  </p>
                 </div>
               </div>
 
@@ -59,8 +95,11 @@ export function CadastrosSection() {
                   <RefreshCw size={16} className="text-cyan-400" />
                 </div>
                 <div>
-                  <p className="text-[#999] text-[8px]">Clientes recuperados</p>
-                  <p className="text-cyan-400 text-[10px] font-medium">5 clientes</p>
+                  <p className="text-[#999] text-[8px]">Recuperados</p>
+                  <p className="text-cyan-400 text-[10px] font-medium">{cur.recuperados}</p>
+                  <p className={`text-[9px] font-mono ${cur.recuperados >= prev.recuperados ? 'text-green-400' : 'text-red-400'}`}>
+                    {pctStr(cur.recuperados, prev.recuperados)}
+                  </p>
                 </div>
               </div>
             </div>
