@@ -83,7 +83,7 @@ export function CadastrosSection() {
                 <div>
                   <p className="text-[#999] text-sm mb-1">Perdidos</p>
                   <p className="text-red-400 text-3xl font-bold">{cur.perdidos}</p>
-                  <p className={`text-sm font-mono mt-1 ${cur.perdidos <= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>
+                  <p className={`text-sm font-mono mt-1 ${cur.perdidos >= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>
                     {pctStr(cur.perdidos, prev.perdidos)}
                   </p>
                 </div>
