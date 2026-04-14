@@ -30,9 +30,9 @@ interface Props {
 const AVG_METRICS = new Set(['Ticket Médio'])
 
 export function MetricaChartModal({ metricLabel, onClose }: Props) {
-  const raw = MOCK_DATA[metricLabel] ?? []
+  const raw = (MOCK_DATA as Record<string, number[]>)[metricLabel] ?? []
   const data = MONTHS_LABELS.map((month, i) => ({ month, value: raw[i] ?? 0 }))
-  const avg = Math.round(raw.reduce((s, v) => s + v, 0) / raw.length)
+  const avg = Math.round(raw.reduce((s: number, v: number) => s + v, 0) / raw.length)
   const peak = Math.max(...raw)
   const minVal = Math.min(...raw)
 
@@ -45,8 +45,8 @@ export function MetricaChartModal({ metricLabel, onClose }: Props) {
   // Acumulado 2026 (Jan/26 → Abr/26)
   const raw2026 = raw.slice(IDX_2026_START)
   const acum2026 = AVG_METRICS.has(metricLabel)
-    ? raw2026.reduce((s, v) => s + v, 0) / raw2026.length
-    : raw2026.reduce((s, v) => s + v, 0)
+    ? raw2026.reduce((s: number, v: number) => s + v, 0) / raw2026.length
+    : raw2026.reduce((s: number, v: number) => s + v, 0)
 
   const acum2026Label = CURRENCY_LABELS.has(metricLabel)
     ? `R$ ${acum2026.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`

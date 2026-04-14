@@ -45,7 +45,6 @@ export function AvaliacaoResultadosInline() {
   const [showHistorico, setShowHistorico] = useState(false)
   const { selectedMonth, selectedYear, compareMonth, compareYear } = useDashboardFilter()
 
-  const analiseLabel = `${MONTHS_SHORT[selectedMonth]}/${selectedYear}`
   const compareLabel = `${MONTHS_SHORT[compareMonth]}/${compareYear}`
 
   const { avaliacao: rows } = getPeriodData(selectedMonth, selectedYear, compareMonth, compareYear)

@@ -7,11 +7,6 @@ import {
 import { CADASTROS } from '../../mocks/dashboardData'
 const data = CADASTROS
 
-// Totais YTD
-const totalNovos       = data.reduce((s, d) => s + d.novos, 0)
-const totalPerdidos    = data.reduce((s, d) => s + d.perdidos, 0)
-const totalRecuperados = data.reduce((s, d) => s + d.recuperados, 0)
-
 interface Props { onClose: () => void }
 
 // Tooltip customizado no estilo dark do app
