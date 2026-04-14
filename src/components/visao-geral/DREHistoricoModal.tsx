@@ -170,7 +170,7 @@ export function DREHistoricoModal({ onClose }: Props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {ROW_DEFS.map((row, ri) => {
+                  {ROW_DEFS.map((row) => {
                     const values = RAW[row.key]
                     const ytd = values.reduce((a, b) => a + b, 0)
                     const isSubtotal = row.highlight === 'orange' || row.bold
