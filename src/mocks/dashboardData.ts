@@ -52,6 +52,18 @@ export const OPERACAO = MESES.map((mes, i) => ({
   naoAceitou:    [ 18, 13, 12, 24, 15, 17, 26, 17, 29, 16, 19, 20, 18][i],
 }))
 
+// ─── Operação | Produtos ─────────────────────────────────────────────────────
+// naoAtuou = mNegativa + custoZero + exclusaoLoja + blacklist (sub-categorias do não atuado)
+export const OPERACAO_PRODUTOS = MESES.map((mes, i) => {
+  const mNegativa    = [3000,3200,2800,3500,2500,2900,3200,3000,3500,2800,2900,3100,3000][i]
+  const custoZero    = [2000,2100,1800,2300,1700,2000,2100,2000,2300,1900,1900,2100,2000][i]
+  const exclusaoLoja = [2500,2600,2300,2800,2000,2400,2600,2500,2900,2300,2400,2600,2500][i]
+  const blacklist    = [2500,2600,2200,2800,2000,2400,2600,2500,2900,2300,2400,2500,2500][i]
+  const naoAtuou     = mNegativa + custoZero + exclusaoLoja + blacklist
+  const aproveitado  = [35000,37500,33000,41000,30000,36000,39000,37000,43000,34000,36000,38000,37000][i]
+  return { mes, aproveitado, naoAtuou, mNegativa, custoZero, exclusaoLoja, blacklist }
+})
+
 // ─── Avaliação de resultados por mês ─────────────────────────────────────────
 // Escala proporcional às vendas de Abr/26 (referência)
 const REF_VENDAS = 172000
