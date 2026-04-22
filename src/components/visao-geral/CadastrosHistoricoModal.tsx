@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
 
@@ -33,7 +33,7 @@ function CustomLegend({ payload }: any) {
     <div className="flex items-center gap-6 mb-2">
       {payload?.map((p: any) => (
         <span key={p.value} className="flex items-center gap-2 text-xs text-[#aaa]">
-          <span className="w-3 h-3 rounded-full shrink-0" style={{ background: p.color }} />
+          <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: p.color }} />
           {p.value}
         </span>
       ))}
@@ -97,11 +97,11 @@ export function CadastrosHistoricoModal({ onClose }: Props) {
         {/* Chart */}
         <div className="flex-1 overflow-auto px-8 py-6">
           <ResponsiveContainer width="100%" height={500}>
-            <LineChart data={data} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+            <BarChart data={data} margin={{ top: 10, right: 10, bottom: 5, left: 0 }} barCategoryGap="25%">
               <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="0" vertical={false} />
               <XAxis
                 dataKey="mes"
-                tick={{ fill: '#666', fontSize: 11, fontWeight: 600, letterSpacing: 1 }}
+                tick={{ fill: '#666', fontSize: 10, fontWeight: 600 }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -111,36 +111,12 @@ export function CadastrosHistoricoModal({ onClose }: Props) {
                 tickLine={false}
                 width={28}
               />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend content={<CustomLegend />} verticalAlign="top" />
-              <Line
-                type="monotone"
-                dataKey="novos"
-                name="Novos Cadastros"
-                stroke="#a0a0c0"
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 4, fill: '#a0a0c0' }}
-              />
-              <Line
-                type="monotone"
-                dataKey="perdidos"
-                name="Clientes Perdidos"
-                stroke="#e05252"
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 4, fill: '#e05252' }}
-              />
-              <Line
-                type="monotone"
-                dataKey="recuperados"
-                name="Clientes Recuperados"
-                stroke="#22c55e"
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 4, fill: '#22c55e' }}
-              />
-            </LineChart>
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+              <Legend content={<CustomLegend />} verticalAlign="top" align="right" wrapperStyle={{ paddingBottom: 12 }} />
+              <Bar dataKey="novos"       name="Novos Cadastros"      fill="#a0a0c0" radius={[3,3,0,0]} maxBarSize={28} />
+              <Bar dataKey="perdidos"    name="Clientes Perdidos"    fill="#e05252" radius={[3,3,0,0]} maxBarSize={28} />
+              <Bar dataKey="recuperados" name="Clientes Recuperados" fill="#22c55e" radius={[3,3,0,0]} maxBarSize={28} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
 
