@@ -12,11 +12,11 @@ function pctStr(cur: number, prev: number) {
 }
 
 const composicaoData = [
-  { label: 'Ativos',       value: 120, pct: 42,   color: '#20bf55' },
-  { label: 'Novos',        value: 10,  pct: 3.5,  color: '#66cdf6' },
-  { label: 'Recuperados',  value: 30,  pct: 10.5, color: '#2499e4' },
-  { label: 'A ser perdidos', value: 50, pct: 17.5, color: '#f1d954' },
-  { label: 'Perdidos',     value: 80,  pct: 28,   color: '#ff5353' },
+  { label: 'Comprando hoje', desc: 'Clientes comprando hoje',              value: 120, pct: 42,   color: '#20bf55' },
+  { label: '7 dias',         desc: '7 dias da última compra',              value: 10,  pct: 3.5,  color: '#66cdf6' },
+  { label: '15 dias',        desc: '15 dias da última compra',             value: 30,  pct: 10.5, color: '#2499e4' },
+  { label: '15–30 dias',     desc: 'Entre 15 e 30 dias da última compra',  value: 50,  pct: 17.5, color: '#f1d954' },
+  { label: '> 30 dias',      desc: 'Mais de 30 dias da última compra',     value: 80,  pct: 28,   color: '#ff5353' },
 ]
 
 export function CadastrosSection() {
@@ -138,11 +138,14 @@ export function CadastrosSection() {
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-x-5 gap-y-2">
           {composicaoData.map((item) => (
-            <div key={item.label} className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-              <span className="text-[#999] text-[10px]">{item.label}</span>
+            <div key={item.label} className="flex items-start gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full mt-0.5 shrink-0" style={{ backgroundColor: item.color }} />
+              <div>
+                <span className="text-white text-[10px] font-semibold">{item.label}</span>
+                <p className="text-[#555] text-[9px] leading-tight">{item.desc}</p>
+              </div>
             </div>
           ))}
         </div>
