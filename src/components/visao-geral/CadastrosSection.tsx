@@ -82,9 +82,9 @@ export function CadastrosSection() {
             <div className="w-7 h-7 rounded-lg bg-orange-500/10 flex items-center justify-center mb-2">
               <TrendingUp size={13} className="text-orange-500" />
             </div>
-            <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-1">Cadastrados</p>
+            <p className="text-[#555] text-xs font-semibold tracking-widest uppercase mb-1">Cadastrados</p>
             <p className="text-orange-500 text-xl font-bold">{cur.novos}</p>
-            <p className={`text-[10px] font-mono mt-1 ${cur.novos >= prev.novos ? 'text-green-400' : 'text-red-400'}`}>
+            <p className={`text-xs font-mono mt-1 ${cur.novos >= prev.novos ? 'text-green-400' : 'text-red-400'}`}>
               {pctStr(cur.novos, prev.novos)}
             </p>
           </div>
@@ -94,9 +94,9 @@ export function CadastrosSection() {
             <div className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center mb-2">
               <TrendingDown size={13} className="text-red-400" />
             </div>
-            <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-1">Perdidos</p>
+            <p className="text-[#555] text-xs font-semibold tracking-widest uppercase mb-1">Perdidos</p>
             <p className="text-red-400 text-xl font-bold">{cur.perdidos}</p>
-            <p className={`text-[10px] font-mono mt-1 ${cur.perdidos >= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>
+            <p className={`text-xs font-mono mt-1 ${cur.perdidos >= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>
               {pctStr(cur.perdidos, prev.perdidos)}
             </p>
           </div>
@@ -106,9 +106,9 @@ export function CadastrosSection() {
             <div className="w-7 h-7 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-2">
               <RefreshCw size={13} className="text-cyan-400" />
             </div>
-            <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-1">Recuperados</p>
+            <p className="text-[#555] text-xs font-semibold tracking-widest uppercase mb-1">Recuperados</p>
             <p className="text-cyan-400 text-xl font-bold">{cur.recuperados}</p>
-            <p className={`text-[10px] font-mono mt-1 ${cur.recuperados >= prev.recuperados ? 'text-green-400' : 'text-red-400'}`}>
+            <p className={`text-xs font-mono mt-1 ${cur.recuperados >= prev.recuperados ? 'text-green-400' : 'text-red-400'}`}>
               {pctStr(cur.recuperados, prev.recuperados)}
             </p>
           </div>
