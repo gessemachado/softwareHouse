@@ -37,9 +37,19 @@ export function CadastrosSection() {
       {showComposicao && <ComposicaoClientesModal   onClose={() => setShowComposicao(false)} />}
 
       {/* Cadastros Ativos */}
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 p-5">
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-white text-base">Cadastros Ativos</p>
+      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden">
+        {/* Header */}
+        <div className="border-b border-[#292929] px-5 py-4 flex items-center justify-between"
+          style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)' }}>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-green-500/10 flex items-center justify-center">
+              <TrendingUp size={16} className="text-green-400" />
+            </div>
+            <div>
+              <p className="text-white text-sm font-semibold">Cadastros Ativos</p>
+              <p className="text-[#555] text-[10px]">Movimentação do mês</p>
+            </div>
+          </div>
           <button
             onClick={() => setShowHistorico(true)}
             className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors"
@@ -48,64 +58,59 @@ export function CadastrosSection() {
             <span>Histórico</span>
           </button>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-          {/* Saldo */}
-          <div className="min-w-[100px]">
-            <p className={`text-2xl font-semibold ${saldo >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+
+        {/* Saldo hero */}
+        <div className="px-5 py-4 border-b border-white/[0.04] flex items-center justify-between">
+          <div>
+            <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-1">Saldo do mês</p>
+            <p className={`text-3xl font-bold ${saldo >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {saldo >= 0 ? '+' : ''}{saldo}
             </p>
-            <p className="text-[#999] text-[10px] mt-1">Saldo do mês</p>
-            <p className="text-[#999] text-[10px]">(novos – perdidos + recup.)</p>
+            <p className="text-[#333] text-[9px] font-mono mt-1">novos – perdidos + recuperados</p>
+          </div>
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${saldo >= 0 ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
+            {saldo >= 0
+              ? <TrendingUp size={24} className="text-green-400" />
+              : <TrendingDown size={24} className="text-red-400" />}
+          </div>
+        </div>
+
+        {/* 3 métricas */}
+        <div className="grid grid-cols-3">
+          {/* Cadastrados */}
+          <div className="px-4 py-4 border-r border-white/[0.04]">
+            <div className="w-7 h-7 rounded-lg bg-orange-500/10 flex items-center justify-center mb-2">
+              <TrendingUp size={13} className="text-orange-500" />
+            </div>
+            <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-1">Cadastrados</p>
+            <p className="text-orange-500 text-xl font-bold">{cur.novos}</p>
+            <p className={`text-[10px] font-mono mt-1 ${cur.novos >= prev.novos ? 'text-green-400' : 'text-red-400'}`}>
+              {pctStr(cur.novos, prev.novos)}
+            </p>
           </div>
 
-          {/* Divider */}
-          <div className="hidden sm:block w-px bg-[rgba(142,142,147,0.3)] self-stretch" />
-
-          {/* Right side */}
-          <div className="flex-1">
-            <div className="flex gap-5">
-              {/* Novos */}
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center mt-0.5">
-                  <TrendingUp size={18} className="text-orange-500" />
-                </div>
-                <div>
-                  <p className="text-[#999] text-[10px] mb-0.5">Cadastrados</p>
-                  <p className="text-orange-500 text-lg font-bold">{cur.novos}</p>
-                  <p className={`text-[11px] font-mono mt-0.5 ${cur.novos >= prev.novos ? 'text-green-400' : 'text-red-400'}`}>
-                    {pctStr(cur.novos, prev.novos)}
-                  </p>
-                </div>
-              </div>
-
-              {/* Perdidos */}
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center mt-0.5">
-                  <TrendingDown size={18} className="text-red-500" />
-                </div>
-                <div>
-                  <p className="text-[#999] text-[10px] mb-0.5">Perdidos</p>
-                  <p className="text-red-400 text-lg font-bold">{cur.perdidos}</p>
-                  <p className={`text-[11px] font-mono mt-0.5 ${cur.perdidos >= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>
-                    {pctStr(cur.perdidos, prev.perdidos)}
-                  </p>
-                </div>
-              </div>
-
-              {/* Recuperados */}
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center mt-0.5">
-                  <RefreshCw size={18} className="text-cyan-400" />
-                </div>
-                <div>
-                  <p className="text-[#999] text-[10px] mb-0.5">Recuperados</p>
-                  <p className="text-cyan-400 text-lg font-bold">{cur.recuperados}</p>
-                  <p className={`text-[11px] font-mono mt-0.5 ${cur.recuperados >= prev.recuperados ? 'text-green-400' : 'text-red-400'}`}>
-                    {pctStr(cur.recuperados, prev.recuperados)}
-                  </p>
-                </div>
-              </div>
+          {/* Perdidos */}
+          <div className="px-4 py-4 border-r border-white/[0.04]">
+            <div className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center mb-2">
+              <TrendingDown size={13} className="text-red-400" />
             </div>
+            <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-1">Perdidos</p>
+            <p className="text-red-400 text-xl font-bold">{cur.perdidos}</p>
+            <p className={`text-[10px] font-mono mt-1 ${cur.perdidos >= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>
+              {pctStr(cur.perdidos, prev.perdidos)}
+            </p>
+          </div>
+
+          {/* Recuperados */}
+          <div className="px-4 py-4">
+            <div className="w-7 h-7 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-2">
+              <RefreshCw size={13} className="text-cyan-400" />
+            </div>
+            <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-1">Recuperados</p>
+            <p className="text-cyan-400 text-xl font-bold">{cur.recuperados}</p>
+            <p className={`text-[10px] font-mono mt-1 ${cur.recuperados >= prev.recuperados ? 'text-green-400' : 'text-red-400'}`}>
+              {pctStr(cur.recuperados, prev.recuperados)}
+            </p>
           </div>
         </div>
       </div>
