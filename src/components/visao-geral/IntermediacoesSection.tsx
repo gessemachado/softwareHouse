@@ -254,24 +254,24 @@ export function IntermediacoesSection() {
                   </div>
                 </div>
               </div>
-              <div className="space-y-1 pl-3">
+              <div className="space-y-1.5 pl-3">
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-xs text-[#777]">
-                    <span className="w-1.5 h-1.5 rounded-sm shrink-0 bg-[#fca5a5]" />Mesma Tributação
+                  <span className="flex items-center gap-1.5 text-sm text-[#777]">
+                    <span className="w-2 h-2 rounded-sm shrink-0 bg-[#fca5a5]" />Mesma Tributação
                   </span>
-                  <span className="text-white text-xs font-bold">{op.mesmaTrib}</span>
+                  <span className="text-white text-sm font-bold">{op.mesmaTrib}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-xs text-[#777]">
-                    <span className="w-1.5 h-1.5 rounded-sm shrink-0 bg-[#b45309]" />Somente um Item
+                  <span className="flex items-center gap-1.5 text-sm text-[#777]">
+                    <span className="w-2 h-2 rounded-sm shrink-0 bg-[#b45309]" />Somente um Item
                   </span>
-                  <span className="text-white text-xs font-bold">{op.somenteItem}</span>
+                  <span className="text-white text-sm font-bold">{op.somenteItem}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-xs text-[#777]">
-                    <span className="w-1.5 h-1.5 rounded-sm shrink-0 bg-[#7f1d1d]" />Cliente não aceitou
+                  <span className="flex items-center gap-1.5 text-sm text-[#777]">
+                    <span className="w-2 h-2 rounded-sm shrink-0 bg-[#7f1d1d]" />Cliente não aceitou
                   </span>
-                  <span className="text-white text-xs font-bold">{op.naoAceitou}</span>
+                  <span className="text-white text-sm font-bold">{op.naoAceitou}</span>
                 </div>
               </div>
             </div>
@@ -343,14 +343,14 @@ export function IntermediacoesSection() {
                   </div>
                 </div>
               </div>
-              <div className="space-y-1 pl-3">
+              <div className="space-y-1.5 pl-3">
                 {prodSubItems.map(({ label, cur, color }) => (
                   <div key={label} className="flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 text-xs text-[#777]">
-                      <span className="w-1.5 h-1.5 rounded-sm shrink-0" style={{ background: color }} />
+                    <span className="flex items-center gap-1.5 text-sm text-[#777]">
+                      <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: color }} />
                       {label}
                     </span>
-                    <span className="text-white text-xs font-bold">{fmtK(cur)}</span>
+                    <span className="text-white text-sm font-bold">{fmtK(cur)}</span>
                   </div>
                 ))}
               </div>
