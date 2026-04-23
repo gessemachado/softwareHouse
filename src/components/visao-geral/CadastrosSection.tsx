@@ -124,16 +124,6 @@ export function CadastrosSection() {
         </div>
         <p className="text-[#666] text-xs mb-5">Total: 5235 clientes Ativos</p>
 
-        {/* Bar */}
-        <div className="h-3 flex rounded-full overflow-hidden mb-4">
-          {composicaoData.map((item) => (
-            <div
-              key={item.label}
-              style={{ width: `${item.pct}%`, backgroundColor: item.color }}
-            />
-          ))}
-        </div>
-
         {/* Legend */}
         <div className="space-y-2">
           {composicaoData.map((item) => (
