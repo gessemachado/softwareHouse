@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { TrendingUp, TrendingDown, RefreshCw, LineChart as LineChartIcon } from 'lucide-react'
+import { TrendingUp, TrendingDown, RefreshCw, LineChart as LineChartIcon, Users } from 'lucide-react'
 import { CadastrosHistoricoModal } from './CadastrosHistoricoModal'
+import { ComposicaoClientesModal } from './ComposicaoClientesModal'
 import { useDashboardFilter } from '../../contexts/DashboardFilterContext'
 import { CADASTROS, mesIdx } from '../../mocks/dashboardData'
 
@@ -19,7 +20,8 @@ const composicaoData = [
 ]
 
 export function CadastrosSection() {
-  const [showHistorico, setShowHistorico] = useState(false)
+  const [showHistorico, setShowHistorico]     = useState(false)
+  const [showComposicao, setShowComposicao]   = useState(false)
 
   const { selectedMonth, selectedYear, compareMonth, compareYear } = useDashboardFilter()
   const curIdx  = mesIdx(selectedMonth, selectedYear)
@@ -31,7 +33,8 @@ export function CadastrosSection() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
-      {showHistorico && <CadastrosHistoricoModal onClose={() => setShowHistorico(false)} />}
+      {showHistorico  && <CadastrosHistoricoModal   onClose={() => setShowHistorico(false)}  />}
+      {showComposicao && <ComposicaoClientesModal   onClose={() => setShowComposicao(false)} />}
 
       {/* Cadastros Ativos */}
       <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 p-5">
@@ -109,7 +112,16 @@ export function CadastrosSection() {
 
       {/* Composição dos Clientes */}
       <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 p-5">
-        <p className="text-white text-sm font-semibold mb-0.5">Composição dos clientes</p>
+        <div className="flex items-center justify-between mb-0.5">
+          <p className="text-white text-sm font-semibold">Composição dos clientes</p>
+          <button
+            onClick={() => setShowComposicao(true)}
+            className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors"
+          >
+            <Users size={12} />
+            <span>Origem</span>
+          </button>
+        </div>
         <p className="text-[#666] text-xs mb-5">Total: 5235 clientes Ativos</p>
 
         {/* Bar */}
