@@ -13,10 +13,10 @@ export function VisaoGeral() {
       <AppLayout title="" subtitle="" breadcrumb="">
         <TabNav />
         <DashboardHeader />
+        <IntermediacoesSection />
         <SalesAnalysisSection />
         <CadastrosSection />
         <MetricasSection />
-        <IntermediacoesSection />
       </AppLayout>
     </DashboardFilterProvider>
   )

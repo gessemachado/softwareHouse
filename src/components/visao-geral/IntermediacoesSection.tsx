@@ -100,9 +100,10 @@ export function IntermediacoesSection() {
                 <p className="text-[#999] text-xs">Acompanhamento do desconto disponibilizado</p>
               </div>
             </div>
-            <button onClick={() => setShowAbsorcao(true)} title="Performance de Absorção"
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors">
-              <BarChart2 size={15} />
+            <button onClick={() => setShowAbsorcao(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+              <BarChart2 size={12} />
+              <span>Histórico</span>
             </button>
           </div>
         </div>
@@ -186,9 +187,10 @@ export function IntermediacoesSection() {
                 <p className="text-[#999] text-xs">Acompanhamento da operação | Pedido / Intermediação</p>
               </div>
             </div>
-            <button onClick={() => setShowOperacao(true)} title="Evolução 13 Meses"
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors">
-              <BarChart2 size={15} />
+            <button onClick={() => setShowOperacao(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+              <BarChart2 size={12} />
+              <span>Histórico</span>
             </button>
           </div>
         </div>
@@ -301,9 +303,10 @@ export function IntermediacoesSection() {
                 <p className="text-[#999] text-xs">Acompanhamento dos produtos que não atuamos</p>
               </div>
             </div>
-            <button onClick={() => setShowProdutos(true)} title="Evolução 13 Meses"
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors">
-              <BarChart2 size={15} />
+            <button onClick={() => setShowProdutos(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+              <BarChart2 size={12} />
+              <span>Histórico</span>
             </button>
           </div>
         </div>
@@ -326,22 +329,6 @@ export function IntermediacoesSection() {
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            {/* APROVEITADO */}
-            <div className="rounded-lg border border-orange-500/20 bg-orange-500/5 px-3 py-2.5">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="w-2 h-2 rounded-full bg-orange-500" />
-                <span className="text-orange-500 text-[10px] font-semibold tracking-widest uppercase">APROVEITADO</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-white text-sm font-bold">{fmtK(prod.aproveitado)}</span>
-                <div className="flex items-center gap-1.5">
-                  <TrendBadge cur={prod.aproveitado} prev={prodPrev.aproveitado} />
-                  <span className="text-[#666] text-xs">vs {fmtK(prodPrev.aproveitado)}</span>
-                </div>
-              </div>
-              <p className="text-[#555] text-[10px] mt-0.5">{aprovPct.toFixed(1)}% do total</p>
-            </div>
-
             {/* NÃO ATUOU (base) + sub-categorias */}
             <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">

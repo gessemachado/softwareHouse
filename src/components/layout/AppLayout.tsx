@@ -16,7 +16,7 @@ export function AppLayout({ title = 'BuyHelp Desconto', subtitle = 'Gestão e an
 
       {/* Page header */}
       {title && (
-        <div className="px-8 pt-6 pb-4">
+        <div className="px-3 pt-4 pb-3 sm:px-8 sm:pt-6 sm:pb-4">
           {breadcrumb && (
             <div className="flex items-center gap-2 text-bh-muted text-sm mb-3">
               <AlignJustify size={14} />
@@ -29,12 +29,12 @@ export function AppLayout({ title = 'BuyHelp Desconto', subtitle = 'Gestão e an
       )}
 
       {/* Content */}
-      <main className="flex-1 px-8 pb-8">
+      <main className="flex-1 px-3 pb-6 sm:px-8 sm:pb-8">
         {children}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-bh-border px-8 py-4 flex items-center justify-between">
+      <footer className="border-t border-bh-border px-3 py-3 sm:px-8 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 text-bh-muted text-xs">
             <div className="w-4 h-4 bg-bh-primary rounded flex items-center justify-center text-white font-bold" style={{ fontSize: '9px' }}>B</div>

@@ -9,7 +9,7 @@ const MONTHS_LABELS = MESES
 const IDX_2026_START = 9  // Jan/26
 const MOCK_DATA = METRICAS
 
-const CURRENCY_LABELS = new Set(['Total de Vendas', 'Ticket Médio', 'Total de Intermediações', 'Desconto Usado'])
+const CURRENCY_LABELS = new Set(['Total de Vendas', 'Ticket Médio', 'Total de Intermediações', 'Desconto Usado', 'Taxa'])
 
 function formatY(label: string, v: number) {
   if (CURRENCY_LABELS.has(label)) return `R$${Math.round(v / 1000)}k`

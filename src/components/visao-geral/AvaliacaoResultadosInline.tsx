@@ -68,10 +68,10 @@ export function AvaliacaoResultadosInline() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowHistorico(true)}
-            title="Histórico — Análise Fiscal"
-            className="w-9 h-9 flex items-center justify-center rounded-xl border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
+            className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors"
           >
-            <History size={16} />
+            <History size={12} />
+            <span>Histórico</span>
           </button>
         </div>
       </div>

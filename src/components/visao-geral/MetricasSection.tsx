@@ -50,10 +50,10 @@ export function MetricasSection() {
             <div key={card.label} className="relative rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/50 p-4">
               <button
                 onClick={() => setActiveChart(card.label)}
-                className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-md text-[#444] hover:text-orange-500 hover:bg-orange-500/10 transition-colors"
-                title="Ver gráfico"
+                className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-lg border border-white/10 text-[#444] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2 py-1 text-[10px] font-semibold transition-colors"
               >
-                <BarChart2 size={14} />
+                <BarChart2 size={11} />
+                <span>Histórico</span>
               </button>
               <p className="text-[#999] text-sm mb-3">{card.label}</p>
               <p className="text-white text-2xl font-light mb-3">{card.value}</p>

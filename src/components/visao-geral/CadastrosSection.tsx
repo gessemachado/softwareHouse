@@ -30,7 +30,7 @@ export function CadastrosSection() {
   const saldo = cur.novos - cur.perdidos + cur.recuperados
 
   return (
-    <div className="grid grid-cols-2 gap-5 mb-5">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
       {showHistorico && <CadastrosHistoricoModal onClose={() => setShowHistorico(false)} />}
 
       {/* Cadastros Ativos */}
@@ -39,13 +39,13 @@ export function CadastrosSection() {
           <p className="text-white text-base">Cadastros Ativos</p>
           <button
             onClick={() => setShowHistorico(true)}
-            title="Histórico 13 Meses"
-            className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
+            className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors"
           >
-            <LineChartIcon size={15} />
+            <LineChartIcon size={12} />
+            <span>Histórico</span>
           </button>
         </div>
-        <div className="flex gap-6">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           {/* Saldo */}
           <div className="min-w-[100px]">
             <p className={`text-2xl font-semibold ${saldo >= 0 ? 'text-green-400' : 'text-red-400'}`}>
@@ -56,7 +56,7 @@ export function CadastrosSection() {
           </div>
 
           {/* Divider */}
-          <div className="w-px bg-[rgba(142,142,147,0.3)] self-stretch" />
+          <div className="hidden sm:block w-px bg-[rgba(142,142,147,0.3)] self-stretch" />
 
           {/* Right side */}
           <div className="flex-1">

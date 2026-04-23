@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import type {
   RelatorioFilters,
   RelatorioRegistro,
@@ -25,14 +25,10 @@ export function useRelatorio() {
   const [shTotal, setShTotal] = useState(0)
   const [loadingSH, setLoadingSH] = useState(false)
 
-  // Referência para os filtros aplicados (evita stale closure)
-  const appliedRef = useRef(appliedFilters)
-  appliedRef.current = appliedFilters
-
   useEffect(() => {
     let cancelled = false
     setLoadingSH(true)
-    fetchRelatorioSH(appliedRef.current, { page: shPage, pageSize: shPageSize })
+    fetchRelatorioSH(appliedFilters, { page: shPage, pageSize: shPageSize })
       .then(result => {
         if (cancelled) return
         setRegistros(result.data)
@@ -64,13 +60,10 @@ export function useRelatorio() {
   const [fingerTotal, setFingerTotal] = useState(0)
   const [loadingFinger, setLoadingFinger] = useState(false)
 
-  const appliedFingerRef = useRef(appliedFingerFilters)
-  appliedFingerRef.current = appliedFingerFilters
-
   useEffect(() => {
     let cancelled = false
     setLoadingFinger(true)
-    fetchRelatorioFingers(appliedFingerRef.current, { page: fingerPage, pageSize: fingerPageSize })
+    fetchRelatorioFingers(appliedFingerFilters, { page: fingerPage, pageSize: fingerPageSize })
       .then(result => {
         if (cancelled) return
         setFingerRegistros(result.data)
