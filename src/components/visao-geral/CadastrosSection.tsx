@@ -145,22 +145,22 @@ export function CadastrosSection() {
         <p className="text-[#666] text-xs mb-5">Total: 5235 clientes Ativos</p>
 
         {/* Legend */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           {composicaoData.map((item) => (
             <div key={item.label} className="flex items-center gap-3">
-              <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: item.color }} />
+              <div className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: item.color }} />
               <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-white text-xs font-semibold">{item.label}</span>
-                  <span className="text-[#444] text-[9px] truncate">{item.desc}</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-white text-sm font-semibold">{item.label}</span>
+                  <span className="text-[#555] text-xs truncate">{item.desc}</span>
                 </div>
-                <div className="mt-0.5 h-1 rounded-full bg-white/5 overflow-hidden">
+                <div className="mt-1 h-1.5 rounded-full bg-white/5 overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${item.pct}%`, backgroundColor: item.color, opacity: 0.6 }} />
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-white text-xs font-bold">{item.value}</span>
-                <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded" style={{ color: item.color, background: `${item.color}20` }}>{item.pct}%</span>
+                <span className="text-white text-sm font-bold">{item.value}</span>
+                <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ color: item.color, background: `${item.color}20` }}>{item.pct}%</span>
               </div>
             </div>
           ))}
