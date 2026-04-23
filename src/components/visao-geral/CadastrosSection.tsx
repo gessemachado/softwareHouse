@@ -66,7 +66,7 @@ export function CadastrosSection() {
             <p className={`text-3xl font-bold ${saldo >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {saldo >= 0 ? '+' : ''}{saldo}
             </p>
-            <p className="text-[#333] text-[9px] font-mono mt-1">novos – perdidos + recuperados</p>
+            <p className="text-[#444] text-xs font-mono mt-1">novos – perdidos + recuperados</p>
           </div>
           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${saldo >= 0 ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
             {saldo >= 0
