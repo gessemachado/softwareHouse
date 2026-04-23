@@ -102,8 +102,9 @@ export function MetricasSection() {
                 <span className="text-[#999] text-xs">Qtd de Intermediações</span>
               </div>
               <button onClick={() => setActiveChart('Qtd de Intermediações')}
-                className="w-7 h-7 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-purple-400 hover:border-purple-500/40 hover:bg-purple-500/5 transition-colors">
-                <BarChart2 size={13} />
+                className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+                <BarChart2 size={12} />
+                <span>Histórico</span>
               </button>
             </div>
             <p className="text-white text-2xl font-light mb-3">{qtdInter}</p>
@@ -132,8 +133,9 @@ export function MetricasSection() {
                 <span className="text-[#999] text-xs">Total de Intermediações</span>
               </div>
               <button onClick={() => setActiveChart('Total de Intermediações')}
-                className="w-7 h-7 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-purple-400 hover:border-purple-500/40 hover:bg-purple-500/5 transition-colors">
-                <BarChart2 size={13} />
+                className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+                <BarChart2 size={12} />
+                <span>Histórico</span>
               </button>
             </div>
             <p className="text-white text-2xl font-light mb-3">{fmtK(totalInter)}</p>
@@ -160,8 +162,9 @@ export function MetricasSection() {
                 <span className="text-[#999] text-xs">Desconto Usado</span>
               </div>
               <button onClick={() => setActiveChart('Desconto Usado')}
-                className="w-7 h-7 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-purple-400 hover:border-purple-500/40 hover:bg-purple-500/5 transition-colors">
-                <BarChart2 size={13} />
+                className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+                <BarChart2 size={12} />
+                <span>Histórico</span>
               </button>
             </div>
             <p className="text-white text-2xl font-light mb-3">{fmtK(descUsado)}</p>
