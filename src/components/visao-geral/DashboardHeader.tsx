@@ -315,59 +315,6 @@ function MonthPicker({
   )
 }
 
-// ── Mini Dropdown ─────────────────────────────────────────────────────────────
-function MiniDropdown({
-  value, options, onChange,
-}: {
-  value: string | number
-  options: { value: string | number; label: string }[]
-  onChange: (v: string | number) => void
-}) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function handler(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [])
-
-  const selected = options.find(o => o.value === value)
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen(v => !v)}
-        className="flex items-center gap-1.5 rounded border border-[rgba(41,41,41,0.8)] text-[10px] font-semibold text-[#ccc] px-2 py-0.5 hover:border-orange-500/50 transition-colors"
-        style={{ background: '#0d0d0d' }}
-      >
-        {selected?.label}
-        <ChevronDown size={10} className={`text-[#666] transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
-      {open && (
-        <div
-          className="absolute z-30 top-full mt-1 left-0 rounded-lg border border-[rgba(41,41,41,0.8)] overflow-hidden shadow-xl"
-          style={{ background: '#141414', minWidth: '100%', whiteSpace: 'nowrap' }}
-        >
-          {options.map(opt => (
-            <button
-              key={String(opt.value)}
-              onClick={() => { onChange(opt.value); setOpen(false) }}
-              className={`w-full text-left px-3 py-2 text-xs border-b border-white/5 last:border-0 transition-colors ${
-                opt.value === value ? 'text-orange-500 bg-orange-500/10 font-semibold' : 'text-white hover:bg-white/5'
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
 // ── Main Component ────────────────────────────────────────────────────────────
 export function DashboardHeader() {
   const {
