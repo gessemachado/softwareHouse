@@ -430,21 +430,19 @@ export function DashboardHeader() {
       </div>
 
       {/* Filter cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
-        {/* 1 — Período Análise */}
+        {/* 1 — TIPO */}
         <div>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center shadow-lg shadow-orange-500/30">1</span>
             <span className="text-[#999] text-[9px] font-semibold tracking-widest uppercase">Período Análise</span>
           </div>
 
-          <div className="flex gap-2">
-            {/* ── TIPO sub-card ──────────────────────────────────── */}
-            <div className="relative flex-none">
-              <button
-                onClick={() => { setShowTypePicker(v => !v); setShowDayPicker(false); setShowAnalysePicker(false) }}
-                className="rounded-lg border border-orange-500/30 px-3 py-2.5 text-left transition-colors hover:border-orange-500/50 w-28"
+          <div className="relative">
+            <button
+              onClick={() => { setShowTypePicker(v => !v); setShowDayPicker(false); setShowAnalysePicker(false) }}
+              className="w-full rounded-lg border border-orange-500/30 px-3 py-2.5 text-left transition-colors hover:border-orange-500/50"
                 style={{ background: 'linear-gradient(164deg, rgba(41,41,41,0.8) 0%, rgba(26,26,26,0.9) 100%)' }}
               >
                 <p className="text-[#999] text-[8px] font-semibold tracking-widest uppercase mb-1">TIPO</p>
@@ -474,10 +472,13 @@ export function DashboardHeader() {
                   ))}
                 </div>
               )}
-            </div>
+          </div>
+        </div>
 
-            {/* ── Período sub-card ───────────────────────────────── */}
-            <div className="flex-1 relative">
+        {/* — Período */}
+        <div>
+          <div className="h-5 mb-1.5" />
+          <div className="relative">
               {periodType === 'diario' ? (
                 <>
                   <button
@@ -567,7 +568,6 @@ export function DashboardHeader() {
                   )}
                 </>
               )}
-            </div>
           </div>
         </div>
 
