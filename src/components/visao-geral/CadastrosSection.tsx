@@ -83,12 +83,14 @@ export function CadastrosSection() {
               <TrendingUp size={13} className="text-orange-500" />
             </div>
             <p className="text-[#555] text-xs font-semibold tracking-widest uppercase mb-2">Cadastrados</p>
-            <p className="text-orange-500 text-xl font-bold mb-2">{cur.novos}</p>
-            <div className={`inline-flex items-center gap-1 rounded px-2 py-1 ${cur.novos >= prev.novos ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
-              {cur.novos >= prev.novos
-                ? <TrendingUp size={11} className="text-green-400" />
-                : <TrendingDown size={11} className="text-red-400" />}
-              <span className={`text-xs font-semibold ${cur.novos >= prev.novos ? 'text-green-400' : 'text-red-400'}`}>{pctStr(cur.novos, prev.novos)}</span>
+            <div className="flex items-center gap-2">
+              <p className="text-orange-500 text-xl font-bold">{cur.novos}</p>
+              <div className={`inline-flex items-center gap-1 rounded px-2 py-1 ${cur.novos >= prev.novos ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
+                {cur.novos >= prev.novos
+                  ? <TrendingUp size={11} className="text-green-400" />
+                  : <TrendingDown size={11} className="text-red-400" />}
+                <span className={`text-xs font-semibold ${cur.novos >= prev.novos ? 'text-green-400' : 'text-red-400'}`}>{pctStr(cur.novos, prev.novos)}</span>
+              </div>
             </div>
           </div>
 
@@ -98,12 +100,14 @@ export function CadastrosSection() {
               <TrendingDown size={13} className="text-red-400" />
             </div>
             <p className="text-[#555] text-xs font-semibold tracking-widest uppercase mb-2">Perdidos</p>
-            <p className="text-red-400 text-xl font-bold mb-2">{cur.perdidos}</p>
-            <div className={`inline-flex items-center gap-1 rounded px-2 py-1 ${cur.perdidos >= prev.perdidos ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
-              {cur.perdidos >= prev.perdidos
-                ? <TrendingUp size={11} className="text-green-400" />
-                : <TrendingDown size={11} className="text-red-400" />}
-              <span className={`text-xs font-semibold ${cur.perdidos >= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>{pctStr(cur.perdidos, prev.perdidos)}</span>
+            <div className="flex items-center gap-2">
+              <p className="text-red-400 text-xl font-bold">{cur.perdidos}</p>
+              <div className={`inline-flex items-center gap-1 rounded px-2 py-1 ${cur.perdidos >= prev.perdidos ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
+                {cur.perdidos >= prev.perdidos
+                  ? <TrendingUp size={11} className="text-green-400" />
+                  : <TrendingDown size={11} className="text-red-400" />}
+                <span className={`text-xs font-semibold ${cur.perdidos >= prev.perdidos ? 'text-green-400' : 'text-red-400'}`}>{pctStr(cur.perdidos, prev.perdidos)}</span>
+              </div>
             </div>
           </div>
 
@@ -113,12 +117,14 @@ export function CadastrosSection() {
               <RefreshCw size={13} className="text-cyan-400" />
             </div>
             <p className="text-[#555] text-xs font-semibold tracking-widest uppercase mb-2">Recuperados</p>
-            <p className="text-cyan-400 text-xl font-bold mb-2">{cur.recuperados}</p>
-            <div className={`inline-flex items-center gap-1 rounded px-2 py-1 ${cur.recuperados >= prev.recuperados ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
-              {cur.recuperados >= prev.recuperados
-                ? <TrendingUp size={11} className="text-green-400" />
-                : <TrendingDown size={11} className="text-red-400" />}
-              <span className={`text-xs font-semibold ${cur.recuperados >= prev.recuperados ? 'text-green-400' : 'text-red-400'}`}>{pctStr(cur.recuperados, prev.recuperados)}</span>
+            <div className="flex items-center gap-2">
+              <p className="text-cyan-400 text-xl font-bold">{cur.recuperados}</p>
+              <div className={`inline-flex items-center gap-1 rounded px-2 py-1 ${cur.recuperados >= prev.recuperados ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
+                {cur.recuperados >= prev.recuperados
+                  ? <TrendingUp size={11} className="text-green-400" />
+                  : <TrendingDown size={11} className="text-red-400" />}
+                <span className={`text-xs font-semibold ${cur.recuperados >= prev.recuperados ? 'text-green-400' : 'text-red-400'}`}>{pctStr(cur.recuperados, prev.recuperados)}</span>
+              </div>
             </div>
           </div>
         </div>
