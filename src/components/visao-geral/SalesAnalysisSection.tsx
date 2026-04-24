@@ -95,7 +95,7 @@ export function SalesAnalysisSection() {
   const avgFormatted   = formatFull(metric, avg)
   const currentLabel   = formatFull(metric, current)
   const prevLabel      = formatFull(metric, prevVal)
-  const diffLabel      = (diff >= 0 ? '+' : '') + formatFull(metric, Math.abs(diff))
+  const diffLabel      = formatFull(metric, Math.abs(diff))
 
   return (
     <div className="rounded-lg border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 p-6 mb-5">
