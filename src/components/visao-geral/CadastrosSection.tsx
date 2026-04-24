@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TrendingUp, TrendingDown, RefreshCw, LineChart as LineChartIcon, Users } from 'lucide-react'
+import { TrendingUp, TrendingDown, RefreshCw, LineChart as LineChartIcon, Users, HelpCircle } from 'lucide-react'
 import { CadastrosHistoricoModal } from './CadastrosHistoricoModal'
 import { ComposicaoClientesModal } from './ComposicaoClientesModal'
 import { useDashboardFilter } from '../../contexts/DashboardFilterContext'
@@ -94,7 +94,16 @@ export function CadastrosSection() {
             <div className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center mb-2">
               <TrendingDown size={13} className="text-red-400" />
             </div>
-            <p className="text-[#555] text-xs font-semibold tracking-widest uppercase mb-2">Perdidos</p>
+            <div className="flex items-center gap-1 mb-2">
+              <p className="text-[#555] text-xs font-semibold tracking-widest uppercase">Perdidos</p>
+              <div className="relative group">
+                <HelpCircle size={11} className="text-[#444] cursor-help hover:text-[#888] transition-colors" />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-[#1a1a1a] border border-[#333] text-[#ccc] text-[10px] rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 leading-relaxed shadow-xl">
+                  Clientes que deixaram de comprar após 60 dias
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#333]" />
+                </div>
+              </div>
+            </div>
             <div className="flex items-center gap-2">
               <p className="text-red-400 text-xl font-bold">{cur.perdidos}</p>
               <div className={`inline-flex items-center gap-1 rounded px-2 py-1 ${cur.perdidos >= prev.perdidos ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
