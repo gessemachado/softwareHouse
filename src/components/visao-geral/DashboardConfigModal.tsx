@@ -58,7 +58,7 @@ export function DashboardConfigModal({ onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-2xl border border-white/10 shadow-2xl flex flex-col"
+        className="w-full max-w-md rounded-2xl border border-white/10 shadow-2xl flex flex-col max-h-[90vh]"
         style={{ background: '#0d0d0d' }}
         onClick={e => e.stopPropagation()}
       >
@@ -77,7 +77,7 @@ export function DashboardConfigModal({ onClose }: Props) {
         </div>
 
         {/* Section list */}
-        <div className="px-6 py-4 space-y-2">
+        <div className="px-6 py-4 space-y-2 overflow-y-auto flex-1">
           {draft.map((section, i) => (
             <div
               key={section.id}
