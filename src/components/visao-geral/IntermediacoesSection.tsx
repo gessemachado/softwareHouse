@@ -14,15 +14,14 @@ function pctStr(cur: number, prev: number) {
   return `${p >= 0 ? '+' : ''}${p.toFixed(1)}%`
 }
 
-function TrendBadge({ cur, prev, positiveIsUp = true }: { cur: number; prev: number; positiveIsUp?: boolean }) {
+function TrendBadge({ cur, prev }: { cur: number; prev: number; positiveIsUp?: boolean }) {
   const up = cur >= prev
-  const good = positiveIsUp ? up : !up
   return (
-    <div className={`flex items-center gap-1 rounded px-1.5 py-0.5 ${good ? 'bg-green-400/10' : 'bg-red-400/10'}`}>
+    <div className={`flex items-center gap-1 rounded px-1.5 py-0.5 ${up ? 'bg-green-400/10' : 'bg-red-400/10'}`}>
       {up
-        ? <TrendingUp size={10} className={good ? 'text-green-400' : 'text-red-400'} />
-        : <TrendingDown size={10} className={good ? 'text-green-400' : 'text-red-400'} />}
-      <span className={`text-xs ${good ? 'text-green-400' : 'text-red-400'}`}>{pctStr(cur, prev)}</span>
+        ? <TrendingUp size={10} className="text-green-400" />
+        : <TrendingDown size={10} className="text-red-400" />}
+      <span className={`text-xs ${up ? 'text-green-400' : 'text-red-400'}`}>{pctStr(cur, prev)}</span>
     </div>
   )
 }
