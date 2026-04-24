@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise Supermercado Maciel</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0e14;
+    --bg2: #111520;
+    --bg3: #161b28;
+    --surface: #1a2035;
+    --surface2: #1f2740;
+    --border: #263050;
+    --border2: #2e3a5c;
+    --text: #e8edf8;
+    --text-muted: #7a8aaa;
+    --text-dim: #4a5878;
+    --gold: #c9a84c;
+    --gold2: #e8c96a;
+    --green: #3ecf8e;
+    --green-bg: rgba(62,207,142,0.08);
+    --red: #ff5e5e;
+    --red-bg: rgba(255,94,94,0.08);
+    --blue: #4a8fff;
+    --blue-bg: rgba(74,143,255,0.08);
+    --accent: #c9a84c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(201,168,76,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 90%, rgba(74,143,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* HEADER */
+  header {
+    margin-bottom: 56px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-eyebrow::before {
+    content: '';
+    width: 32px; height: 1px;
+    background: var(--gold);
+    opacity: 0.6;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 6vw, 72px);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--text);
+  }
+  h1 span { color: var(--gold); }
+
+  .header-sub {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+
+  .header-divider {
+    margin-top: 32px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--border) 40%, transparent 100%);
+    opacity: 0.4;
+  }
+
+  /* KPI STRIP */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 52px;
+    animation: fadeUp 0.6s 0.15s ease both;
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .kpi-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .kpi-card:hover::after { opacity: 1; }
+
+  .kpi-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .kpi-base-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .kpi-base-after {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+  .kpi-gain {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .kpi-gain-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+  .kpi-gain-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 2px 10px;
+    border-radius: 20px;
+  }
+  .kpi-gain-val.positive { color: var(--green); background: var(--green-bg); }
+  .kpi-gain-val.neutral  { color: var(--text-muted); background: var(--surface2); }
+
+  .kpi-bg-num {
+    position: absolute;
+    right: 16px; bottom: -8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    color: var(--border);
+    pointer-events: none;
+    line-height: 1;
+    user-select: none;
+  }
+
+  /* PERIOD SECTIONS */
+  .period-section {
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .period-section:nth-child(1) { animation-delay: 0.2s; }
+  .period-section:nth-child(2) { animation-delay: 0.3s; }
+  .period-section:nth-child(3) { animation-delay: 0.4s; }
+
+  .period-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .period-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.06em;
+    color: var(--gold2);
+    line-height: 1;
+  }
+  .period-bases {
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+  .period-bases strong {
+    font-weight: 500;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+  .period-header-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead tr {
+    background: var(--surface2);
+  }
+
+  thead th {
+    padding: 14px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  thead th:first-child { text-align: left; }
+
+  .thead-group {
+    background: var(--bg3);
+  }
+  .thead-group th {
+    padding: 8px 20px;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+    border-bottom: none;
+  }
+  .col-group-antes { color: var(--blue) !important; }
+  .col-group-depois { color: var(--green) !important; }
+  .col-group-reducao { color: var(--gold) !important; }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(38,48,80,0.5);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  tbody td {
+    padding: 14px 20px;
+    font-size: 13.5px;
+    text-align: right;
+    color: var(--text);
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  tbody td:first-child {
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+  }
+
+  .pct-cell {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .pct-before { color: var(--blue) !important; }
+  .pct-after  { color: var(--green) !important; }
+
+  .val-cell {
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+  }
+  .val-before { color: rgba(232,237,248,0.7); }
+  .val-after  { color: var(--text); }
+
+  .reducao-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .neg { color: var(--red); }
+  .pos { color: var(--green); }
+
+  .reducao-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+  .reducao-val.neg { color: var(--red); }
+  .reducao-val.pos { color: var(--green); }
+
+  /* Margem Bruta row highlight */
+  tr.row-margem {
+    background: rgba(201,168,76,0.04);
+  }
+  tr.row-margem td:first-child {
+    color: var(--gold) !important;
+  }
+
+  /* Ganho Maciel row */
+  tr.row-ganho td {
+    background: transparent;
+    padding-top: 8px;
+    padding-bottom: 14px;
+  }
+  tr.row-ganho td:first-child {
+    color: var(--text) !important;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  .ganho-highlight {
+    display: inline-block;
+    background: rgba(62,207,142,0.12);
+    border: 1px solid rgba(62,207,142,0.25);
+    color: var(--green) !important;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 6px;
+  }
+  .ganho-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+  }
+  .ganho-zero {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 860px) {
+    .wrapper { padding: 32px 16px 60px; }
+    .kpi-strip { grid-template-columns: 1fr; }
+    .table-wrap { overflow-x: auto; }
+    table { min-width: 640px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-eyebrow">Relatório Tributário — Consultoria Fiscal</div>
+    <h1>Análise <span>Supermercado</span><br>Maciel</h1>
+    <p class="header-sub">Comparativo de alíquotas, débitos e margem bruta — Exercícios 2024, 2025 e 2026</p>
+    <div class="header-divider"></div>
+  </header>
+
+  <!-- KPI STRIP -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-year">Base 2024</div>
+      <div class="kpi-base-value">R$ 2.513.388,64</div>
+      <div class="kpi-base-after">Após: R$ 2.483.562,35</div>
+      <div class="kpi-gain">
+        <span class="kpi-gain-label">Ganho Maciel</span>
+        <span class="kpi-gain-val neutral">R$ 0,00</span>
+      </div>
+      <div class="kpi-bg-num">24</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-year">Base 2025</div>
+      <div class="kpi-base-value">R$ 7.467.863,63</div>
+      <div class="kpi-base-after">Após: R$ 7.387.956,24</div>
+      <div class="kpi-gain">
+        <span class="kpi-gain-label">Ganho Maciel</span>
+        <span class="kpi-gain-val positive">R$ 9.637,85</span>
+      </div>
+      <div class="kpi-bg-num">25</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-year">Base 2026</div>
+      <div class="kpi-base-value">R$ 2.192.644,65</div>
+      <div class="kpi-base-after">Após: R$ 2.161.947,89</div>
+      <div class="kpi-gain">
+        <span class="kpi-gain-label">Ganho Maciel</span>
+        <span class="kpi-gain-val positive">R$ 4.094,14</span>
+      </div>
+      <div class="kpi-bg-num">26</div>
+    </div>
+  </div>
+
+  <!-- PERIOD 2024 -->
+  <div class="period-section">
+    <div class="period-header">
+      <div class="period-badge">2024</div>
+      <div class="period-bases">
+        <span>Antes: <strong>R$ 2.513.388,64</strong></span>
+        <span>Depois: <strong>R$ 2.483.562,35</strong></span>
+      </div>
+      <div class="period-header-line"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr class="thead-group">
+            <th></th>
+            <th colspan="2" class="col-group-antes">% Alíquota</th>
+            <th colspan="2" class="col-group-depois">Valor (R$)</th>
+            <th colspan="2" class="col-group-reducao">Redução</th>
+          </tr>
+          <tr>
+            <th>Rubrica</th>
+            <th>Antes</th>
+            <th>Depois</th>
+            <th>Antes</th>
+            <th>Depois</th>
+            <th>% Redução</th>
+            <th>Valor Redução</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ICMS</td>
+            <td class="pct-cell pct-before">21,56%</td>
+            <td class="pct-cell pct-after">17,55%</td>
+            <td class="val-cell val-before">R$ 541.985,53</td>
+            <td class="val-cell val-after">R$ 435.798,00</td>
+            <td class="reducao-pct neg">-18,63%</td>
+            <td class="reducao-val">—</td>
+          </tr>
+          <tr>
+            <td>PIS/COFINS</td>
+            <td class="pct-cell pct-before">35,53%</td>
+            <td class="pct-cell pct-after">28,23%</td>
+            <td class="val-cell val-before">R$ 893.085,83</td>
+            <td class="val-cell val-after">R$ 701.102,61</td>
+            <td class="reducao-pct neg">-20,55%</td>
+            <td class="reducao-val neg">-1,40%</td>
+          </tr>
+          <tr>
+            <td>Débitos</td>
+            <td class="pct-cell pct-before">6,87%</td>
+            <td class="pct-cell pct-after">5,54%</td>
+            <td class="val-cell val-before">R$ 172.643,68</td>
+            <td class="val-cell val-after">R$ 137.554,10</td>
+            <td class="reducao-pct neg">-19,37%</td>
+            <td class="reducao-val neg">-R$ 35.089,58</td>
+          </tr>
+          <tr class="row-margem">
+            <td>Margem Bruta</td>
+            <td class="pct-cell pct-before">22,41%</td>
+            <td class="pct-cell pct-after">22,89%</td>
+            <td class="val-cell val-before">R$ 563.229,84</td>
+            <td class="val-cell val-after">R$ 568.493,13</td>
+            <td class="reducao-pct pos">+2,15%</td>
+            <td class="reducao-val pos">R$ 5.263,29</td>
+          </tr>
+          <tr class="row-ganho">
+            <td>Ganho Maciel</td>
+            <td></td><td></td><td></td>
+            <td><span class="ganho-zero">R$ 0,00</span></td>
+            <td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PERIOD 2025 -->
+  <div class="period-section">
+    <div class="period-header">
+      <div class="period-badge">2025</div>
+      <div class="period-bases">
+        <span>Antes: <strong>R$ 7.467.863,63</strong></span>
+        <span>Depois: <strong>R$ 7.387.956,24</strong></span>
+      </div>
+      <div class="period-header-line"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr class="thead-group">
+            <th></th>
+            <th colspan="2" class="col-group-antes">% Alíquota</th>
+            <th colspan="2" class="col-group-depois">Valor (R$)</th>
+            <th colspan="2" class="col-group-reducao">Redução</th>
+          </tr>
+          <tr>
+            <th>Rubrica</th>
+            <th>Antes</th>
+            <th>Depois</th>
+            <th>Antes</th>
+            <th>Depois</th>
+            <th>% Redução</th>
+            <th>Valor Redução</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ICMS</td>
+            <td class="pct-cell pct-before">21,23%</td>
+            <td class="pct-cell pct-after">17,02%</td>
+            <td class="val-cell val-before">R$ 1.585.756,92</td>
+            <td class="val-cell val-after">R$ 1.257.234,15</td>
+            <td class="reducao-pct neg">-19,86%</td>
+            <td class="reducao-val">—</td>
+          </tr>
+          <tr>
+            <td>PIS/COFINS</td>
+            <td class="pct-cell pct-before">33,22%</td>
+            <td class="pct-cell pct-after">26,09%</td>
+            <td class="val-cell val-before">R$ 2.480.897,52</td>
+            <td class="val-cell val-after">R$ 1.927.669,63</td>
+            <td class="reducao-pct neg">-21,46%</td>
+            <td class="reducao-val neg">-1,41%</td>
+          </tr>
+          <tr>
+            <td>Débitos</td>
+            <td class="pct-cell pct-before">6,61%</td>
+            <td class="pct-cell pct-after">5,26%</td>
+            <td class="val-cell val-before">R$ 493.724,32</td>
+            <td class="val-cell val-after">R$ 388.725,32</td>
+            <td class="reducao-pct neg">-20,42%</td>
+            <td class="reducao-val neg">-R$ 104.999,00</td>
+          </tr>
+          <tr class="row-margem">
+            <td>Margem Bruta</td>
+            <td class="pct-cell pct-before">22,64%</td>
+            <td class="pct-cell pct-after">23,22%</td>
+            <td class="val-cell val-before">R$ 1.690.646,42</td>
+            <td class="val-cell val-after">R$ 1.715.738,03</td>
+            <td class="reducao-pct pos">+2,58%</td>
+            <td class="reducao-val pos">R$ 25.091,61</td>
+          </tr>
+          <tr class="row-ganho">
+            <td>Ganho Maciel</td>
+            <td></td>
+            <td></td>
+            <td><span class="ganho-highlight">-9,18%</span></td>
+            <td><span class="ganho-val">R$ 9.637,85</span></td>
+            <td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PERIOD 2026 -->
+  <div class="period-section">
+    <div class="period-header">
+      <div class="period-badge">2026</div>
+      <div class="period-bases">
+        <span>Antes: <strong>R$ 2.192.644,65</strong></span>
+        <span>Depois: <strong>R$ 2.161.947,89</strong></span>
+      </div>
+      <div class="period-header-line"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr class="thead-group">
+            <th></th>
+            <th colspan="2" class="col-group-antes">% Alíquota</th>
+            <th colspan="2" class="col-group-depois">Valor (R$)</th>
+            <th colspan="2" class="col-group-reducao">Redução</th>
+          </tr>
+          <tr>
+            <th>Rubrica</th>
+            <th>Antes</th>
+            <th>Depois</th>
+            <th>Antes</th>
+            <th>Depois</th>
+            <th>% Redução</th>
+            <th>Valor Redução</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ICMS</td>
+            <td class="pct-cell pct-before">25,69%</td>
+            <td class="pct-cell pct-after">19,65%</td>
+            <td class="val-cell val-before">R$ 563.192,46</td>
+            <td class="val-cell val-after">R$ 424.780,71</td>
+            <td class="reducao-pct neg">-23,51%</td>
+            <td class="reducao-val">—</td>
+          </tr>
+          <tr>
+            <td>PIS/COFINS</td>
+            <td class="pct-cell pct-before">36,70%</td>
+            <td class="pct-cell pct-after">27,95%</td>
+            <td class="val-cell val-before">R$ 804.671,42</td>
+            <td class="val-cell val-after">R$ 604.220,95</td>
+            <td class="reducao-pct neg">-23,84%</td>
+            <td class="reducao-val neg">-1,87%</td>
+          </tr>
+          <tr>
+            <td>Débitos</td>
+            <td class="pct-cell pct-before">7,64%</td>
+            <td class="pct-cell pct-after">5,86%</td>
+            <td class="val-cell val-before">R$ 167.575,23</td>
+            <td class="val-cell val-after">R$ 126.643,11</td>
+            <td class="reducao-pct neg">-23,35%</td>
+            <td class="reducao-val neg">-R$ 40.932,12</td>
+          </tr>
+          <tr class="row-margem">
+            <td>Margem Bruta</td>
+            <td class="pct-cell pct-before">21,95%</td>
+            <td class="pct-cell pct-after">22,73%</td>
+            <td class="val-cell val-before">R$ 481.248,81</td>
+            <td class="val-cell val-after">R$ 491.484,17</td>
+            <td class="reducao-pct pos">+3,58%</td>
+            <td class="reducao-val pos">R$ 10.235,36</td>
+          </tr>
+          <tr class="row-ganho">
+            <td>Ganho Maciel</td>
+            <td></td>
+            <td></td>
+            <td><span class="ganho-highlight">-10,00%</span></td>
+            <td><span class="ganho-val">R$ 4.094,14</span></td>
+            <td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>Supermercado Maciel — Análise Tributária</span>
+    <span>Exercícios 2024 · 2025 · 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -5,10 +5,14 @@ import { useDashboardConfig, type SectionConfig } from '../../contexts/Dashboard
 interface Props { onClose: () => void }
 
 const ICONS: Record<string, string> = {
-  intermediacoes: '⚡',
-  vendas:         '📊',
-  cadastros:      '👥',
-  metricas:       '📈',
+  desconto:         '💰',
+  operacao:         '⚡',
+  produtos:         '📦',
+  vendas:           '📊',
+  ativos:           '👥',
+  composicao:       '🥧',
+  metricas_vendas:  '📈',
+  intermediacoes_m: '🔀',
 }
 
 export function DashboardConfigModal({ onClose }: Props) {
