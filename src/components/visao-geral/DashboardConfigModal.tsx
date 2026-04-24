@@ -5,14 +5,10 @@ import { useDashboardConfig, type SectionConfig } from '../../contexts/Dashboard
 interface Props { onClose: () => void }
 
 const ICONS: Record<string, string> = {
-  desconto:         '💰',
-  operacao:         '⚡',
-  produtos:         '📦',
-  vendas:           '📊',
-  ativos:           '👥',
-  composicao:       '🥧',
-  metricas_vendas:  '📈',
-  intermediacoes_m: '🔀',
+  intermediacoes: '⚡',
+  vendas:         '📊',
+  cadastros:      '👥',
+  metricas:       '📈',
 }
 
 export function DashboardConfigModal({ onClose }: Props) {
@@ -58,7 +54,7 @@ export function DashboardConfigModal({ onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-2xl border border-white/10 shadow-2xl flex flex-col max-h-[90vh]"
+        className="w-full max-w-md rounded-2xl border border-white/10 shadow-2xl flex flex-col"
         style={{ background: '#0d0d0d' }}
         onClick={e => e.stopPropagation()}
       >
@@ -77,7 +73,7 @@ export function DashboardConfigModal({ onClose }: Props) {
         </div>
 
         {/* Section list */}
-        <div className="px-6 py-4 space-y-2 overflow-y-auto flex-1">
+        <div className="px-6 py-4 space-y-2">
           {draft.map((section, i) => (
             <div
               key={section.id}
