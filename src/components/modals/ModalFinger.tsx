@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { User, Mail, Phone, CreditCard, Percent, MapPin, Globe, Save } from 'lucide-react'
+import { User, Mail, Phone, CreditCard, Percent, MapPin, Globe, Save, Calendar, Clock } from 'lucide-react'
 import { Modal } from '../ui/Modal'
 import type { FingerForm } from '../../types/sh.types'
 
@@ -14,7 +14,8 @@ const schema = z.object({
   telefone: z.string().min(14, 'Telefone inválido'),
   cpf: z.string().min(14, 'CPF inválido'),
   porcentagem: z.number().min(0).max(100, 'Entre 0 e 100'),
-  prazo_meses: z.number().optional(),
+  data_ativacao: z.string().optional(),
+  prazo_meses: z.number().min(1, 'Mínimo 1 mês').max(120, 'Máximo 120 meses').optional().or(z.nan().transform(() => undefined)),
   cidade: z.string().optional(),
   estado: z.string().optional(),
 })
@@ -99,6 +100,33 @@ export function ModalFinger({ open, onClose, onSave, defaultValues }: Props) {
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-bh-muted text-sm">%</span>
           </div>
           {errors.porcentagem && <p className="error-msg">{errors.porcentagem.message}</p>}
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <LabelIcon icon={Calendar}>Data de Ativação</LabelIcon>
+            <input
+              type="date"
+              className="input-bh"
+              {...register('data_ativacao')}
+            />
+            {errors.data_ativacao && <p className="error-msg">{errors.data_ativacao.message}</p>}
+          </div>
+          <div>
+            <LabelIcon icon={Clock}>Prazo (meses)</LabelIcon>
+            <div className="relative">
+              <input
+                type="number"
+                min={1}
+                max={120}
+                className="input-bh pr-12"
+                placeholder="Ex: 12"
+                {...register('prazo_meses', { valueAsNumber: true })}
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-bh-muted text-xs">meses</span>
+            </div>
+            {errors.prazo_meses && <p className="error-msg">{errors.prazo_meses.message}</p>}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">

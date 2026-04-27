@@ -3,19 +3,19 @@ import { Settings2 } from 'lucide-react'
 import { AppLayout } from '../components/layout/AppLayout'
 import { TabNav } from '../components/ui/TabNav'
 import { DashboardHeader } from '../components/visao-geral/DashboardHeader'
+import { CardsGrid } from '../components/visao-geral/CardsGrid'
 import { SalesAnalysisSection } from '../components/visao-geral/SalesAnalysisSection'
 import { CadastrosSection } from '../components/visao-geral/CadastrosSection'
 import { MetricasSection } from '../components/visao-geral/MetricasSection'
-import { IntermediacoesSection } from '../components/visao-geral/IntermediacoesSection'
 import { DashboardConfigModal } from '../components/visao-geral/DashboardConfigModal'
 import { DashboardFilterProvider } from '../contexts/DashboardFilterContext'
 import { DashboardConfigProvider, useDashboardConfig } from '../contexts/DashboardConfigContext'
 
 const SECTION_MAP: Record<string, ReactElement> = {
-  intermediacoes: <IntermediacoesSection />,
-  vendas:         <SalesAnalysisSection />,
-  cadastros:      <CadastrosSection />,
-  metricas:       <MetricasSection />,
+  cards:    <CardsGrid />,
+  vendas:   <SalesAnalysisSection />,
+  cadastros: <CadastrosSection />,
+  metricas: <MetricasSection />,
 }
 
 function DashboardContent() {

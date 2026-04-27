@@ -115,9 +115,9 @@ export function SoftwareHouseList() {
                   <td>
                     <div className="flex items-center gap-3">
                       <button
-                        title="Relatório"
+                        title="Dashboard"
                         className="text-green-500 hover:text-green-400 transition-colors"
-                        onClick={() => navigate('/software-house/relatorio')}
+                        onClick={() => navigate(`/software-house/${sh.id}/dashboard`)}
                       >
                         <BarChart2 size={18} />
                       </button>

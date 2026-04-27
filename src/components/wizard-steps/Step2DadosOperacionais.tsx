@@ -38,7 +38,7 @@ export function Step2DadosOperacionais({ defaultValues, onNext, onBack }: Props)
         <div className="space-y-4">
           <div>
             <label className="label-bh flex items-center gap-1.5">
-              <Calendar size={12} className="text-bh-primary" /> Prazo para Pagamento <span className="text-bh-primary">*</span>
+              <Calendar size={12} className="text-bh-primary" /> Prazo para pagamento após o recebimento <span className="text-bh-primary">*</span>
             </label>
             <div className="relative">
               <input

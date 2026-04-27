@@ -49,6 +49,7 @@ export interface Finger {
   cpf: string
   porcentagem: number
   prazo_meses?: number
+  data_ativacao?: string
   cidade?: string
   estado?: string
   data_vinculo: string
