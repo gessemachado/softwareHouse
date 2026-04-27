@@ -4,7 +4,7 @@ const MONTHS_FULL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julh
 const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 
 export type CompareMode  = 0 | 1 | 2  // 0=Mês anterior, 1=Mesmo mês ano anterior, 2=Customizado
-export type PeriodType   = 'diario' | 'semanal' | 'mensal'
+export type PeriodType   = 'diario'
 
 interface DashboardFilter {
   // Período análise
@@ -59,7 +59,7 @@ const DashboardFilterContext = createContext<DashboardFilter | null>(null)
 export function DashboardFilterProvider({ children }: { children: ReactNode }) {
   const [selectedMonth, setSelectedMonth] = useState(3)   // Abril
   const [selectedYear, setSelectedYear]   = useState(2026)
-  const [periodType, setPeriodType]                   = useState<PeriodType>('mensal')
+  const [periodType, setPeriodType]                   = useState<PeriodType>('diario')
   const [dayRangeStart, setDayRangeStart]             = useState<number | null>(null)
   const [dayRangeEnd,   setDayRangeEnd]               = useState<number | null>(null)
   const [compareDayRangeStart, setCompareDayRangeStart] = useState<number | null>(null)

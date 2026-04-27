@@ -29,26 +29,26 @@ function CustomTooltip({ active, payload, label }: any) {
   const pct      = total > 0 ? ((aprov / total) * 100).toFixed(1) : '0'
 
   return (
-    <div className="rounded-xl border border-white/10 px-4 py-3 shadow-2xl text-xs min-w-[220px]"
-      style={{ background: '#161616' }}>
-      <p className="text-[#888] font-mono font-bold tracking-widest uppercase mb-2">{label}</p>
+    <div className="rounded-xl border border-gray-200 px-4 py-3 shadow-2xl text-xs min-w-[220px]"
+      style={{ background: '#ffffff' }}>
+      <p className="text-gray-500 font-mono font-bold tracking-widest uppercase mb-2">{label}</p>
 
       <div className="flex items-center gap-2 mb-2">
         <span className="w-2 h-2 rounded-sm shrink-0 bg-[#ff6600]" />
-        <span className="text-[#aaa]">Aproveitado</span>
-        <span className="font-bold ml-auto pl-4 text-orange-400">{fmtK(aprov)}</span>
-        <span className="text-[#555] text-[10px]">{pct}%</span>
+        <span className="text-gray-600">Aproveitado</span>
+        <span className="font-bold ml-auto pl-4 text-orange-500">{fmtK(aprov)}</span>
+        <span className="text-gray-400 text-[10px]">{pct}%</span>
       </div>
 
-      <div className="border-t border-white/10 pt-2 mb-1 flex items-center justify-between">
-        <span className="text-[#555] text-[9px] font-bold tracking-widest uppercase">Não Atuou</span>
-        <span className="text-red-400 font-bold">{fmtK(totalNao)}</span>
+      <div className="border-t border-gray-100 pt-2 mb-1 flex items-center justify-between">
+        <span className="text-gray-400 text-[9px] font-bold tracking-widest uppercase">Não Atuou</span>
+        <span className="text-red-500 font-bold">{fmtK(totalNao)}</span>
       </div>
       {subs.map((p: any) => (
         <div key={p.dataKey} className="flex items-center gap-2 mb-1 pl-1">
           <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: p.fill }} />
-          <span className="text-[#777]">{p.name}</span>
-          <span className="font-bold ml-auto pl-4 text-white">{fmtK(p.value)}</span>
+          <span className="text-gray-500">{p.name}</span>
+          <span className="font-bold ml-auto pl-4 text-gray-900">{fmtK(p.value)}</span>
         </div>
       ))}
     </div>

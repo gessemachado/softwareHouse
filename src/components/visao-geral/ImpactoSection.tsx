@@ -50,8 +50,8 @@ function ComparisonChart({
           />
           <Tooltip
             formatter={(v) => [format(Number(v)), '']}
-            contentStyle={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: 6, color: '#fff' }}
-            labelStyle={{ color: '#999' }}
+            contentStyle={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 6, color: '#111827' }}
+            labelStyle={{ color: '#6b7280' }}
           />
           <Bar dataKey="value" radius={[4, 4, 0, 0]} label={{ position: 'top', formatter: (v: unknown) => format(Number(v)), fill: '#fff', fontWeight: 'bold', fontSize: 12 }}>
             {data.map((entry, index) => (

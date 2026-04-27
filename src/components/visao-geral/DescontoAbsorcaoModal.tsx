@@ -18,22 +18,22 @@ function CustomTooltip({ active, payload, label }: any) {
   const total = aproveitado + disponivel
   const pct = total > 0 ? ((aproveitado / total) * 100).toFixed(1) : '0'
   return (
-    <div className="rounded-xl border border-white/10 px-4 py-3 shadow-2xl text-xs"
-      style={{ background: '#161616' }}>
-      <p className="text-[#888] font-mono font-bold tracking-widest uppercase mb-2">{label}</p>
+    <div className="rounded-xl border border-gray-200 px-4 py-3 shadow-2xl text-xs"
+      style={{ background: '#ffffff' }}>
+      <p className="text-gray-500 font-mono font-bold tracking-widest uppercase mb-2">{label}</p>
       <div className="flex items-center gap-2 mb-1">
         <span className="w-2 h-2 rounded-sm shrink-0 bg-orange-500" />
-        <span className="text-[#aaa]">Valor Aproveitado</span>
-        <span className="font-semibold ml-auto pl-4 text-orange-400">{fmt(aproveitado)}</span>
+        <span className="text-gray-600">Valor Aproveitado</span>
+        <span className="font-semibold ml-auto pl-4 text-orange-500">{fmt(aproveitado)}</span>
       </div>
       <div className="flex items-center gap-2 mb-2">
-        <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: 'rgba(255,255,255,0.15)' }} />
-        <span className="text-[#aaa]">Valor Disponível</span>
-        <span className="font-semibold ml-auto pl-4 text-[#888]">{fmt(disponivel)}</span>
+        <span className="w-2 h-2 rounded-sm shrink-0 bg-gray-300" />
+        <span className="text-gray-600">Valor Disponível</span>
+        <span className="font-semibold ml-auto pl-4 text-gray-500">{fmt(disponivel)}</span>
       </div>
-      <div className="border-t border-white/10 pt-2 flex items-center justify-between">
-        <span className="text-[#555]">Absorção</span>
-        <span className="text-orange-400 font-bold font-mono">{pct}%</span>
+      <div className="border-t border-gray-100 pt-2 flex items-center justify-between">
+        <span className="text-gray-500">Absorção</span>
+        <span className="text-orange-500 font-bold font-mono">{pct}%</span>
       </div>
     </div>
   )

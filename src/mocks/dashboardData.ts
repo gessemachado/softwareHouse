@@ -72,6 +72,14 @@ export const OPERACAO_PRODUTOS = MESES.map((mes, i) => {
   return { mes, aproveitado, naoAtuou, mNegativa, custoZero, exclusaoLoja, blacklist }
 })
 
+// ─── Tributação de Produtos ───────────────────────────────────────────────────
+// tributado + isento = Total de Vendas
+export const TRIBUTACAO = MESES.map((mes, i) => ({
+  mes,
+  tributado: [96200,101400,90350,105950,87100,98150,111150,105300,115700,96850,102700,105950,111800][i],
+  isento:    [51800, 54600,48650, 57050,46900,52850, 59850, 56700, 62300,52150, 55300, 57050, 60200][i],
+}))
+
 // ─── Avaliação de resultados por mês ─────────────────────────────────────────
 // Escala proporcional às vendas de Abr/26 (referência)
 const REF_VENDAS = 172000

@@ -26,19 +26,19 @@ function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null
   const total = payload.reduce((s: number, p: any) => s + p.value, 0)
   return (
-    <div className="rounded-xl border border-white/10 px-4 py-3 shadow-2xl text-xs"
-      style={{ background: '#161616' }}>
-      <p className="text-[#888] font-mono font-bold tracking-widest uppercase mb-2">{label}</p>
+    <div className="rounded-xl border border-gray-200 px-4 py-3 shadow-2xl text-xs"
+      style={{ background: '#ffffff' }}>
+      <p className="text-gray-500 font-mono font-bold tracking-widest uppercase mb-2">{label}</p>
       {payload.map((p: any) => (
         <div key={p.dataKey} className="flex items-center gap-2 mb-1">
           <span className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color }} />
-          <span className="text-[#aaa]">{p.name}</span>
+          <span className="text-gray-600">{p.name}</span>
           <span className="font-semibold ml-auto pl-4" style={{ color: p.color }}>{p.value}</span>
         </div>
       ))}
-      <div className="border-t border-white/5 mt-2 pt-2 flex items-center justify-between">
-        <span className="text-[#666]">Total</span>
-        <span className="text-white font-bold">{total}</span>
+      <div className="border-t border-gray-100 mt-2 pt-2 flex items-center justify-between">
+        <span className="text-gray-500">Total</span>
+        <span className="text-gray-900 font-bold">{total}</span>
       </div>
     </div>
   )

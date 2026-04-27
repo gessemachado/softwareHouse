@@ -58,7 +58,7 @@ export function CardTributacao() {
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                 {barData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                 <LabelList
-                  content={({ x, y, width, value, index }) => {
+                  content={({ x, y, width, index }) => {
                     const item = barData[index as number]
                     if (!item) return null
                     const cx = (x as number) + (width as number) / 2

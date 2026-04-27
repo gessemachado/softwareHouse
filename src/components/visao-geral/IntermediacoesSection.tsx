@@ -5,6 +5,7 @@ import { DescontoAbsorcaoModal } from './DescontoAbsorcaoModal'
 import { OperacaoHistoricoModal } from './OperacaoHistoricoModal'
 import { OperacaoProdutosHistoricoModal } from './OperacaoProdutosHistoricoModal'
 import { useDashboardFilter } from '../../contexts/DashboardFilterContext'
+import { useDashboardConfig } from '../../contexts/DashboardConfigContext'
 import { DESCONTO, OPERACAO, OPERACAO_PRODUTOS, mesIdx } from '../../mocks/dashboardData'
 
 function fmtK(v: number) { return `R$ ${Math.round(v / 1000)}k` }
@@ -31,6 +32,9 @@ export function IntermediacoesSection() {
   const [showOperacao, setShowOperacao] = useState(false)
   const [showProdutos, setShowProdutos] = useState(false)
 
+  const { cardVis } = useDashboardConfig()
+  const vis = (id: string) => cardVis[id] !== false
+
   const { selectedMonth, selectedYear, compareMonth, compareYear } = useDashboardFilter()
   const curIdx  = mesIdx(selectedMonth, selectedYear)
   const prevIdx = mesIdx(compareMonth, compareYear)
@@ -54,7 +58,6 @@ export function IntermediacoesSection() {
   const naoAprov     = op.mesmaTrib + op.somenteItem + op.naoAceitou
   const naoAprovPrev = opPrev.mesmaTrib + opPrev.somenteItem + opPrev.naoAceitou
   const absorcaoOp     = op.pedido > 0 ? (op.intermediacao / op.pedido) * 100 : 0
-  const absorcaoOpPrev = opPrev.pedido > 0 ? (opPrev.intermediacao / opPrev.pedido) * 100 : 0
 
   const operacaoData = [
     { name: 'Aproveitado',     value: absorcaoOp,       fill: '#ff6600' },
@@ -73,10 +76,10 @@ export function IntermediacoesSection() {
   ]
 
   const prodSubItems = [
-    { label: 'M. Negativa',   cur: prod.mNegativa,    prev: prodPrev.mNegativa,    color: '#ef4444' },
-    { label: 'Custo Zero',    cur: prod.custoZero,    prev: prodPrev.custoZero,    color: '#f59e0b' },
-    { label: 'Exclusão Loja', cur: prod.exclusaoLoja, prev: prodPrev.exclusaoLoja, color: '#8b5cf6' },
-    { label: 'Blacklist',     cur: prod.blacklist,    prev: prodPrev.blacklist,    color: '#374151' },
+    { id: 'c_op_prod.m_negativa',    label: 'M. Negativa',   cur: prod.mNegativa,    prev: prodPrev.mNegativa,    color: '#ef4444' },
+    { id: 'c_op_prod.custo_zero',    label: 'Custo Zero',    cur: prod.custoZero,    prev: prodPrev.custoZero,    color: '#f59e0b' },
+    { id: 'c_op_prod.exclusao_loja', label: 'Exclusão Loja', cur: prod.exclusaoLoja, prev: prodPrev.exclusaoLoja, color: '#8b5cf6' },
+    { id: 'c_op_prod.blacklist',     label: 'Blacklist',     cur: prod.blacklist,    prev: prodPrev.blacklist,    color: '#374151' },
   ]
 
   return (
@@ -86,7 +89,7 @@ export function IntermediacoesSection() {
       {showProdutos && <OperacaoProdutosHistoricoModal onClose={() => setShowProdutos(false)} />}
 
       {/* ── Desconto Disponibilizado ──────────────────────────────────────────── */}
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden">
+      {vis('c_desconto') && <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden">
         <div className="border-b border-[#292929] px-6 py-5"
           style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)' }}>
           <div className="flex items-center justify-between">
@@ -125,7 +128,7 @@ export function IntermediacoesSection() {
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
+            {vis('c_desconto.disponivel') && <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Disponível</span>
@@ -138,9 +141,9 @@ export function IntermediacoesSection() {
                 </div>
               </div>
               <p className="text-[#555] text-[10px] mt-1">{dispPct.toFixed(1)}% restante</p>
-            </div>
+            </div>}
 
-            <div className="rounded-lg border border-orange-500/20 bg-orange-500/5 px-3 py-2.5">
+            {vis('c_desconto.aproveitado') && <div className="rounded-lg border border-orange-500/20 bg-orange-500/5 px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-full bg-orange-500" />
                 <span className="text-orange-500 text-xs font-semibold tracking-widest uppercase">Aproveitado</span>
@@ -153,9 +156,9 @@ export function IntermediacoesSection() {
                 </div>
               </div>
               <p className="text-[#555] text-[10px] mt-1">{absorcaoPct.toFixed(1)}% do total</p>
-            </div>
+            </div>}
 
-            <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
+            {vis('c_desconto.total') && <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Total Disponibilizado</span>
@@ -167,13 +170,13 @@ export function IntermediacoesSection() {
                   <span className="text-[#666] text-xs">vs {fmtK(totalDescP)}</span>
                 </div>
               </div>
-            </div>
+            </div>}
           </div>
         </div>
-      </div>
+      </div>}
 
-      {/* ── Operação ──────────────────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden">
+      {/* ── Não Aproveitado ──────────────────────────────────────────────────── */}
+      {vis('c_nao_aprov') && <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden">
         <div className="border-b border-[#292929] px-6 py-5"
           style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)' }}>
           <div className="flex items-center justify-between">
@@ -182,7 +185,7 @@ export function IntermediacoesSection() {
                 <span className="text-orange-500 text-base font-bold">%</span>
               </div>
               <div>
-                <h3 className="text-white text-lg font-semibold">Operação</h3>
+                <h3 className="text-white text-lg font-semibold">Não Aproveitado</h3>
                 <p className="text-[#999] text-xs">Acompanhamento da operação | Pedido / Intermediação</p>
               </div>
             </div>
@@ -204,46 +207,15 @@ export function IntermediacoesSection() {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
-              <div className="text-center">
-                <p className="text-[#999] text-xs">Aproveitado</p>
-                <p className="text-orange-500 text-xl font-bold">{absorcaoOp.toFixed(1)}%</p>
-              </div>
-              <div className="text-center">
-                <p className="text-[#999] text-xs">Não Aprov.</p>
-                <p className="text-cyan-400 text-base font-bold">{(100 - absorcaoOp).toFixed(1)}%</p>
-              </div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <p className="text-[#999] text-xs">Não Aprov.</p>
+              <p className="text-cyan-400 text-xl font-bold">{(100 - absorcaoOp).toFixed(1)}%</p>
             </div>
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#6b7280]" />
-                <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">PEDIDO | {op.pedido}</span>
-              </div>
+            {vis('c_nao_aprov.total') && <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
               <div className="flex items-center gap-1.5">
-                <TrendBadge cur={op.pedido} prev={opPrev.pedido} />
-                <span className="text-[#666] text-xs">vs {opPrev.pedido}</span>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-orange-500/20 bg-orange-500/5 px-3 py-2.5">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="w-2 h-2 rounded-full bg-orange-500" />
-                <span className="text-orange-500 text-xs font-semibold tracking-widest uppercase">INTERM. | {op.intermediacao}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <TrendBadge cur={op.intermediacao} prev={opPrev.intermediacao} />
-                  <span className="text-[#666] text-xs">vs {opPrev.intermediacao}</span>
-                </div>
-                <span className="text-[#555] text-[10px]">{absorcaoOp.toFixed(1)}% do total</span>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
-              <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <div className="flex items-center justify-between flex-1">
                   <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">NÃO APROV. | {naoAprov}</span>
@@ -253,43 +225,55 @@ export function IntermediacoesSection() {
                   </div>
                 </div>
               </div>
-              <div className="space-y-1.5 pl-3">
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-sm text-[#777]">
-                    <span className="w-2 h-2 rounded-sm shrink-0 bg-[#fca5a5]" />Mesma Tributação
-                  </span>
-                  <span className="text-white text-sm font-bold">{op.mesmaTrib}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-sm text-[#777]">
-                    <span className="w-2 h-2 rounded-sm shrink-0 bg-[#b45309]" />Somente um Item
-                  </span>
-                  <span className="text-white text-sm font-bold">{op.somenteItem}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-sm text-[#777]">
-                    <span className="w-2 h-2 rounded-sm shrink-0 bg-[#7f1d1d]" />Cliente não aceitou
-                  </span>
-                  <span className="text-white text-sm font-bold">{op.naoAceitou}</span>
-                </div>
-              </div>
-            </div>
+            </div>}
 
-            <div className="rounded-lg border border-orange-500/10 bg-orange-500/5 px-3 py-2.5">
+            {vis('c_nao_aprov.mesma_trib') && <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className="w-2 h-2 rounded-sm shrink-0 bg-[#fca5a5]" />
+                <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">Mesma Tributação</span>
+              </div>
               <div className="flex items-center justify-between">
-                <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Conversão</span>
+                <span className="text-white text-xs font-bold">{op.mesmaTrib}</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-orange-400 text-sm font-bold font-mono">{absorcaoOp.toFixed(1)}%</span>
-                  <TrendBadge cur={absorcaoOp} prev={absorcaoOpPrev} />
+                  <TrendBadge cur={op.mesmaTrib} prev={opPrev.mesmaTrib} positiveIsUp={false} />
+                  <span className="text-[#666] text-[10px]">vs {opPrev.mesmaTrib}</span>
                 </div>
               </div>
-            </div>
+            </div>}
+
+            {vis('c_nao_aprov.somente_item') && <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className="w-2 h-2 rounded-sm shrink-0 bg-[#b45309]" />
+                <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">Somente um Item</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-white text-xs font-bold">{op.somenteItem}</span>
+                <div className="flex items-center gap-1.5">
+                  <TrendBadge cur={op.somenteItem} prev={opPrev.somenteItem} positiveIsUp={false} />
+                  <span className="text-[#666] text-[10px]">vs {opPrev.somenteItem}</span>
+                </div>
+              </div>
+            </div>}
+
+            {vis('c_nao_aprov.nao_aceitou') && <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className="w-2 h-2 rounded-sm shrink-0 bg-[#7f1d1d]" />
+                <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">Cliente não aceitou</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-white text-xs font-bold">{op.naoAceitou}</span>
+                <div className="flex items-center gap-1.5">
+                  <TrendBadge cur={op.naoAceitou} prev={opPrev.naoAceitou} positiveIsUp={false} />
+                  <span className="text-[#666] text-[10px]">vs {opPrev.naoAceitou}</span>
+                </div>
+              </div>
+            </div>}
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ── Operação | Produtos ────────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden">
+      {vis('c_op_prod') && <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden">
         <div className="border-b border-[#292929] px-6 py-5"
           style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)' }}>
           <div className="flex items-center justify-between w-full">
@@ -328,8 +312,8 @@ export function IntermediacoesSection() {
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
-              <div className="flex items-center gap-1.5 mb-1.5">
+            {vis('c_op_prod.nao_atuou') && <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
+              <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <div className="flex items-center justify-between flex-1">
                   <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">
@@ -341,21 +325,26 @@ export function IntermediacoesSection() {
                   </div>
                 </div>
               </div>
-              <div className="space-y-1.5 pl-3">
-                {prodSubItems.map(({ label, cur, color }) => (
-                  <div key={label} className="flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 text-sm text-[#777]">
-                      <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: color }} />
-                      {label}
-                    </span>
-                    <span className="text-white text-sm font-bold">{fmtK(cur)}</span>
+            </div>}
+
+            {prodSubItems.map(({ id, label, cur, prev, color }) => vis(id) && (
+              <div key={label} className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: color }} />
+                  <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">{label}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white text-xs font-bold">{fmtK(cur)}</span>
+                  <div className="flex items-center gap-1.5">
+                    <TrendBadge cur={cur} prev={prev} positiveIsUp={false} />
+                    <span className="text-[#666] text-[10px]">vs {fmtK(prev)}</span>
                   </div>
-                ))}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   )
 }

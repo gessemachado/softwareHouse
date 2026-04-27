@@ -33,36 +33,36 @@ function CustomTooltip({ active, payload, label }: any) {
   const naoAprovItems = payload.filter((p: any) => NAO_APROV_KEYS.has(p.dataKey))
 
   return (
-    <div className="rounded-xl border border-white/10 px-4 py-3 shadow-2xl text-xs min-w-[210px]"
-      style={{ background: '#161616' }}>
-      <p className="text-[#888] font-mono font-bold tracking-widest uppercase mb-2">{label}</p>
+    <div className="rounded-xl border border-gray-200 px-4 py-3 shadow-2xl text-xs min-w-[210px]"
+      style={{ background: '#ffffff' }}>
+      <p className="text-gray-500 font-mono font-bold tracking-widest uppercase mb-2">{label}</p>
 
       {/* Pedido + Intermediação */}
       {principais.map((p: any) => (
         <div key={p.dataKey} className="flex items-center gap-2 mb-1">
           <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: p.fill }} />
-          <span className="text-[#aaa]">{p.name}</span>
-          <span className="font-bold ml-auto pl-4 text-white">{p.value}</span>
+          <span className="text-gray-600">{p.name}</span>
+          <span className="font-bold ml-auto pl-4 text-gray-900">{p.value}</span>
         </div>
       ))}
 
       {/* Não Aproveitados */}
-      <div className="border-t border-white/10 mt-2 pt-2 mb-1 flex items-center justify-between">
-        <span className="text-[#555] text-[9px] font-bold tracking-widest uppercase">Não Aproveitados</span>
-        <span className="text-red-400 font-bold">{naoAprovTotal}</span>
+      <div className="border-t border-gray-100 mt-2 pt-2 mb-1 flex items-center justify-between">
+        <span className="text-gray-400 text-[9px] font-bold tracking-widest uppercase">Não Aproveitados</span>
+        <span className="text-red-500 font-bold">{naoAprovTotal}</span>
       </div>
       {naoAprovItems.map((p: any) => (
         <div key={p.dataKey} className="flex items-center gap-2 mb-1 pl-1">
           <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: p.fill }} />
-          <span className="text-[#777]">{p.name}</span>
-          <span className="font-bold ml-auto pl-4 text-white">{p.value}</span>
+          <span className="text-gray-500">{p.name}</span>
+          <span className="font-bold ml-auto pl-4 text-gray-900">{p.value}</span>
         </div>
       ))}
 
       {/* Conversão */}
-      <div className="border-t border-white/10 mt-2 pt-2 flex items-center justify-between">
-        <span className="text-[#555]">Conversão</span>
-        <span className="text-orange-400 font-bold font-mono">{absorcao}%</span>
+      <div className="border-t border-gray-100 mt-2 pt-2 flex items-center justify-between">
+        <span className="text-gray-400">Conversão</span>
+        <span className="text-orange-500 font-bold font-mono">{absorcao}%</span>
       </div>
     </div>
   )
