@@ -1,32 +1,37 @@
 import { type ReactElement } from 'react'
 import { useDashboardConfig } from '../../contexts/DashboardConfigContext'
-import { CardDesconto }       from './cards/CardDesconto'
 import { CardNaoAproveitado } from './cards/CardNaoAproveitado'
 import { CardOpProdutos }     from './cards/CardOpProdutos'
-import { CardGaugeOperacao }  from './cards/CardGaugeOperacao'
 import { CardTributacao }     from './cards/CardTributacao'
-import { CardDebitos }        from './cards/CardDebitos'
 
+// Estes 3 cards não participam do carrossel de análise
 const CARD_MAP: Record<string, ReactElement> = {
-  c_desconto:   <CardDesconto />,
   c_nao_aprov:  <CardNaoAproveitado />,
   c_op_prod:    <CardOpProdutos />,
-  c_gauge:      <CardGaugeOperacao />,
   c_tributacao: <CardTributacao />,
-  c_debitos:    <CardDebitos />,
 }
+
+const REMAINING_IDS = new Set(Object.keys(CARD_MAP))
 
 export function CardsGrid() {
   const { cardOrder, cardVis } = useDashboardConfig()
 
-  const visibleCards = cardOrder.filter(id => cardVis[id] !== false)
+  const visibleCards = cardOrder.filter(
+    id => REMAINING_IDS.has(id) && cardVis[id] !== false,
+  )
+
+  if (visibleCards.length === 0) return null
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5"
-      style={{ gridAutoRows: '1fr' }}>
-      {visibleCards.map(id => (
-        <div key={id} className="h-full">{CARD_MAP[id]}</div>
-      ))}
+    <div className="mb-5">
+      <span className="block text-[#444] text-[10px] font-semibold tracking-widest uppercase mb-3">
+        Indicadores Complementares
+      </span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5" style={{ gridAutoRows: '1fr' }}>
+        {visibleCards.map(id => (
+          <div key={id} className="h-full">{CARD_MAP[id]}</div>
+        ))}
+      </div>
     </div>
   )
 }

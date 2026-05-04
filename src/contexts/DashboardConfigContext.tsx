@@ -7,10 +7,11 @@ export interface SectionConfig {
 }
 
 const DEFAULT_SECTIONS: SectionConfig[] = [
-  { id: 'cards',    label: 'Cards de Análise',    visible: true },
-  { id: 'vendas',   label: 'Análise de Vendas',   visible: true },
-  { id: 'cadastros', label: 'Cadastros',           visible: true },
-  { id: 'metricas', label: 'Métricas de Vendas',  visible: true },
+  { id: 'carousel',  label: 'Carrossel',           visible: true },
+  { id: 'cards',     label: 'Cards de Análise',    visible: true },
+  { id: 'vendas',    label: 'Análise de Vendas',   visible: true },
+  { id: 'cadastros', label: 'Cadastros',            visible: true },
+  { id: 'metricas',  label: 'Métricas de Vendas',  visible: true },
 ]
 
 export const DEFAULT_CARD_ORDER = [
@@ -48,9 +49,12 @@ export const DEFAULT_CARD_VIS: Record<string, boolean> = {
   'c_debitos.antes': true, 'c_debitos.depois': true, 'c_debitos.economia': true,
 }
 
-const SECTIONS_KEY   = 'buyhelp-sh-dashboard-config'
-const CARD_VIS_KEY   = 'buyhelp-sh-card-vis'
-const CARD_ORDER_KEY = 'buyhelp-sh-card-order'
+export type CarouselOrder = 'desc' | 'asc'
+
+const SECTIONS_KEY        = 'buyhelp-sh-dashboard-config'
+const CARD_VIS_KEY        = 'buyhelp-sh-card-vis'
+const CARD_ORDER_KEY      = 'buyhelp-sh-card-order'
+const CAROUSEL_ORDER_KEY  = 'buyhelp-sh-carousel-order'
 
 interface DashboardConfigCtx {
   sections: SectionConfig[]
@@ -63,6 +67,9 @@ interface DashboardConfigCtx {
   cardOrder: string[]
   setCardOrder: (order: string[]) => void
   resetCardOrder: () => void
+  carouselOrder: CarouselOrder
+  setCarouselOrder: (o: CarouselOrder) => void
+  resetCarouselOrder: () => void
 }
 
 const Ctx = createContext<DashboardConfigCtx>({
@@ -76,6 +83,9 @@ const Ctx = createContext<DashboardConfigCtx>({
   cardOrder: DEFAULT_CARD_ORDER,
   setCardOrder: () => {},
   resetCardOrder: () => {},
+  carouselOrder: 'desc',
+  setCarouselOrder: () => {},
+  resetCarouselOrder: () => {},
 })
 
 export function DashboardConfigProvider({ children }: { children: ReactNode }) {
@@ -112,6 +122,14 @@ export function DashboardConfigProvider({ children }: { children: ReactNode }) {
       }
     } catch {}
     return [...DEFAULT_CARD_ORDER]
+  })
+
+  const [carouselOrder, setCarouselOrderState] = useState<CarouselOrder>(() => {
+    try {
+      const saved = localStorage.getItem(CAROUSEL_ORDER_KEY)
+      if (saved === 'asc' || saved === 'desc') return saved
+    } catch {}
+    return 'desc'
   })
 
   function setSections(s: SectionConfig[]) {
@@ -152,6 +170,16 @@ export function DashboardConfigProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(CARD_ORDER_KEY)
   }
 
+  function setCarouselOrder(o: CarouselOrder) {
+    setCarouselOrderState(o)
+    localStorage.setItem(CAROUSEL_ORDER_KEY, o)
+  }
+
+  function resetCarouselOrder() {
+    setCarouselOrderState('desc')
+    localStorage.removeItem(CAROUSEL_ORDER_KEY)
+  }
+
   useEffect(() => {
     localStorage.setItem(SECTIONS_KEY, JSON.stringify(sections))
   }, [sections])
@@ -161,6 +189,7 @@ export function DashboardConfigProvider({ children }: { children: ReactNode }) {
       sections, setSections, resetSections,
       cardVis, setCardVis, applyCardVis, resetCardVis,
       cardOrder, setCardOrder, resetCardOrder,
+      carouselOrder, setCarouselOrder, resetCarouselOrder,
     }}>
       {children}
     </Ctx.Provider>

@@ -3,6 +3,7 @@ import { Settings2 } from 'lucide-react'
 import { AppLayout } from '../components/layout/AppLayout'
 import { TabNav } from '../components/ui/TabNav'
 import { DashboardHeader } from '../components/visao-geral/DashboardHeader'
+import { CardsCarousel } from '../components/visao-geral/CardsCarousel'
 import { CardsGrid } from '../components/visao-geral/CardsGrid'
 import { SalesAnalysisSection } from '../components/visao-geral/SalesAnalysisSection'
 import { CadastrosSection } from '../components/visao-geral/CadastrosSection'
@@ -12,10 +13,11 @@ import { DashboardFilterProvider } from '../contexts/DashboardFilterContext'
 import { DashboardConfigProvider, useDashboardConfig } from '../contexts/DashboardConfigContext'
 
 const SECTION_MAP: Record<string, ReactElement> = {
-  cards:    <CardsGrid />,
-  vendas:   <SalesAnalysisSection />,
+  carousel:  <CardsCarousel />,
+  cards:     <CardsGrid />,
+  vendas:    <SalesAnalysisSection />,
   cadastros: <CadastrosSection />,
-  metricas: <MetricasSection />,
+  metricas:  <MetricasSection />,
 }
 
 function DashboardContent() {

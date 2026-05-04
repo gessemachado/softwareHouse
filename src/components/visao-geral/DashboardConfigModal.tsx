@@ -4,7 +4,7 @@ import {
   ChevronRight, RotateCcw, Check, GripVertical,
 } from 'lucide-react'
 import {
-  useDashboardConfig, type SectionConfig,
+  useDashboardConfig, type SectionConfig, type CarouselOrder,
   CARD_LABELS,
 } from '../../contexts/DashboardConfigContext'
 
@@ -44,8 +44,10 @@ const CARD_INNER: Record<string, { id: string; label: string }[]> = {
   ],
 }
 
+const CAROUSEL_IDS = new Set(['c_desconto', 'c_gauge', 'c_debitos'])
+
 const SECTION_ICONS: Record<string, string> = {
-  cards: '🃏', vendas: '📊', cadastros: '👥', metricas: '📈',
+  carousel: '🎠', cards: '🃏', vendas: '📊', cadastros: '👥', metricas: '📈',
 }
 
 interface Props { onClose: () => void }
@@ -69,11 +71,13 @@ export function DashboardConfigModal({ onClose }: Props) {
     sections, setSections, resetSections,
     cardVis, applyCardVis, resetCardVis,
     cardOrder, setCardOrder, resetCardOrder,
+    carouselOrder, setCarouselOrder, resetCarouselOrder,
   } = useDashboardConfig()
 
-  const [draftSections, setDraftSections] = useState<SectionConfig[]>([...sections])
-  const [draftCardVis,  setDraftCardVis]  = useState<Record<string, boolean>>({ ...cardVis })
-  const [draftCardOrder, setDraftCardOrder] = useState<string[]>([...cardOrder])
+  const [draftSections,     setDraftSections]     = useState<SectionConfig[]>([...sections])
+  const [draftCardVis,      setDraftCardVis]       = useState<Record<string, boolean>>({ ...cardVis })
+  const [draftCardOrder,    setDraftCardOrder]     = useState<string[]>([...cardOrder])
+  const [draftCarouselOrder, setDraftCarouselOrder] = useState<CarouselOrder>(carouselOrder)
   const [selectedSection, setSelectedSection] = useState<string>(sections[0]?.id ?? '')
   const [expandedCards,   setExpandedCards]   = useState<Set<string>>(new Set())
 
@@ -132,17 +136,20 @@ export function DashboardConfigModal({ onClose }: Props) {
     resetSections()
     resetCardVis()
     resetCardOrder()
+    resetCarouselOrder()
     onClose()
   }
   function handleSave() {
     setSections(draftSections)
     applyCardVis(draftCardVis)
     setCardOrder(draftCardOrder)
+    setCarouselOrder(draftCarouselOrder)
     onClose()
   }
 
-  const selectedSec = draftSections.find(s => s.id === selectedSection)
-  const isCardsSection = selectedSection === 'cards'
+  const selectedSec      = draftSections.find(s => s.id === selectedSection)
+  const isCarouselSection = selectedSection === 'carousel'
+  const isCardsSection    = selectedSection === 'cards'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -211,9 +218,11 @@ export function DashboardConfigModal({ onClose }: Props) {
                 <div>
                   <p className="text-white text-sm font-bold">{selectedSec.label}</p>
                   <p className="text-[#555] text-[11px] mt-0.5">
-                    {isCardsSection
-                      ? 'Arraste para reordenar · toggle para ocultar'
-                      : 'Sem cards individuais'}
+                    {isCarouselSection
+                      ? 'Cards fixos — configure a ordenação'
+                      : isCardsSection
+                        ? 'Arraste para reordenar · toggle para ocultar'
+                        : 'Sem cards individuais'}
                   </p>
                 </div>
                 <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
@@ -224,20 +233,64 @@ export function DashboardConfigModal({ onClose }: Props) {
               </div>
             )}
 
-            {/* Cards section — draggable list */}
-            {isCardsSection ? (
+            {/* ── Carrossel — só ordenação ───────────────────────────── */}
+            {isCarouselSection ? (
+              <div className="rounded-xl border border-white/[0.07] overflow-hidden">
+                <div className="px-4 py-3 bg-white/[0.02] border-b border-white/[0.05]">
+                  <p className="text-[#999] text-[10px] font-semibold">Cards fixos</p>
+                  <p className="text-[#555] text-[10px] mt-0.5">
+                    Desconto Disponibilizado · Operação | Pedidos · Total de Débitos
+                  </p>
+                </div>
+                <div className="px-4 py-4">
+                  <p className="text-[#666] text-[10px] font-semibold tracking-widest uppercase mb-3">
+                    Ordenar por variação mensal
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => setDraftCarouselOrder('desc')}
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold border transition-all ${
+                        draftCarouselOrder === 'desc'
+                          ? 'bg-orange-500/15 border-orange-500/40 text-orange-400'
+                          : 'bg-transparent border-white/10 text-[#555] hover:border-white/20 hover:text-[#888]'
+                      }`}
+                    >
+                      <span className="text-base leading-none">↓</span>
+                      <span>Maior → Menor</span>
+                      <span className="text-[10px] opacity-60 ml-auto">mais positivo primeiro</span>
+                    </button>
+                    <button
+                      onClick={() => setDraftCarouselOrder('asc')}
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold border transition-all ${
+                        draftCarouselOrder === 'asc'
+                          ? 'bg-orange-500/15 border-orange-500/40 text-orange-400'
+                          : 'bg-transparent border-white/10 text-[#555] hover:border-white/20 hover:text-[#888]'
+                      }`}
+                    >
+                      <span className="text-base leading-none">↑</span>
+                      <span>Menor → Maior</span>
+                      <span className="text-[10px] opacity-60 ml-auto">mais negativo primeiro</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : isCardsSection ? (
               <div className="space-y-2">
-                {draftCardOrder.map((cardId, i) => {
+                {draftCardOrder.filter(id => !CAROUSEL_IDS.has(id)).map((cardId, filteredI) => {
+                  const realI      = draftCardOrder.indexOf(cardId)
+                  const filteredList = draftCardOrder.filter(id => !CAROUSEL_IDS.has(id))
+                  const isFirst    = filteredI === 0
+                  const isLast     = filteredI === filteredList.length - 1
                   const isExpanded = expandedCards.has(cardId)
                   const cardOn     = draftCardVis[cardId] !== false
                   const inner      = CARD_INNER[cardId] ?? []
-                  const isDragOver = dragOverIdx === i
+                  const isDragOver = dragOverIdx === realI
                   return (
                     <div key={cardId}
                       draggable
-                      onDragStart={() => handleDragStart(i)}
-                      onDragOver={e => handleDragOver(e, i)}
-                      onDrop={() => handleDrop(i)}
+                      onDragStart={() => handleDragStart(realI)}
+                      onDragOver={e => handleDragOver(e, realI)}
+                      onDrop={() => handleDrop(realI)}
                       onDragEnd={handleDragEnd}
                       className={`rounded-xl border overflow-hidden transition-all ${
                         isDragOver ? 'border-orange-500/50 bg-orange-500/5' : 'border-white/[0.07]'
@@ -245,7 +298,7 @@ export function DashboardConfigModal({ onClose }: Props) {
                       {/* Card row */}
                       <div className={`flex items-center gap-2 px-3 py-3 transition-colors ${cardOn ? 'bg-white/[0.03]' : 'bg-transparent'}`}>
                         {/* Position badge */}
-                        <span className="text-[#333] text-[10px] font-mono w-4 text-center shrink-0">{i + 1}</span>
+                        <span className="text-[#333] text-[10px] font-mono w-4 text-center shrink-0">{filteredI + 1}</span>
 
                         {/* Drag handle */}
                         <span className="text-[#333] hover:text-[#666] cursor-grab active:cursor-grabbing shrink-0">
@@ -264,11 +317,11 @@ export function DashboardConfigModal({ onClose }: Props) {
 
                         {/* Arrow controls */}
                         <div className="flex flex-col gap-0.5 shrink-0">
-                          <button onClick={() => moveCardUp(i)} disabled={i === 0}
+                          <button onClick={() => moveCardUp(realI)} disabled={isFirst}
                             className="w-4 h-3.5 flex items-center justify-center rounded text-[#444] hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
                             <ChevronUp size={9} />
                           </button>
-                          <button onClick={() => moveCardDown(i)} disabled={i === draftCardOrder.length - 1}
+                          <button onClick={() => moveCardDown(realI)} disabled={isLast}
                             className="w-4 h-3.5 flex items-center justify-center rounded text-[#444] hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
                             <ChevronDown size={9} />
                           </button>
