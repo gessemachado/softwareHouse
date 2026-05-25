@@ -31,9 +31,8 @@ export function MetricasSection() {
     <>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
       {/* Métricas de Vendas */}
-      <div className="rounded-xl border border-[#1a1a1a] bg-[#0d0d0d] overflow-hidden">
-        <div className="border-b border-[#292929] px-6 py-5"
-          style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)' }}>
+      <div className="rounded-xl border border-[#1a1a1a] bg-black overflow-hidden">
+        <div className="border-b border-[#292929] px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
               <TrendingUp size={18} className="text-blue-400" />
@@ -47,7 +46,7 @@ export function MetricasSection() {
 
         <div className="grid grid-cols-2 gap-4 p-5">
           {metricasCards.map((card) => (
-            <div key={card.label} className="relative rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/50 p-4">
+            <div key={card.label} className="relative rounded-xl border border-[rgba(41,41,41,0.5)] bg-black p-4">
               <button
                 onClick={() => setActiveChart(card.label)}
                 className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-lg border border-white/10 text-[#444] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2 py-1 text-[10px] font-semibold transition-colors"
@@ -73,9 +72,8 @@ export function MetricasSection() {
       </div>
 
       {/* Intermediações */}
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden">
-        <div className="border-b border-[#292929] px-6 py-5"
-          style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)' }}>
+      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden">
+        <div className="border-b border-[#292929] px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -91,7 +89,7 @@ export function MetricasSection() {
 
         <div className="grid grid-cols-2 gap-4 p-5">
           {/* Qtd de Intermediações */}
-          <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/50 p-4">
+          <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
@@ -122,7 +120,7 @@ export function MetricasSection() {
           </div>
 
           {/* Total de Intermediações */}
-          <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/50 p-4">
+          <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
@@ -153,7 +151,7 @@ export function MetricasSection() {
           </div>
 
           {/* Desconto Usado */}
-          <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/50 p-4">
+          <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">

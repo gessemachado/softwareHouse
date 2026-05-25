@@ -41,9 +41,8 @@ export function CadastrosSection() {
       {showComposicao && <ComposicaoClientesModal   onClose={() => setShowComposicao(false)} />}
 
       {/* Cadastros Ativos */}
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden flex flex-col">
-        <div className="border-b border-[#292929] px-5 py-4 flex items-center justify-between"
-          style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)' }}>
+      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden flex flex-col">
+        <div className="border-b border-[#292929] px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-green-500/10 flex items-center justify-center">
               <TrendingUp size={16} className="text-green-400" />
@@ -79,7 +78,7 @@ export function CadastrosSection() {
 
         <div className="flex-1 p-4 grid grid-cols-2 gap-3">
           {/* Cadastrados */}
-          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: '#000' }}>
             <div className="w-7 h-7 rounded-lg bg-orange-500/10 flex items-center justify-center mb-3">
               <TrendingUp size={13} className="text-orange-500" />
             </div>
@@ -96,7 +95,7 @@ export function CadastrosSection() {
           </div>
 
           {/* Perdidos */}
-          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: '#000' }}>
             <div className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center mb-3">
               <TrendingDown size={13} className="text-red-400" />
             </div>
@@ -122,7 +121,7 @@ export function CadastrosSection() {
           </div>
 
           {/* Recuperados */}
-          <div className="col-span-2 rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div className="col-span-2 rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: '#000' }}>
             <div className="w-7 h-7 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-3">
               <RefreshCw size={13} className="text-cyan-400" />
             </div>
@@ -150,7 +149,7 @@ export function CadastrosSection() {
       </div>
 
       {/* Composição dos Clientes */}
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 p-5">
+      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black p-5">
         <div className="flex items-center justify-between mb-0.5">
           <p className="text-white text-sm font-semibold">Composição dos clientes</p>
           <button

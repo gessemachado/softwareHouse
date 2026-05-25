@@ -29,10 +29,10 @@ export function CardGaugeOperacao() {
   ]
 
   return (
-    <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden h-full flex flex-col">
+    <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden h-full flex flex-col">
       {showGaugeHistorico && <OperacaoGaugeHistoricoModal onClose={() => setShowGaugeHistorico(false)} />}
       <div className="border-b border-[#292929] px-6 py-5"
-        style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)' }}>
+>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
@@ -67,10 +67,10 @@ export function CardGaugeOperacao() {
           </div>
         </div>
         <div className="flex-1 flex flex-col gap-2">
-          {vis('c_gauge.pedidos') && <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2">
+          {vis('c_gauge.pedidos') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2">
             <div className="flex items-center gap-1.5 mb-1">
               <span className="w-1.5 h-1.5 rounded-full bg-[#6b7280]" />
-              <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">
+              <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">
                 Pedidos | {op.pedido}
               </span>
             </div>
@@ -78,14 +78,14 @@ export function CardGaugeOperacao() {
               <span className="text-white text-xs font-bold">{fmtK(pedidosVal)}</span>
               <div className="flex items-center gap-1.5">
                 <TrendBadge cur={pedidosVal} prev={pedidosValPrev} />
-                <span className="text-[#666] text-[10px]">vs {fmtK(pedidosValPrev)}</span>
+                <span className="text-[#666] text-xs">vs {fmtK(pedidosValPrev)}</span>
               </div>
             </div>
           </div>}
           {vis('c_gauge.intermediacoes') && <div className="rounded-lg border border-green-500/20 bg-green-500/5 px-3 py-2">
             <div className="flex items-center gap-1.5 mb-1">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-              <span className="text-green-400 text-[10px] font-semibold tracking-widest uppercase">
+              <span className="text-green-400 text-xs font-semibold tracking-widest uppercase">
                 Interm. | {op.intermediacao}
               </span>
             </div>
@@ -93,30 +93,20 @@ export function CardGaugeOperacao() {
               <span className="text-white text-xs font-bold">{fmtK(intermedVal)}</span>
               <div className="flex items-center gap-1.5">
                 <TrendBadge cur={intermedVal} prev={intermedValPrev} />
-                <span className="text-[#666] text-[10px]">vs {fmtK(intermedValPrev)}</span>
+                <span className="text-[#666] text-xs">vs {fmtK(intermedValPrev)}</span>
               </div>
             </div>
-            <p className="text-[#555] text-[9px] mt-0.5">{convPct.toFixed(1)}% do total</p>
+            <p className="text-[#555] text-[10px] mt-0.5">{convPct.toFixed(1)}% do total</p>
           </div>}
           {vis('c_gauge.conversao') && <div className="rounded-lg border border-green-500/10 bg-green-500/5 px-3 py-2">
             <div className="flex items-center justify-between">
-              <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">Conversão</span>
+              <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Conversão</span>
               <div className="flex items-center gap-1.5">
                 <span className="text-green-400 text-xs font-bold font-mono">{convPct.toFixed(2)}%</span>
                 <TrendBadge cur={convPct} prev={convPctPrev} />
               </div>
             </div>
-            <p className="text-[#555] text-[9px] mt-0.5">vs {convPctPrev.toFixed(2)}% anterior</p>
-          </div>}
-          {vis('c_gauge.nao_conversao') && <div className="rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2">
-            <div className="flex items-center justify-between">
-              <span className="text-red-400 text-[10px] font-semibold tracking-widest uppercase">Não Converteu</span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-red-400 text-xs font-bold font-mono">{(100 - convPct).toFixed(2)}%</span>
-                <TrendBadge cur={100 - convPct} prev={100 - convPctPrev} />
-              </div>
-            </div>
-            <p className="text-[#555] text-[9px] mt-0.5">vs {(100 - convPctPrev).toFixed(2)}% anterior</p>
+            <p className="text-[#555] text-[10px] mt-0.5">vs {convPctPrev.toFixed(2)}% anterior</p>
           </div>}
         </div>
       </div>

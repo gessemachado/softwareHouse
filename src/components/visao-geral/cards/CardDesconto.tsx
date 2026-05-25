@@ -28,10 +28,10 @@ export function CardDesconto() {
   ]
 
   return (
-    <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden h-full flex flex-col">
+    <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden h-full flex flex-col">
       {showAbsorcao && <DescontoAbsorcaoModal onClose={() => setShowAbsorcao(false)} />}
       <div className="border-b border-[#292929] px-6 py-5"
-        style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)' }}>
+>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
@@ -64,7 +64,7 @@ export function CardDesconto() {
           </div>
         </div>
         <div className="flex-1 flex flex-col gap-2">
-          {vis('c_desconto.total') && <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
+          {vis('c_desconto.total') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
               <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Total Disponibilizado</span>
@@ -91,7 +91,7 @@ export function CardDesconto() {
             </div>
             <p className="text-[#555] text-[10px] mt-1">{absorcaoPct.toFixed(1)}% do total</p>
           </div>}
-          {vis('c_desconto.disponivel') && <div className="rounded-lg border border-[#1a1a1a] bg-[#0d0d0d]/50 px-3 py-2.5">
+          {vis('c_desconto.disponivel') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
               <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Disponível</span>

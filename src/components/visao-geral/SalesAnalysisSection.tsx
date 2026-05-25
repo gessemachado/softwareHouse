@@ -98,7 +98,7 @@ export function SalesAnalysisSection() {
   const diffLabel      = formatFull(metric, Math.abs(diff))
 
   return (
-    <div className="rounded-lg border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 p-6 mb-5">
+    <div className="rounded-lg border border-[rgba(41,41,41,0.5)] bg-black p-6 mb-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -116,14 +116,14 @@ export function SalesAnalysisSection() {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setShowDropdown(v => !v)}
-            className="flex items-center gap-2 border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/50 text-white px-4 py-2 rounded-lg text-sm hover:border-orange-500/40 transition-colors"
+            className="flex items-center gap-2 border border-[rgba(41,41,41,0.5)] bg-black text-white px-4 py-2 rounded-lg text-sm hover:border-orange-500/40 transition-colors"
           >
             {METRIC_LABELS[metric]}
             <ChevronDown size={14} className={`text-[#999] transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
           </button>
           {showDropdown && (
             <div className="absolute z-20 right-0 top-full mt-1 w-52 rounded-xl border border-[rgba(41,41,41,0.8)] overflow-hidden shadow-xl"
-              style={{ background: '#141414' }}>
+              style={{ background: '#000' }}>
               {METRICS.map(m => (
                 <button
                   key={m}
@@ -144,7 +144,7 @@ export function SalesAnalysisSection() {
 
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Left card */}
-        <div className="w-full sm:w-64 sm:shrink-0 border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/50 rounded-lg p-5">
+        <div className="w-full sm:w-64 sm:shrink-0 border border-[rgba(41,41,41,0.5)] bg-black rounded-lg p-5">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: 'linear-gradient(135deg, rgba(255,102,0,0.25) 0%, rgba(255,102,0,0.1) 100%)' }}>
