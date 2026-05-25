@@ -35,11 +35,11 @@
   }
 
   .btn-ghost {
-    @apply text-bh-muted hover:text-bh-text px-3 py-2 rounded transition-colors inline-flex items-center gap-2 text-sm cursor-pointer;
+    @apply text-bh-muted hover:text-bh-text hover:bg-bh-surface2 px-3 py-2 rounded transition-colors inline-flex items-center gap-2 text-sm cursor-pointer;
   }
 
   .input-bh {
-    @apply w-full bg-bh-surface2 border border-bh-border text-bh-text placeholder-bh-subtle rounded px-3 py-2 text-sm focus:outline-none focus:border-bh-primary transition-colors;
+    @apply w-full bg-bh-bg border border-bh-border text-bh-text placeholder-bh-subtle rounded px-3 py-2 text-sm focus:outline-none focus:border-bh-primary transition-colors;
   }
 
   .card-bh {

@@ -32,7 +32,7 @@ function SHDashboardContent({ sh }: { sh: SoftwareHouse }) {
       <TabNav />
 
       {/* Header SH */}
-      <div className="rounded-lg border border-orange-500/20 bg-[#0d0d0d]/80 p-4 sm:p-6 mb-5">
+      <div className="rounded-lg border border-bh-primary/20 bg-bh-bg/80 p-4 sm:p-6 mb-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -43,7 +43,7 @@ function SHDashboardContent({ sh }: { sh: SoftwareHouse }) {
             </button>
             <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: 'linear-gradient(135deg, rgba(255,102,0,0.2) 0%, rgba(255,102,0,0.1) 100%)' }}>
-              <Eye size={20} className="text-orange-500" />
+              <Eye size={20} className="text-bh-primary" />
             </div>
             <div>
               <h1 className="text-white text-2xl font-bold leading-tight">{sh.nome_fantasia}</h1>
@@ -52,7 +52,7 @@ function SHDashboardContent({ sh }: { sh: SoftwareHouse }) {
               </p>
             </div>
           </div>
-          <button className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg text-sm font-medium transition-colors">
+          <button className="flex items-center gap-2 bg-bh-primary hover:bg-bh-primary-hover text-white px-5 py-3 rounded-lg text-sm font-medium transition-colors">
             <Download size={14} />
             Exportar
           </button>
@@ -66,7 +66,7 @@ function SHDashboardContent({ sh }: { sh: SoftwareHouse }) {
       <div className="flex justify-end mb-4 -mt-1">
         <button
           onClick={() => setShowConfig(true)}
-          className="flex items-center gap-2 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-3 py-1.5 text-xs font-semibold transition-colors"
+          className="flex items-center gap-2 rounded-lg border border-white/10 text-[#555] hover:text-bh-primary hover:border-bh-primary/40 hover:bg-bh-primary/5 px-3 py-1.5 text-xs font-semibold transition-colors"
         >
           <Settings2 size={13} />
           Configurar dashboard

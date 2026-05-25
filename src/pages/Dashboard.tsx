@@ -115,7 +115,7 @@ export function Dashboard() {
             disabled={loading}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             style={{
-              background: '#f97316',
+              background: '#ff6600',
               color: '#fff',
               opacity: loading ? 0.6 : 1,
               cursor: loading ? 'not-allowed' : 'pointer',
