@@ -97,8 +97,7 @@ export function OperacaoGaugeSection() {
       {/* ── Card 1: Gauge Operação ─────────────────────────────────────────── */}
       {vis('c_gauge') && <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden">
         {/* Header */}
-        <div className="border-b border-[#292929] px-6 py-5"
-          
+        <div className="border-b border-[#292929] px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
@@ -191,8 +190,7 @@ export function OperacaoGaugeSection() {
       {/* ── Card 2: Tributação de Produtos ────────────────────────────────── */}
       {vis('c_tributacao') && <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden">
         {/* Header */}
-        <div className="border-b border-[#292929] px-6 py-5"
-          
+        <div className="border-b border-[#292929] px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
@@ -287,8 +285,7 @@ export function OperacaoGaugeSection() {
       {/* ── Card 3: Total de Débitos ──────────────────────────────────────── */}
       {vis('c_debitos') && <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden">
         {/* Header */}
-        <div className="border-b border-[#292929] px-6 py-5"
-          
+        <div className="border-b border-[#292929] px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center shrink-0">
