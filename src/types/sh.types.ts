@@ -160,6 +160,7 @@ export interface RelatorioRegistro {
   valor_taxa: number
   imposto: number
   valor_sh: number
+  valor_representante: number
 }
 
 export interface RelatorioFingerRegistro {

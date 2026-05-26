@@ -24,6 +24,7 @@ export function RelatorioFinanceiro() {
   const totalValorTaxa = registros.reduce((s, r) => s + r.valor_taxa, 0)
   const totalImposto = registros.reduce((s, r) => s + r.imposto, 0)
   const totalValorSH = registros.reduce((s, r) => s + r.valor_sh, 0)
+  const totalValorRepresentante = registros.reduce((s, r) => s + r.valor_representante, 0)
   const totalValorFinger = fingerRegistros.reduce((s, r) => s + r.valor_finger, 0)
 
   return (
@@ -144,6 +145,7 @@ export function RelatorioFinanceiro() {
                   <th>Valor R$</th>
                   <th>Imposto (20%) R$</th>
                   <th>Valor Software House R$</th>
+                  <th>Valor Representante R$</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,6 +173,7 @@ export function RelatorioFinanceiro() {
                     <td>{formatBRL(r.valor_taxa)}</td>
                     <td>{formatBRL(r.imposto)}</td>
                     <td>{formatBRL(r.valor_sh)}</td>
+                    <td>{formatBRL(r.valor_representante)}</td>
                   </tr>
                 ))}
                 {registros.length > 0 && (
@@ -179,6 +182,7 @@ export function RelatorioFinanceiro() {
                     <td className="font-bold text-bh-primary">{formatBRL(totalValorTaxa)}</td>
                     <td className="font-bold text-bh-primary">{formatBRL(totalImposto)}</td>
                     <td className="font-bold text-bh-primary">{formatBRL(totalValorSH)}</td>
+                    <td className="font-bold text-bh-primary">{formatBRL(totalValorRepresentante)}</td>
                   </tr>
                 )}
               </tbody>

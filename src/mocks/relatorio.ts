@@ -28,6 +28,7 @@ export const mockRelatorioRegistros: RelatorioRegistro[] = [
     valor_taxa: 82000,
     imposto: 16400,
     valor_sh: 52480,
+    valor_representante: 8200,
   },
   {
     id: 'rel-2',
@@ -42,6 +43,7 @@ export const mockRelatorioRegistros: RelatorioRegistro[] = [
     valor_taxa: 145000,
     imposto: 29000,
     valor_sh: 92800,
+    valor_representante: 14500,
   },
   {
     id: 'rel-3',
@@ -56,6 +58,7 @@ export const mockRelatorioRegistros: RelatorioRegistro[] = [
     valor_taxa: 68000,
     imposto: 13600,
     valor_sh: 43520,
+    valor_representante: 6800,
   },
   {
     id: 'rel-4',
@@ -70,6 +73,7 @@ export const mockRelatorioRegistros: RelatorioRegistro[] = [
     valor_taxa: 95000,
     imposto: 19000,
     valor_sh: 60800,
+    valor_representante: 9500,
   },
   {
     id: 'rel-5',
@@ -84,6 +88,7 @@ export const mockRelatorioRegistros: RelatorioRegistro[] = [
     valor_taxa: 57000,
     imposto: 11400,
     valor_sh: 36480,
+    valor_representante: 5700,
   },
   {
     id: 'rel-6',
@@ -98,6 +103,7 @@ export const mockRelatorioRegistros: RelatorioRegistro[] = [
     valor_taxa: 73000,
     imposto: 14600,
     valor_sh: 46720,
+    valor_representante: 7300,
   },
   {
     id: 'rel-7',
@@ -112,6 +118,7 @@ export const mockRelatorioRegistros: RelatorioRegistro[] = [
     valor_taxa: 104000,
     imposto: 20800,
     valor_sh: 66560,
+    valor_representante: 10400,
   },
   {
     id: 'rel-8',
@@ -126,6 +133,7 @@ export const mockRelatorioRegistros: RelatorioRegistro[] = [
     valor_taxa: 41500,
     imposto: 8300,
     valor_sh: 26560,
+    valor_representante: 4150,
   },
   {
     id: 'rel-9',
@@ -140,6 +148,7 @@ export const mockRelatorioRegistros: RelatorioRegistro[] = [
     valor_taxa: 182000,
     imposto: 36400,
     valor_sh: 116480,
+    valor_representante: 18200,
   },
 ]
 
