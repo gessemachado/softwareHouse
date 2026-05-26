@@ -1,15 +1,9 @@
 import { supabase } from '../../lib/supabase'
+import { mockRepresentantes } from '../../mocks/representantes'
 import type { Representante, RepresentanteForm } from '../../types/sh.types'
 
 export async function listRepresentantes(softwareHouseId: string): Promise<Representante[]> {
-  const { data, error } = await supabase
-    .from('representantes')
-    .select('*')
-    .eq('software_house_id', softwareHouseId)
-    .order('nome_completo', { ascending: true })
-
-  if (error) throw error
-  return data ?? []
+  return mockRepresentantes.filter(r => r.software_house_id === softwareHouseId)
 }
 
 export async function createRepresentante(

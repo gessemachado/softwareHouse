@@ -1,15 +1,9 @@
 import { supabase } from '../../lib/supabase'
+import { mockFingers } from '../../mocks/fingers'
 import type { Finger, FingerForm } from '../../types/sh.types'
 
 export async function listFingers(softwareHouseId: string): Promise<Finger[]> {
-  const { data, error } = await supabase
-    .from('fingers')
-    .select('*')
-    .eq('software_house_id', softwareHouseId)
-    .order('nome_completo', { ascending: true })
-
-  if (error) throw error
-  return data ?? []
+  return mockFingers.filter(f => f.software_house_id === softwareHouseId)
 }
 
 export async function createFinger(

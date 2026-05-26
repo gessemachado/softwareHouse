@@ -10,10 +10,10 @@ import { Step4Fingers } from '../components/wizard-steps/Step4Fingers'
 import { Step5Credenciados } from '../components/wizard-steps/Step5Credenciados'
 import { useWizardState } from '../hooks/useWizardState'
 import { getSoftwareHouseById, createSoftwareHouse, updateSoftwareHouse } from '../services/supabase/softwareHouseService'
-import { createRepresentantesLote } from '../services/supabase/representanteService'
-import { createFingersLote } from '../services/supabase/fingerService'
-import { createSHCredenciadosLote } from '../services/supabase/credenciadoService'
-import type { SoftwareHouse } from '../types/sh.types'
+import { listRepresentantes, createRepresentantesLote } from '../services/supabase/representanteService'
+import { listFingers, createFingersLote } from '../services/supabase/fingerService'
+import { listSHCredenciados, createSHCredenciadosLote } from '../services/supabase/credenciadoService'
+import type { SoftwareHouse, RepresentanteForm, FingerForm, CredenciadoVinculo } from '../types/sh.types'
 
 interface Props {
   mode: 'create' | 'edit'
@@ -28,6 +28,7 @@ export function SoftwareHouseWizard({ mode }: Props) {
     addRepresentante, updateRepresentante, removeRepresentante, advanceFromRepresentantes,
     addFinger, updateFinger, removeFinger, advanceFromFingers,
     addCredenciado, removeCredenciado,
+    initFromEdit,
     reset,
   } = useWizardState()
 
@@ -40,8 +41,31 @@ export function SoftwareHouseWizard({ mode }: Props) {
   useEffect(() => {
     if (mode !== 'edit' || !id) return
     setLoadingEdit(true)
-    getSoftwareHouseById(id)
-      .then(sh => setExistingSH(sh))
+    Promise.all([
+      getSoftwareHouseById(id),
+      listRepresentantes(id),
+      listFingers(id),
+      listSHCredenciados(id),
+    ])
+      .then(([sh, reps, fings, shCreds]) => {
+        setExistingSH(sh)
+
+        const repForms: RepresentanteForm[] = reps.map(
+          ({ id: _id, software_house_id: _shId, data_vinculo: _dv, ...rest }) => rest
+        )
+        const fingerForms: FingerForm[] = fings.map(
+          ({ id: _id, software_house_id: _shId, data_vinculo: _dv, ...rest }) => rest
+        )
+        const credVinculos: CredenciadoVinculo[] = shCreds
+          .map(sc => ({
+            credenciado_id: sc.credenciado_id,
+            representante_idx: reps.findIndex(r => r.id === sc.representante_id),
+            finger_idx: fings.findIndex(f => f.id === sc.finger_id),
+          }))
+          .filter(v => v.representante_idx >= 0 && v.finger_idx >= 0)
+
+        initFromEdit(repForms, fingerForms, credVinculos)
+      })
       .catch(() => showToast('error', 'Erro ao carregar Software House'))
       .finally(() => setLoadingEdit(false))
   }, [mode, id])

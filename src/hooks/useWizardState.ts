@@ -100,6 +100,20 @@ export function useWizardState() {
     setState(s => ({ ...s, credenciados: s.credenciados.filter(c => c.credenciado_id !== credenciado_id) }))
   }
 
+  function initFromEdit(
+    representantes: RepresentanteForm[],
+    fingers: FingerForm[],
+    credenciados: CredenciadoVinculo[]
+  ) {
+    setState(s => ({
+      ...s,
+      representantes,
+      fingers,
+      credenciados,
+      completedSteps: [1, 2, 3, 4, 5],
+    }))
+  }
+
   function reset() {
     setState(initialState)
   }
@@ -119,6 +133,7 @@ export function useWizardState() {
     advanceFromFingers,
     addCredenciado,
     removeCredenciado,
+    initFromEdit,
     reset,
   }
 }
