@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect } from 'react'
+import { Plus } from 'lucide-react'
 
 interface Props {
   open: boolean
@@ -28,12 +29,12 @@ export function Modal({ open, onClose, title, subtitle, children, width = 'max-w
       />
 
       {/* Panel */}
-      <div className={`relative z-10 w-full ${width} bg-bh-surface border border-bh-border rounded-lg shadow-2xl`}>
+      <div className={`relative z-10 w-full ${width} bg-bh-surface border border-bh-border rounded-lg shadow-2xl overflow-hidden`}>
         {/* Header */}
-        <div className="flex items-start justify-between p-5 border-b border-bh-border bg-bh-primary/10 rounded-t-lg">
+        <div className="flex items-start justify-between px-5 py-4 border-b border-bh-border bg-bh-surface rounded-t-lg">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-bh-primary flex items-center justify-center text-white text-sm">
-              ✦
+            <div className="w-9 h-9 rounded-full bg-bh-primary flex items-center justify-center text-white flex-shrink-0">
+              <Plus size={18} />
             </div>
             <div>
               <h3 className="text-bh-text font-semibold text-sm">{title}</h3>
@@ -42,7 +43,7 @@ export function Modal({ open, onClose, title, subtitle, children, width = 'max-w
           </div>
           <button
             onClick={onClose}
-            className="text-bh-muted hover:text-bh-text transition-colors text-lg leading-none ml-4"
+            className="text-bh-muted hover:text-bh-text transition-colors text-xl leading-none ml-4 mt-0.5"
           >
             ×
           </button>
