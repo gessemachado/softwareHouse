@@ -1,95 +1,66 @@
-import { useState, useEffect } from 'react'
-import type {
-  RelatorioFilters,
-  RelatorioRegistro,
-  RelatorioTotais,
-  RelatorioFingerRegistro,
-  RelatorioFingerTotais,
-} from '../types/sh.types'
-import { fetchRelatorioSH, fetchRelatorioFingers } from '../services/supabase/relatorioService'
+import { useState, useMemo } from 'react'
+import type { RelatorioFilters, RelatorioRegistro, RelatorioTotais, RelatorioFingerRegistro, RelatorioFingerTotais } from '../types/sh.types'
+import { mockRelatorioRegistros, mockRelatorioTotais, mockRelatorioFingerRegistros, mockRelatorioFingerTotais } from '../mocks/relatorio'
 
 const emptyFilters: RelatorioFilters = { search: '', grupo_economico: '', mes_ano: '' }
-const emptyTotais: RelatorioTotais = { valor_taxa: 0, imposto: 0, valor_sh: 0, variacao_pct: 0 }
-const emptyFingerTotais: RelatorioFingerTotais = {
-  valor_total_fingers: 0, valor_medio_porcentagem: 0, qtd_fingers: 0, variacao_pct: 0,
+
+function applyRelatorioFilter(list: RelatorioRegistro[], f: RelatorioFilters) {
+  let r = [...list]
+  if (f.search) {
+    const q = f.search.toLowerCase()
+    r = r.filter(x =>
+      x.software_house.toLowerCase().includes(q) ||
+      x.credenciado.toLowerCase().includes(q) ||
+      x.cnpj_sh.includes(q) ||
+      x.representante.toLowerCase().includes(q)
+    )
+  }
+  if (f.mes_ano) r = r.filter(x => x.periodo.includes(f.mes_ano!))
+  return r
+}
+
+function applyFingerFilter(list: RelatorioFingerRegistro[], f: RelatorioFilters) {
+  let r = [...list]
+  if (f.search) {
+    const q = f.search.toLowerCase()
+    r = r.filter(x =>
+      x.finger.toLowerCase().includes(q) ||
+      x.software_house.toLowerCase().includes(q) ||
+      x.credenciado.toLowerCase().includes(q) ||
+      x.cpf_finger.includes(q)
+    )
+  }
+  if (f.mes_ano) r = r.filter(x => x.periodo.includes(f.mes_ano!))
+  return r
 }
 
 export function useRelatorio() {
-  // ── SH ──────────────────────────────────────────────────────────────────────
   const [filters, setFilters] = useState<RelatorioFilters>(emptyFilters)
   const [appliedFilters, setAppliedFilters] = useState<RelatorioFilters>(emptyFilters)
-  const [registros, setRegistros] = useState<RelatorioRegistro[]>([])
-  const [totais, setTotais] = useState<RelatorioTotais>(emptyTotais)
   const [shPage, setShPage] = useState(1)
   const shPageSize = 20
-  const [shTotal, setShTotal] = useState(0)
-  const [loadingSH, setLoadingSH] = useState(false)
 
-  useEffect(() => {
-    let cancelled = false
-    setLoadingSH(true)
-    fetchRelatorioSH(appliedFilters, { page: shPage, pageSize: shPageSize })
-      .then(result => {
-        if (cancelled) return
-        setRegistros(result.data)
-        setTotais(result.totais)
-        setShTotal(result.total)
-      })
-      .catch(console.error)
-      .finally(() => { if (!cancelled) setLoadingSH(false) })
-    return () => { cancelled = true }
-  }, [appliedFilters, shPage])
+  const shFiltered = useMemo(() => applyRelatorioFilter(mockRelatorioRegistros, appliedFilters), [appliedFilters])
+  const registros = useMemo(() => shFiltered.slice((shPage - 1) * shPageSize, shPage * shPageSize), [shFiltered, shPage])
+  const totais: RelatorioTotais = mockRelatorioTotais
 
-  function applyFilters() {
-    setAppliedFilters({ ...filters })
-    setShPage(1)
-  }
-  function clearFilters() {
-    setFilters(emptyFilters)
-    setAppliedFilters(emptyFilters)
-    setShPage(1)
-  }
-
-  // ── Fingers ─────────────────────────────────────────────────────────────────
   const [fingerFilters, setFingerFilters] = useState<RelatorioFilters>(emptyFilters)
   const [appliedFingerFilters, setAppliedFingerFilters] = useState<RelatorioFilters>(emptyFilters)
-  const [fingerRegistros, setFingerRegistros] = useState<RelatorioFingerRegistro[]>([])
-  const [fingerTotais, setFingerTotais] = useState<RelatorioFingerTotais>(emptyFingerTotais)
   const [fingerPage, setFingerPage] = useState(1)
   const fingerPageSize = 20
-  const [fingerTotal, setFingerTotal] = useState(0)
-  const [loadingFinger, setLoadingFinger] = useState(false)
 
-  useEffect(() => {
-    let cancelled = false
-    setLoadingFinger(true)
-    fetchRelatorioFingers(appliedFingerFilters, { page: fingerPage, pageSize: fingerPageSize })
-      .then(result => {
-        if (cancelled) return
-        setFingerRegistros(result.data)
-        setFingerTotais(result.totais)
-        setFingerTotal(result.total)
-      })
-      .catch(console.error)
-      .finally(() => { if (!cancelled) setLoadingFinger(false) })
-    return () => { cancelled = true }
-  }, [appliedFingerFilters, fingerPage])
+  const fingerFiltered = useMemo(() => applyFingerFilter(mockRelatorioFingerRegistros, appliedFingerFilters), [appliedFingerFilters])
+  const fingerRegistros = useMemo(() => fingerFiltered.slice((fingerPage - 1) * fingerPageSize, fingerPage * fingerPageSize), [fingerFiltered, fingerPage])
+  const fingerTotais: RelatorioFingerTotais = mockRelatorioFingerTotais
 
-  function applyFingerFilters() {
-    setAppliedFingerFilters({ ...fingerFilters })
-    setFingerPage(1)
-  }
-  function clearFingerFilters() {
-    setFingerFilters(emptyFilters)
-    setAppliedFingerFilters(emptyFilters)
-    setFingerPage(1)
-  }
+  function applyFilters() { setAppliedFilters({ ...filters }); setShPage(1) }
+  function clearFilters() { setFilters(emptyFilters); setAppliedFilters(emptyFilters); setShPage(1) }
+  function applyFingerFilters() { setAppliedFingerFilters({ ...fingerFilters }); setFingerPage(1) }
+  function clearFingerFilters() { setFingerFilters(emptyFilters); setAppliedFingerFilters(emptyFilters); setFingerPage(1) }
 
-  // ── Export ──────────────────────────────────────────────────────────────────
   function exportarCSV(tab: 'sh' | 'finger') {
     let headers: string[]
     let rows: string[][]
-
     if (tab === 'sh') {
       headers = ['Software House','CNPJ SH','Credenciado','CNPJ Credenciado','Representante','Período','Data Vínculo','Prazo','Valor R$','Imposto (20%) R$','Valor SH R$']
       rows = registros.map(r => [r.software_house,r.cnpj_sh,r.credenciado,r.cnpj_credenciado,r.representante,r.periodo,r.data_vinculo,r.prazo,String(r.valor_taxa),String(r.imposto),String(r.valor_sh)])
@@ -97,7 +68,6 @@ export function useRelatorio() {
       headers = ['Finger','CPF','Software House','CNPJ SH','Credenciado','CNPJ Credenciado','Porcentagem','Valor Finger','Período','Data']
       rows = fingerRegistros.map(r => [r.finger,r.cpf_finger,r.software_house,r.cnpj_sh,r.credenciado,r.cnpj_credenciado,`${r.porcentagem}%`,String(r.valor_finger),r.periodo,r.data])
     }
-
     const csv = [headers, ...rows].map(row => row.join(';')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
@@ -109,13 +79,13 @@ export function useRelatorio() {
   }
 
   return {
-    totais, registros, loadingSH,
+    totais, registros, loadingSH: false,
     filters, setFilters, applyFilters, clearFilters,
-    pagination: { page: shPage, pageSize: shPageSize, total: shTotal },
+    pagination: { page: shPage, pageSize: shPageSize, total: shFiltered.length },
     setPage: setShPage,
-    fingerTotais, fingerRegistros, loadingFinger,
+    fingerTotais, fingerRegistros, loadingFinger: false,
     fingerFilters, setFingerFilters, applyFingerFilters, clearFingerFilters,
-    fingerPagination: { page: fingerPage, pageSize: fingerPageSize, total: fingerTotal },
+    fingerPagination: { page: fingerPage, pageSize: fingerPageSize, total: fingerFiltered.length },
     setFingerPage,
     exportarCSV,
   }

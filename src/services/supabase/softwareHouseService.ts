@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabase'
+import { mockSoftwareHouses } from '../../mocks/softwareHouses'
 import type {
   SoftwareHouse,
   SHFilters,
@@ -15,53 +16,30 @@ export async function listSoftwareHouses(
 ): Promise<{ data: SoftwareHouse[]; total: number }> {
   const { page, pageSize } = pagination
   const from = (page - 1) * pageSize
-  const to = from + pageSize - 1
-
-  let query = supabase
-    .from('software_houses')
-    .select(
-      `
-      *,
-      qtd_representantes:representantes(count),
-      qtd_lojas_vinculadas:sh_credenciados(count)
-    `,
-      { count: 'exact' }
-    )
-    .order('nome_fantasia', { ascending: true })
-    .range(from, to)
-
+  let list = [...mockSoftwareHouses]
   if (filters.search) {
-    query = query.or(
-      `nome_fantasia.ilike.%${filters.search}%,razao_social.ilike.%${filters.search}%,cnpj.ilike.%${filters.search}%`
+    const q = filters.search.toLowerCase()
+    list = list.filter(sh =>
+      sh.nome_fantasia.toLowerCase().includes(q) ||
+      sh.razao_social.toLowerCase().includes(q) ||
+      sh.cnpj.includes(q)
     )
   }
-
-  if (filters.status) {
-    query = query.eq('status', filters.status)
-  }
-
-  const { data, error, count } = await query
-
-  if (error) throw error
-
-  const mapped = (data ?? []).map((row: any) => ({
-    ...row,
-    qtd_representantes: row.qtd_representantes?.[0]?.count ?? 0,
-    qtd_lojas_vinculadas: row.qtd_lojas_vinculadas?.[0]?.count ?? 0,
-  }))
-
-  return { data: mapped, total: count ?? 0 }
+  if (filters.status) list = list.filter(sh => sh.status === filters.status)
+  return { data: list.slice(from, from + pageSize), total: list.length }
 }
 
 // ─── Get by ID ────────────────────────────────────────────────────────────────
 
 export async function getSoftwareHouseById(id: string): Promise<SoftwareHouse> {
+  const found = mockSoftwareHouses.find(sh => sh.id === id)
+  if (found) return found
+  // fallback Supabase
   const { data, error } = await supabase
     .from('software_houses')
     .select('*')
     .eq('id', id)
     .single()
-
   if (error) throw error
   return data
 }

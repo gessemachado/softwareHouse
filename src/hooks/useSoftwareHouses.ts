@@ -1,39 +1,34 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import type { SoftwareHouse, SHFilters, PaginationState } from '../types/sh.types'
-import {
-  listSoftwareHouses,
-  toggleSoftwareHouseStatus,
-  deleteSoftwareHouse,
-} from '../services/supabase/softwareHouseService'
+import { mockSoftwareHouses } from '../mocks/softwareHouses'
 
 export function useSoftwareHouses() {
-  const [data, setData] = useState<SoftwareHouse[]>([])
-  const [total, setTotal] = useState(0)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
   const [filters, setFilters] = useState<SHFilters>({ search: '', status: '' })
   const [appliedFilters, setAppliedFilters] = useState<SHFilters>({ search: '', status: '' })
   const [pagination, setPagination] = useState<PaginationState>({ page: 1, pageSize: 10, total: 0 })
 
-  const fetch = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const result = await listSoftwareHouses(appliedFilters, {
-        page: pagination.page,
-        pageSize: pagination.pageSize,
-      })
-      setData(result.data)
-      setTotal(result.total)
-    } catch (e: any) {
-      setError(e.message ?? 'Erro ao carregar software houses')
-    } finally {
-      setLoading(false)
+  const filtered = useMemo(() => {
+    let list = [...mockSoftwareHouses]
+    if (appliedFilters.search) {
+      const q = appliedFilters.search.toLowerCase()
+      list = list.filter(sh =>
+        sh.nome_fantasia.toLowerCase().includes(q) ||
+        sh.razao_social.toLowerCase().includes(q) ||
+        sh.cnpj.includes(q) ||
+        sh.municipio.toLowerCase().includes(q)
+      )
     }
-  }, [appliedFilters, pagination.page, pagination.pageSize])
+    if (appliedFilters.status) {
+      list = list.filter(sh => sh.status === appliedFilters.status)
+    }
+    return list
+  }, [appliedFilters])
 
-  useEffect(() => { fetch() }, [fetch])
+  const total = filtered.length
+  const data: SoftwareHouse[] = useMemo(() => {
+    const from = (pagination.page - 1) * pagination.pageSize
+    return filtered.slice(from, from + pagination.pageSize)
+  }, [filtered, pagination.page, pagination.pageSize])
 
   function applyFilters() {
     setAppliedFilters({ ...filters })
@@ -47,29 +42,19 @@ export function useSoftwareHouses() {
     setPagination(p => ({ ...p, page: 1 }))
   }
 
-  async function toggleStatus(id: string, status: 'ativa' | 'inativa') {
-    await toggleSoftwareHouseStatus(id, status)
-    await fetch()
-  }
-
-  async function remove(id: string) {
-    await deleteSoftwareHouse(id)
-    await fetch()
-  }
-
   return {
     data,
     total,
-    loading,
-    error,
+    loading: false,
+    error: null,
     filters,
     setFilters,
     applyFilters,
     clearFilters,
     pagination: { ...pagination, total },
     setPage: (page: number) => setPagination(p => ({ ...p, page })),
-    reload: fetch,
-    toggleStatus,
-    remove,
+    reload: () => {},
+    toggleStatus: async () => {},
+    remove: async () => {},
   }
 }
