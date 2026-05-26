@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { User, Mail, Phone, CreditCard, Percent, MapPin, Globe, Save, Calendar, Clock } from 'lucide-react'
+import { Fingerprint, User, Mail, Phone, CreditCard, Percent, MapPin, Globe, Save, Calendar, Clock } from 'lucide-react'
 import { Modal } from '../ui/Modal'
 import type { FingerForm } from '../../types/sh.types'
 
@@ -29,11 +29,22 @@ interface Props {
   defaultValues?: Partial<FingerForm>
 }
 
-function LabelIcon({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) {
+function Field({ icon: Icon, label, required, children, error }: {
+  icon: React.ElementType
+  label: string
+  required?: boolean
+  children: React.ReactNode
+  error?: string
+}) {
   return (
-    <label className="label-bh flex items-center gap-1.5">
-      <Icon size={12} className="text-bh-primary" /> {children}
-    </label>
+    <div>
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <Icon size={13} className="text-bh-primary" />
+        <span className="text-sm text-bh-muted">{label}{required && <span className="text-bh-primary ml-0.5">*</span>}</span>
+      </div>
+      {children}
+      {error && <p className="error-msg">{error}</p>}
+    </div>
   )
 }
 
@@ -50,45 +61,53 @@ export function ModalFinger({ open, onClose, onSave, defaultValues }: Props) {
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Adicionar Novo Finger" subtitle="Preencha os dados do finger">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-        <div>
-          <LabelIcon icon={User}>Nome Completo <span className="text-bh-primary">*</span></LabelIcon>
-          <input className="input-bh" placeholder="Digite o nome completo" {...register('nome_completo')} />
-          {errors.nome_completo && <p className="error-msg">{errors.nome_completo.message}</p>}
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <LabelIcon icon={Mail}>E-mail <span className="text-bh-primary">*</span></LabelIcon>
-            <input className="input-bh" type="email" placeholder="exemplo@email.com" {...register('email')} />
-            {errors.email && <p className="error-msg">{errors.email.message}</p>}
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Adicionar Novo Finger"
+      subtitle="Preencha os dados do finger"
+      icon={<Fingerprint size={22} />}
+      footer={
+        <>
+          <span className="text-xs text-bh-subtle">Campos marcados com * são obrigatórios.</span>
+          <div className="flex gap-2">
+            <button type="button" onClick={onClose} className="btn-ghost">Cancelar</button>
+            <button type="submit" form="form-finger" className="btn-primary">
+              <Save size={14} /> Salvar Finger
+            </button>
           </div>
-          <div>
-            <LabelIcon icon={Phone}>Telefone <span className="text-bh-primary">*</span></LabelIcon>
+        </>
+      }
+    >
+      <form id="form-finger" onSubmit={handleSubmit(onSubmit)} className="contents">
+        <Field icon={User} label="Nome Completo" required error={errors.nome_completo?.message}>
+          <input className="input-bh" placeholder="Digite o nome completo" {...register('nome_completo')} />
+        </Field>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Field icon={Mail} label="E-mail" required error={errors.email?.message}>
+            <input className="input-bh" type="email" placeholder="exemplo@email.com" {...register('email')} />
+          </Field>
+          <Field icon={Phone} label="Telefone" required error={errors.telefone?.message}>
             <input
               className="input-bh"
               placeholder="(00) 00000-0000"
               {...register('telefone')}
               onChange={e => setValue('telefone', fmtTel(e.target.value))}
             />
-            {errors.telefone && <p className="error-msg">{errors.telefone.message}</p>}
-          </div>
+          </Field>
         </div>
 
-        <div>
-          <LabelIcon icon={CreditCard}>CPF <span className="text-bh-primary">*</span></LabelIcon>
+        <Field icon={CreditCard} label="CPF" required error={errors.cpf?.message}>
           <input
             className="input-bh"
             placeholder="000.000.000-00"
             {...register('cpf')}
             onChange={e => setValue('cpf', fmtCPF(e.target.value))}
           />
-          {errors.cpf && <p className="error-msg">{errors.cpf.message}</p>}
-        </div>
+        </Field>
 
-        <div>
-          <LabelIcon icon={Percent}>Porcentagem <span className="text-bh-primary">*</span></LabelIcon>
+        <Field icon={Percent} label="Porcentagem" required error={errors.porcentagem?.message}>
           <div className="relative">
             <input
               type="number"
@@ -99,21 +118,13 @@ export function ModalFinger({ open, onClose, onSave, defaultValues }: Props) {
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-bh-muted text-sm">%</span>
           </div>
-          {errors.porcentagem && <p className="error-msg">{errors.porcentagem.message}</p>}
-        </div>
+        </Field>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <LabelIcon icon={Calendar}>Data de Ativação</LabelIcon>
-            <input
-              type="date"
-              className="input-bh"
-              {...register('data_ativacao')}
-            />
-            {errors.data_ativacao && <p className="error-msg">{errors.data_ativacao.message}</p>}
-          </div>
-          <div>
-            <LabelIcon icon={Clock}>Prazo (meses)</LabelIcon>
+        <div className="grid grid-cols-2 gap-4">
+          <Field icon={Calendar} label="Data de Ativação" error={errors.data_ativacao?.message}>
+            <input type="date" className="input-bh" {...register('data_ativacao')} />
+          </Field>
+          <Field icon={Clock} label="Prazo (meses)" error={errors.prazo_meses?.message}>
             <div className="relative">
               <input
                 type="number"
@@ -125,31 +136,19 @@ export function ModalFinger({ open, onClose, onSave, defaultValues }: Props) {
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-bh-muted text-xs">meses</span>
             </div>
-            {errors.prazo_meses && <p className="error-msg">{errors.prazo_meses.message}</p>}
-          </div>
+          </Field>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <LabelIcon icon={MapPin}>Cidade</LabelIcon>
+        <div className="grid grid-cols-2 gap-4">
+          <Field icon={MapPin} label="Cidade">
             <input className="input-bh" placeholder="Nome da cidade" {...register('cidade')} />
-          </div>
-          <div>
-            <LabelIcon icon={Globe}>Estado</LabelIcon>
+          </Field>
+          <Field icon={Globe} label="Estado">
             <select className="input-bh" {...register('estado')}>
               <option value="">Selecione</option>
               {ESTADOS.map(uf => <option key={uf} value={uf}>{uf}</option>)}
             </select>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 bg-bh-primary/5 border border-bh-primary/20 rounded p-3 mt-2">
-          <span className="text-xs text-bh-muted">Os campos marcados com * são obrigatórios.</span>
-        </div>
-
-        <div className="flex items-center justify-end gap-3 pt-2">
-          <button type="button" onClick={onClose} className="btn-ghost">Cancelar</button>
-          <button type="submit" className="btn-primary"><Save size={14} /> Salvar</button>
+          </Field>
         </div>
       </form>
     </Modal>

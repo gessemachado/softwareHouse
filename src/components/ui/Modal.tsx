@@ -1,16 +1,17 @@
 import { type ReactNode, useEffect } from 'react'
-import { Plus } from 'lucide-react'
+import { X } from 'lucide-react'
 
 interface Props {
   open: boolean
   onClose: () => void
   title: string
   subtitle?: string
+  icon?: ReactNode
+  footer?: ReactNode
   children: ReactNode
-  width?: string
 }
 
-export function Modal({ open, onClose, title, subtitle, children, width = 'max-w-lg' }: Props) {
+export function Modal({ open, onClose, title, subtitle, icon, footer, children }: Props) {
   useEffect(() => {
     if (!open) return
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -21,38 +22,41 @@ export function Modal({ open, onClose, title, subtitle, children, width = 'max-w
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50">
       {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/65 backdrop-blur-md" onClick={onClose} />
 
-      {/* Panel */}
-      <div className={`relative z-10 w-full ${width} bg-bh-surface border border-bh-border rounded-lg shadow-2xl overflow-hidden`}>
+      {/* Dialog — DS pattern: inset 64px, flex column */}
+      <div className="absolute inset-16 bg-bh-surface border border-bh-border rounded-lg shadow-2xl flex flex-col overflow-hidden">
+
         {/* Header */}
-        <div className="flex items-start justify-between px-5 py-4 border-b border-bh-border bg-bh-surface rounded-t-lg">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-bh-primary flex items-center justify-center text-white flex-shrink-0">
-              <Plus size={18} />
-            </div>
+        <div className="flex-shrink-0 border-b border-bh-border px-6 py-5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            {icon && <div className="text-bh-primary flex-shrink-0">{icon}</div>}
             <div>
-              <h3 className="text-bh-text font-semibold text-sm">{title}</h3>
-              {subtitle && <p className="text-bh-muted text-xs mt-0.5">{subtitle}</p>}
+              <h3 className="text-xl font-bold text-bh-text leading-7">{title}</h3>
+              {subtitle && <p className="text-bh-muted text-sm mt-1">{subtitle}</p>}
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-bh-muted hover:text-bh-text transition-colors text-xl leading-none ml-4 mt-0.5"
+            className="w-9 h-9 rounded-lg border border-bh-border bg-transparent flex items-center justify-center text-bh-subtle hover:text-bh-text hover:bg-white/5 hover:border-white/20 transition-colors flex-shrink-0"
           >
-            ×
+            <X size={18} />
           </button>
         </div>
 
-        {/* Body */}
-        <div className="p-5">
+        {/* Body — scrollable */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 flex flex-col gap-4">
           {children}
         </div>
+
+        {/* Footer */}
+        {footer && (
+          <div className="flex-shrink-0 border-t border-bh-border px-6 py-3.5 flex items-center justify-between bg-bh-surface">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   )

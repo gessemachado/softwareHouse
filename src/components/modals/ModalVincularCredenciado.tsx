@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { UserRound, Fingerprint, Check } from 'lucide-react'
+import { UserRound, Fingerprint, Link2, Check } from 'lucide-react'
 import { Modal } from '../ui/Modal'
 import type { Credenciado, RepresentanteForm, FingerForm } from '../../types/sh.types'
 
@@ -27,8 +27,29 @@ export function ModalVincularCredenciado({ open, onClose, credenciado, represent
   if (!credenciado) return null
 
   return (
-    <Modal open={open} onClose={onClose} title="Vincular Credenciado" subtitle="Selecione o representante e finger para vincular" width="max-w-xl">
-      <div className="space-y-4">
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Vincular Credenciado"
+      subtitle="Selecione o representante e finger para vincular"
+      icon={<Link2 size={22} />}
+      footer={
+        <>
+          <span className="text-xs text-bh-subtle">Selecione representante e finger para confirmar.</span>
+          <div className="flex gap-2">
+            <button onClick={onClose} className="btn-ghost">Cancelar</button>
+            <button
+              onClick={handleConfirm}
+              disabled={selectedRep === null || selectedFinger === null}
+              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Check size={14} /> Confirmar Vínculo
+            </button>
+          </div>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-4">
         {/* Credenciado selecionado */}
         <div className="bg-bh-surface2 border border-bh-border rounded p-3">
           <p className="text-bh-muted text-xs mb-1">Credenciado Selecionado</p>
@@ -117,17 +138,6 @@ export function ModalVincularCredenciado({ open, onClose, credenciado, represent
           )}
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center justify-end gap-3 pt-2 border-t border-bh-border">
-          <button onClick={onClose} className="btn-ghost">Cancelar</button>
-          <button
-            onClick={handleConfirm}
-            disabled={selectedRep === null || selectedFinger === null}
-            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Check size={14} /> Confirmar Vínculo
-          </button>
-        </div>
       </div>
     </Modal>
   )
