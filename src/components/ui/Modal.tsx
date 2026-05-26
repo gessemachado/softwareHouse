@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect } from 'react'
-import { X } from 'lucide-react'
+import { type ReactNode, useEffect, useState } from 'react'
+import { X, Maximize2, Minimize2 } from 'lucide-react'
 
 interface Props {
   open: boolean
@@ -12,8 +12,10 @@ interface Props {
 }
 
 export function Modal({ open, onClose, title, subtitle, icon, footer, children }: Props) {
+  const [expanded, setExpanded] = useState(false)
+
   useEffect(() => {
-    if (!open) return
+    if (!open) { setExpanded(false); return }
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
@@ -26,8 +28,10 @@ export function Modal({ open, onClose, title, subtitle, icon, footer, children }
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/65 backdrop-blur-md" onClick={onClose} />
 
-      {/* Dialog — DS pattern: inset 64px, flex column */}
-      <div className="absolute inset-16 bg-bh-surface border border-bh-border rounded-lg shadow-2xl flex flex-col overflow-hidden">
+      {/* Dialog */}
+      <div className={`absolute bg-bh-surface border border-bh-border shadow-2xl flex flex-col overflow-hidden transition-[inset,border-radius] duration-250 ease-[cubic-bezier(.16,1,.3,1)] ${
+        expanded ? 'inset-0 rounded-none' : 'inset-16 rounded-lg'
+      }`}>
 
         {/* Header */}
         <div className="flex-shrink-0 border-b border-bh-border px-6 py-5 flex items-center justify-between gap-4">
@@ -38,12 +42,21 @@ export function Modal({ open, onClose, title, subtitle, icon, footer, children }
               {subtitle && <p className="text-bh-muted text-sm mt-1">{subtitle}</p>}
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="w-9 h-9 rounded-lg border border-bh-border bg-transparent flex items-center justify-center text-bh-subtle hover:text-bh-text hover:bg-white/5 hover:border-white/20 transition-colors flex-shrink-0"
-          >
-            <X size={18} />
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => setExpanded(e => !e)}
+              className="w-9 h-9 rounded-lg border border-bh-border bg-transparent flex items-center justify-center text-bh-subtle hover:text-bh-text hover:bg-white/5 hover:border-white/20 transition-colors"
+              title={expanded ? 'Recolher' : 'Expandir'}
+            >
+              {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+            </button>
+            <button
+              onClick={onClose}
+              className="w-9 h-9 rounded-lg border border-bh-border bg-transparent flex items-center justify-center text-bh-subtle hover:text-bh-text hover:bg-white/5 hover:border-white/20 transition-colors"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Body — scrollable */}
