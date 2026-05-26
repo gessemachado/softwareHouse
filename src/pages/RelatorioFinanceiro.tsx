@@ -157,7 +157,14 @@ export function RelatorioFinanceiro() {
                       <p>{r.credenciado}</p>
                       <p className="text-bh-muted text-xs">{r.cnpj_credenciado}</p>
                     </td>
-                    <td>{r.representante}</td>
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-bh-secondary/20 flex items-center justify-center text-bh-secondary text-xs font-semibold flex-shrink-0">
+                          {r.representante.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()}
+                        </div>
+                        <p className="font-medium">{r.representante}</p>
+                      </div>
+                    </td>
                     <td>{r.periodo}</td>
                     <td>{r.data_vinculo}</td>
                     <td>{r.prazo}</td>
