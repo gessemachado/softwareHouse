@@ -4,6 +4,7 @@ import { SoftwareHouseWizard } from './pages/SoftwareHouseWizard'
 import { RelatorioFinanceiro } from './pages/RelatorioFinanceiro'
 import { VisaoGeral } from './pages/VisaoGeral'
 import { SHDashboard } from './pages/SHDashboard'
+import { Dashboard } from './pages/Dashboard'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/visao-geral" replace />} />
         <Route path="/visao-geral" element={<VisaoGeral />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/software-house" element={<SoftwareHouseList />} />
         <Route path="/software-house/nova" element={<SoftwareHouseWizard mode="create" />} />
         <Route path="/software-house/:id/editar" element={<SoftwareHouseWizard mode="edit" />} />

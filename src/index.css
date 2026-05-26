@@ -5,12 +5,12 @@
 @tailwind utilities;
 
 @layer base {
-  body {
+  html, body {
     @apply bg-bh-bg text-bh-text font-sans m-0;
   }
 
   #root {
-    @apply min-h-screen;
+    @apply min-h-screen bg-bh-bg;
   }
 
   ::-webkit-scrollbar {
@@ -43,7 +43,7 @@
   }
 
   .card-bh {
-    @apply bg-bh-surface border border-bh-border rounded-lg;
+    @apply bg-bh-bg border border-bh-border rounded-lg;
   }
 
   .label-bh {

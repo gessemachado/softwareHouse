@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        'bh-bg':            '#0d0d0d',
-        'bh-surface':       '#161616',
-        'bh-surface2':      '#242424',
+        'bh-bg':            '#000000',
+        'bh-surface':       '#141414',
+        'bh-surface2':      '#1a1a1a',
         'bh-border':        '#292929',
         'bh-primary':       '#ff6600',
         'bh-primary-hover': '#e55a00',
@@ -17,7 +17,7 @@ export default {
         'bh-success':       '#22c55e',
         'bh-success-bg':    '#14532d',
         'bh-danger':        '#dc2828',
-        'bh-nav':           '#0d0d0d',
+        'bh-nav':           '#000000',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

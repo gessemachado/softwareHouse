@@ -1,8 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, AlignJustify } from 'lucide-react'
+import { LayoutDashboard, AlignJustify, BarChart2 } from 'lucide-react'
 
 const tabs = [
   { label: 'Visão Geral', path: '/visao-geral', icon: LayoutDashboard },
+  { label: 'Dashboard', path: '/dashboard', icon: BarChart2 },
   { label: 'Software House', path: '/software-house', icon: AlignJustify },
 ]
 
@@ -21,7 +22,7 @@ export function TabNav() {
             className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition-colors cursor-pointer border ${
               active
                 ? 'bg-bh-primary text-white border-bh-primary'
-                : 'text-bh-text bg-bh-surface border-bh-border hover:bg-bh-surface2'
+                : 'text-bh-muted bg-transparent border-transparent hover:text-bh-text hover:bg-bh-surface'
             }`}
           >
             <Icon size={15} />

@@ -65,7 +65,7 @@ function DayPickerCalendar({
     <div
       ref={ref}
       className="absolute z-30 top-full mt-2 left-0 rounded-xl shadow-2xl border border-orange-500/30 p-4 w-72"
-      style={{ background: '#141414' }}
+      style={{ background: '#000' }}
     >
       {/* Date display */}
       <div className="mb-3 px-1 py-1.5 rounded-lg border border-white/5 bg-black/30">
@@ -219,7 +219,7 @@ export function DashboardHeader() {
   const shortLabel = `${MONTHS_SHORT[compareMonth]} / ${compareYear}`
 
   return (
-    <div className="rounded-lg border border-orange-500/20 bg-[#0d0d0d]/80 p-4 sm:p-6 mb-5">
+    <div className="rounded-lg border border-orange-500/20 bg-black p-4 sm:p-6 mb-5">
       {/* Title row */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -332,7 +332,7 @@ export function DashboardHeader() {
             {/* Dropdown options */}
             {showCompareDropdown && (
               <div className="absolute z-20 top-full mt-1 w-full rounded-xl border border-orange-500/30 overflow-hidden shadow-xl"
-                style={{ background: '#141414' }}>
+                style={{ background: '#000' }}>
                 {COMPARE_OPTIONS.map((opt, i) => (
                   <button key={opt}
                     onClick={() => {
