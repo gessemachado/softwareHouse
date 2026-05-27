@@ -183,20 +183,6 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
           />
         </div>
 
-        {(() => {
-          const pos = data.index.delta_periodo_anterior >= 0
-          return (
-            <div className="mt-3 px-3 py-2.5 rounded-lg border"
-              style={{
-                background: pos ? 'rgba(74,222,128,0.05)' : 'rgba(248,113,113,0.05)',
-                borderColor: pos ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)',
-              }}>
-              <p className="text-xs font-medium" style={{color: pos ? '#4ade80' : '#f87171'}}>
-                {pos ? '↗ O negócio está em trajetória de melhoria.' : '↘ O negócio requer atenção especial neste período.'}
-              </p>
-            </div>
-          )
-        })()}
 
         <div className="mt-4 space-y-2">
           <p className="text-[9px] font-semibold uppercase tracking-widest mb-2" style={{color:'#444'}}>

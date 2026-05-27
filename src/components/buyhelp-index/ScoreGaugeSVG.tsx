@@ -1,34 +1,34 @@
 import { useEffect, useRef, useState } from 'react'
 import type { BuyHelpIndexClassificacao } from '../../types/buyhelp-index.types'
 
-const W = 240, H = 148
-const CX = 120, CY = 138
-const R_OUT = 108, R_IN = 74
+const W = 280, H = 172
+const CX = 140, CY = 158
+const R_TRACK = 110   // inner radius of color track
+const TRACK_W = 26    // track thickness
+const R_OUT = R_TRACK + TRACK_W
+const R_IN  = R_TRACK
+const R_PROGRESS = R_OUT + 10   // thin outer progress ring
 
-const CLS_MAP: Record<BuyHelpIndexClassificacao, { label: string; cor: string; bg: string }> = {
-  excelente: { label: 'Excelente', cor: '#639922', bg: 'rgba(99,153,34,0.18)'  },
-  saudavel:  { label: 'Saudável',  cor: '#22c9a0', bg: 'rgba(34,201,160,0.18)' },
-  atencao:   { label: 'Atenção',   cor: '#EF9F27', bg: 'rgba(239,159,39,0.18)' },
-  critico:   { label: 'Crítico',   cor: '#E24B4A', bg: 'rgba(226,75,74,0.18)'  },
+const CLS_MAP: Record<BuyHelpIndexClassificacao, { label: string; cor: string; bg: string; glow: string }> = {
+  excelente: { label: 'Excelente', cor: '#639922', bg: 'rgba(99,153,34,0.15)',   glow: 'rgba(99,153,34,0.4)'   },
+  saudavel:  { label: 'Saudável',  cor: '#22c9a0', bg: 'rgba(34,201,160,0.15)', glow: 'rgba(34,201,160,0.4)'  },
+  atencao:   { label: 'Atenção',   cor: '#EF9F27', bg: 'rgba(239,159,39,0.15)', glow: 'rgba(239,159,39,0.4)'  },
+  critico:   { label: 'Crítico',   cor: '#E24B4A', bg: 'rgba(226,75,74,0.15)',  glow: 'rgba(226,75,74,0.4)'   },
 }
 
-// angle: score 0 → 180° (left), score 100 → 360° (right), through top at 270°
-function scoreToRad(score: number) {
-  return (180 + (score / 100) * 180) * (Math.PI / 180)
-}
+function deg(score: number) { return 180 + (score / 100) * 180 }
+function rad(score: number) { return deg(score) * (Math.PI / 180) }
 
-function arcPoint(angleDeg: number, r: number) {
+function pt(angleDeg: number, r: number) {
   const a = angleDeg * (Math.PI / 180)
   return { x: CX + r * Math.cos(a), y: CY + r * Math.sin(a) }
 }
 
-function segPath(s0: number, s1: number, rOut = R_OUT, rIn = R_IN) {
-  const a0 = 180 + (s0 / 100) * 180
-  const a1 = 180 + (s1 / 100) * 180
-  const span = a1 - a0
-  const large = span > 180 ? 1 : 0
-  const oo = arcPoint(a0, rOut), oe = arcPoint(a1, rOut)
-  const io = arcPoint(a0, rIn),  ie = arcPoint(a1, rIn)
+function arcPath(s0: number, s1: number, rOut = R_OUT, rIn = R_IN) {
+  const a0 = deg(s0), a1 = deg(s1)
+  const large = (a1 - a0) > 180 ? 1 : 0
+  const oo = pt(a0, rOut), oe = pt(a1, rOut)
+  const io = pt(a0, rIn),  ie = pt(a1, rIn)
   return [
     `M ${oo.x.toFixed(2)} ${oo.y.toFixed(2)}`,
     `A ${rOut} ${rOut} 0 ${large} 1 ${oe.x.toFixed(2)} ${oe.y.toFixed(2)}`,
@@ -37,6 +37,23 @@ function segPath(s0: number, s1: number, rOut = R_OUT, rIn = R_IN) {
     'Z',
   ].join(' ')
 }
+
+// Thin arc line (stroke-based, not fill)
+function thinArc(s0: number, s1: number, r: number) {
+  const a0 = deg(s0), a1 = deg(s1)
+  const large = (a1 - a0) > 180 ? 1 : 0
+  const p0 = pt(a0, r), p1 = pt(a1, r)
+  return `M ${p0.x.toFixed(2)} ${p0.y.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${p1.x.toFixed(2)} ${p1.y.toFixed(2)}`
+}
+
+const SEGMENTS = [
+  { s0: 0,  s1: 39,  fill: '#E24B4A' },
+  { s0: 40, s1: 59,  fill: '#EF9F27' },
+  { s0: 60, s1: 79,  fill: '#22c9a0' },
+  { s0: 80, s1: 100, fill: '#639922' },
+]
+
+const TICKS = [0, 40, 60, 80, 100]
 
 interface Props {
   score: number
@@ -52,7 +69,7 @@ export function ScoreGaugeSVG({ score, classificacao, delta, onClick }: Props) {
 
   useEffect(() => {
     const start = performance.now()
-    const dur = 1000
+    const dur = 1100
     const animate = (now: number) => {
       const t = Math.min((now - start) / dur, 1)
       const eased = 1 - Math.pow(1 - t, 3)
@@ -63,100 +80,138 @@ export function ScoreGaugeSVG({ score, classificacao, delta, onClick }: Props) {
     return () => cancelAnimationFrame(rafRef.current)
   }, [score])
 
-  const needleA = scoreToRad(displayed)
-  const needleTipR = R_IN - 6
-  const nx = CX + needleTipR * Math.cos(needleA)
-  const ny = CY + needleTipR * Math.sin(needleA)
+  const needleRad = rad(displayed)
+  const deltaPos  = delta >= 0
+  const corDelta  = deltaPos ? '#4ade80' : '#f87171'
 
-  // Marker dot on outer rim
-  const markerX = CX + (R_OUT + 7) * Math.cos(needleA)
-  const markerY = CY + (R_OUT + 7) * Math.sin(needleA)
+  // Outer progress dot
+  const dotX = CX + R_PROGRESS * Math.cos(needleRad)
+  const dotY = CY + R_PROGRESS * Math.sin(needleRad)
 
-  const deltaPos = delta >= 0
-  const corDelta = deltaPos ? '#4ade80' : '#f87171'
+  // Needle tip (just inside track)
+  const tipR = R_IN - 4
+  const tipX = CX + tipR * Math.cos(needleRad)
+  const tipY = CY + tipR * Math.sin(needleRad)
 
   return (
     <div
       className={`flex flex-col items-center ${onClick ? 'cursor-pointer select-none' : ''}`}
       onClick={onClick}
     >
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        width="100%"
-        style={{ maxWidth: 280, display: 'block' }}
-      >
-        {/* Track background */}
-        <path d={segPath(0, 100)} fill="#1c1c1c" />
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ maxWidth: 300, display: 'block', overflow: 'visible' }}>
+        <defs>
+          <filter id="glow-gauge" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          <filter id="glow-dot" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
 
-        {/* Faixa: Crítico 0-39 */}
-        <path d={segPath(0, 39)} fill="#E24B4A" opacity="0.85" />
-        {/* Faixa: Atenção 40-59 */}
-        <path d={segPath(40, 59)} fill="#EF9F27" opacity="0.85" />
-        {/* Faixa: Saudável 60-79 */}
-        <path d={segPath(60, 79)} fill="#22c9a0" opacity="0.85" />
-        {/* Faixa: Excelente 80-100 */}
-        <path d={segPath(80, 100)} fill="#639922" opacity="0.85" />
+        {/* ── Track background ──────────────────────────────────── */}
+        <path d={arcPath(0, 100)} fill="#1a1a1a" />
 
-        {/* Tiny gaps between segments */}
-        <path d={segPath(39, 40)} fill="#000" />
-        <path d={segPath(59, 60)} fill="#000" />
-        <path d={segPath(79, 80)} fill="#000" />
+        {/* ── Colored segments ─────────────────────────────────── */}
+        {SEGMENTS.map(s => (
+          <path key={s.s0} d={arcPath(s.s0, s.s1)} fill={s.fill} opacity="0.75" />
+        ))}
 
-        {/* Needle */}
-        <line
-          x1={CX} y1={CY}
-          x2={nx.toFixed(2)} y2={ny.toFixed(2)}
-          stroke={cls.cor} strokeWidth="3" strokeLinecap="round"
+        {/* ── Segment gap lines ─────────────────────────────────── */}
+        {[39, 59, 79].map(v => (
+          <path key={v} d={arcPath(v, v + 1)} fill="#000" />
+        ))}
+
+        {/* ── Outer progress ring background ───────────────────── */}
+        <path
+          d={thinArc(0, 100, R_PROGRESS)}
+          fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" strokeLinecap="round"
         />
 
-        {/* Center circle */}
-        <circle cx={CX} cy={CY} r={11} fill="#000" stroke={cls.cor} strokeWidth="2.5" />
-        <circle cx={CX} cy={CY} r={5} fill={cls.cor} />
+        {/* ── Outer progress ring filled ────────────────────────── */}
+        {displayed > 0 && (
+          <path
+            d={thinArc(0, displayed, R_PROGRESS)}
+            fill="none" stroke={cls.cor} strokeWidth="5" strokeLinecap="round"
+            filter="url(#glow-gauge)" opacity="0.9"
+          />
+        )}
 
-        {/* Marker dot on outer rim */}
-        <circle cx={markerX.toFixed(2)} cy={markerY.toFixed(2)} r={5} fill={cls.cor} />
+        {/* ── Tick marks at segment boundaries ─────────────────── */}
+        {TICKS.map(v => {
+          const inner = pt(deg(v), R_IN - 7)
+          const outer = pt(deg(v), R_OUT + 4)
+          const labelPt = pt(deg(v), R_OUT + 20)
+          // clamp label so 0 and 100 don't clip at edges
+          const lx = Math.max(10, Math.min(W - 10, labelPt.x))
+          const ly = Math.max(10, labelPt.y + 4)
+          return (
+            <g key={v}>
+              <line
+                x1={inner.x.toFixed(1)} y1={inner.y.toFixed(1)}
+                x2={outer.x.toFixed(1)} y2={outer.y.toFixed(1)}
+                stroke="rgba(255,255,255,0.18)" strokeWidth="1.5"
+              />
+              <text
+                x={lx.toFixed(1)} y={ly.toFixed(1)}
+                textAnchor="middle" fill="#444" fontSize="9"
+                fontFamily="Inter, system-ui, sans-serif" fontWeight="600"
+              >
+                {v}
+              </text>
+            </g>
+          )
+        })}
 
-        {/* Score number */}
+        {/* ── Needle ────────────────────────────────────────────── */}
+        <line
+          x1={CX} y1={CY}
+          x2={tipX.toFixed(2)} y2={tipY.toFixed(2)}
+          stroke={cls.cor} strokeWidth="2.5" strokeLinecap="round"
+          opacity="0.9"
+        />
+
+        {/* ── Center hub ────────────────────────────────────────── */}
+        <circle cx={CX} cy={CY} r={13} fill="#111" stroke={cls.cor} strokeWidth="2" />
+        <circle cx={CX} cy={CY} r={5.5} fill={cls.cor} />
+
+        {/* ── Outer rim dot (glowing) ───────────────────────────── */}
+        <circle cx={dotX.toFixed(2)} cy={dotY.toFixed(2)} r={6} fill={cls.cor} filter="url(#glow-dot)" />
+        <circle cx={dotX.toFixed(2)} cy={dotY.toFixed(2)} r={3.5} fill="#fff" opacity="0.9" />
+
+        {/* ── Score number ──────────────────────────────────────── */}
         <text
-          x={CX} y={CY - 24}
+          x={CX} y={CY - 42}
           textAnchor="middle"
           fill={cls.cor}
-          fontSize="44"
+          fontSize="56"
           fontWeight="900"
           fontFamily="Inter, system-ui, sans-serif"
+          letterSpacing="-2"
         >
           {displayed}
         </text>
-        <text
-          x={CX} y={CY - 8}
-          textAnchor="middle"
-          fill="#555"
-          fontSize="11"
-          fontFamily="Inter, system-ui, sans-serif"
-        >
-          de 0 a 100
-        </text>
       </svg>
 
-      {/* Classification badge */}
+      {/* ── Badge ───────────────────────────────────────────────── */}
       <span
-        className="px-4 py-1 rounded-full text-sm font-bold mt-1"
-        style={{ background: cls.bg, color: cls.cor }}
+        className="px-4 py-1.5 rounded-full text-sm font-bold mt-3"
+        style={{ background: cls.bg, color: cls.cor, border: `1px solid ${cls.cor}30` }}
       >
         {cls.label}
       </span>
 
-      {/* Delta */}
-      <div className="flex items-center gap-1.5 mt-2">
-        <span className="text-lg font-bold" style={{ color: corDelta }}>
+      {/* ── Delta ───────────────────────────────────────────────── */}
+      <div className="flex items-center gap-1.5 mt-2.5">
+        <span className="text-base font-bold" style={{ color: corDelta }}>
           {deltaPos ? '↑' : '↓'} {Math.abs(delta).toFixed(1)} pts
         </span>
-        <span className="text-xs" style={{ color: '#666' }}>vs período anterior</span>
+        <span className="text-xs" style={{ color: '#555' }}>vs período anterior</span>
       </div>
 
-      {/* Click hint */}
       {onClick && (
-        <p className="text-[10px] mt-2 font-medium uppercase tracking-widest" style={{ color: '#666' }}>
+        <p className="text-[10px] mt-2 font-medium uppercase tracking-widest" style={{ color: '#555' }}>
           Clique para ver detalhes
         </p>
       )}
