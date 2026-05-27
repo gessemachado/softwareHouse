@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { LojaGrupoProvider } from './contexts/LojaGrupoContext'
 import { SoftwareHouseList } from './pages/SoftwareHouseList'
 import { SoftwareHouseWizard } from './pages/SoftwareHouseWizard'
 import { RelatorioFinanceiro } from './pages/RelatorioFinanceiro'
@@ -8,6 +9,7 @@ import { Dashboard } from './pages/Dashboard'
 
 function App() {
   return (
+    <LojaGrupoProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/visao-geral" replace />} />
@@ -21,6 +23,7 @@ function App() {
         <Route path="*" element={<Navigate to="/visao-geral" replace />} />
       </Routes>
     </BrowserRouter>
+    </LojaGrupoProvider>
   )
 }
 

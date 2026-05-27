@@ -1,6 +1,168 @@
-import { Bell, Search, Store, ChevronDown, Sparkles, LayoutGrid } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Bell, Search, Store, ChevronDown, Sparkles, LayoutGrid, Layers, X, Check } from 'lucide-react'
+import { useLojaGrupo } from '../../contexts/LojaGrupoContext'
+import { CREDENCIADOS_MOCK, GRUPOS_MOCK, GRUPO_LOJAS } from '../../mocks/buyhelp-index.mock'
+import type { CredenciadoOption } from '../../types/buyhelp-index.types'
+
+// ─── Picker dropdown ──────────────────────────────────────────────────────────
+
+const CRED_MAP = Object.fromEntries(CREDENCIADOS_MOCK.map(c => [c.uuid, c])) as Record<string, CredenciadoOption>
+
+function LojaGrupoPicker({
+  modo, credenciadoUuid, grupoUuid,
+  onSelectGrupo, onSelectLoja, onClose,
+}: {
+  modo: 'loja' | 'grupo'
+  credenciadoUuid: string
+  grupoUuid: string
+  onSelectGrupo: (uuid: string) => void
+  onSelectLoja: (uuid: string) => void
+  onClose: () => void
+}) {
+  const [search, setSearch] = useState('')
+  const q = search.toLowerCase()
+
+  return (
+    <div
+      className="absolute z-50 top-full mt-2 left-0 rounded-xl shadow-2xl border overflow-hidden flex flex-col"
+      style={{ background: '#0d0d0d', borderColor: 'rgba(255,255,255,0.1)', width: 450, maxHeight: '75vh' }}
+    >
+      {/* Header */}
+      <div className="shrink-0 p-3 flex flex-col gap-3" style={{ background: 'rgba(36,36,36,0.5)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 pl-1">
+            <Layers size={13} style={{ color: '#ff6600' }} />
+            <span className="text-sm font-semibold" style={{ color: '#fafafa' }}>
+              Filtro Global – Loja/Grupo Econômico
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={onClose}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-white/5"
+              style={{ color: '#fafafa' }}
+            >
+              <Check size={12} /> Todos
+            </button>
+            <button
+              onClick={onClose}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-white/5"
+              style={{ color: '#fafafa' }}
+            >
+              <X size={12} /> Fechar
+            </button>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#666' }} />
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Filtrar por loja, grupo ou CNPJ..."
+            autoFocus
+            className="w-full rounded-md pl-9 pr-3 py-1.5 text-sm outline-none border"
+            style={{ background: '#111', borderColor: '#242424', color: '#fafafa' }}
+          />
+        </div>
+
+        {/* Counter */}
+        <span className="self-start px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#008080', color: '#fff' }}>
+          1 de {CREDENCIADOS_MOCK.length} selecionadas
+        </span>
+      </div>
+
+      {/* List */}
+      <div className="overflow-y-auto flex-1">
+        <div className="p-3 space-y-2">
+          {GRUPOS_MOCK.map(grupo => {
+            const lojas = (GRUPO_LOJAS[grupo.uuid] ?? []).map(uid => CRED_MAP[uid]).filter(Boolean)
+            const grpMatch = grupo.nome.toLowerCase().includes(q)
+            const filteredLojas = lojas.filter(l =>
+              !q || grpMatch || l.nome.toLowerCase().includes(q) || l.cnpj.includes(search)
+            )
+            if (q && !grpMatch && filteredLojas.length === 0) return null
+
+            const isGrupoSel = modo === 'grupo' && grupoUuid === grupo.uuid
+
+            return (
+              <div key={grupo.uuid} className="space-y-0.5">
+                {/* Group row */}
+                <button
+                  onClick={() => { onSelectGrupo(grupo.uuid); onClose() }}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors hover:bg-white/5"
+                  style={{
+                    background: isGrupoSel ? 'rgba(255,102,0,0.12)' : 'rgba(36,36,36,0.5)',
+                    border: isGrupoSel ? '1px solid rgba(255,102,0,0.3)' : '1px solid transparent',
+                  }}
+                >
+                  <div className="w-5 h-5 rounded-full border flex-shrink-0 flex items-center justify-center"
+                    style={{ borderColor: isGrupoSel ? '#ff6600' : '#666' }}>
+                    {isGrupoSel && <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff6600' }} />}
+                  </div>
+                  <Layers size={16} style={{ color: isGrupoSel ? '#ff6600' : '#888', flexShrink: 0 }} />
+                  <span className="flex-1 text-sm font-medium" style={{ color: '#fafafa' }}>{grupo.nome}</span>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold" style={{ background: '#008080', color: '#fff' }}>
+                    {lojas.length}
+                  </span>
+                </button>
+
+                {/* Store rows */}
+                <div className="ml-8 space-y-0.5">
+                  {filteredLojas.map(loja => {
+                    const isSel = modo === 'loja' && credenciadoUuid === loja.uuid
+                    return (
+                      <button
+                        key={loja.uuid}
+                        onClick={() => { onSelectLoja(loja.uuid); onClose() }}
+                        className="w-full flex items-center gap-3 px-2 py-2 rounded-md text-left transition-colors hover:bg-white/5"
+                        style={isSel
+                          ? { background: 'rgba(255,102,0,0.08)', border: '1px solid rgba(255,102,0,0.2)' }
+                          : { border: '1px solid transparent' }
+                        }
+                      >
+                        <div className="w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center"
+                          style={{ borderColor: isSel ? '#ff6600' : '#666' }}>
+                          {isSel && <div className="w-2 h-2 rounded-full" style={{ background: '#ff6600' }} />}
+                        </div>
+                        <Store size={14} style={{ color: isSel ? '#ff6600' : '#777', flexShrink: 0 }} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm leading-tight" style={{ color: '#fafafa' }}>{loja.nome}</p>
+                          <p className="text-xs mt-0.5" style={{ color: '#999' }}>{loja.cnpj}</p>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
 
 export function Header() {
+  const { modo, setModo, credenciadoUuid, setCredenciadoUuid, grupoUuid, setGrupoUuid, pickerOpen, setPickerOpen } = useLojaGrupo()
+  const pickerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function h(e: MouseEvent) {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) setPickerOpen(false)
+    }
+    document.addEventListener('mousedown', h)
+    return () => document.removeEventListener('mousedown', h)
+  }, [setPickerOpen])
+
+  const selectorLabel = modo === 'grupo'
+    ? (GRUPOS_MOCK.find(g => g.uuid === grupoUuid)?.nome ?? 'Grupo')
+    : (CREDENCIADOS_MOCK.find(c => c.uuid === credenciadoUuid)?.nome ?? 'Selecione lojas/grupos')
+
   return (
     <header className="bg-bh-nav border-b border-bh-border">
       <div className="flex items-center justify-between px-6 h-12">
@@ -27,9 +189,34 @@ export function Header() {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          <button className="text-bh-muted text-xs hover:text-bh-text transition-colors flex items-center gap-1.5">
-            <Store size={14} /> Selecione lojas/grupos
-          </button>
+
+          {/* Picker trigger */}
+          <div className="relative" ref={pickerRef}>
+            <button
+              onClick={() => setPickerOpen(!pickerOpen)}
+              className="flex items-center gap-1.5 text-xs transition-colors hover:text-bh-text"
+              style={{ color: pickerOpen ? '#ff6600' : '#999' }}
+            >
+              {modo === 'grupo'
+                ? <Layers size={14} style={{ color: pickerOpen ? '#ff6600' : '#999' }} />
+                : <Store  size={14} style={{ color: pickerOpen ? '#ff6600' : '#999' }} />
+              }
+              <span className="max-w-[180px] truncate">{selectorLabel}</span>
+              <ChevronDown size={11} className={`transition-transform ${pickerOpen ? 'rotate-180 text-orange-500' : ''}`} />
+            </button>
+
+            {pickerOpen && (
+              <LojaGrupoPicker
+                modo={modo}
+                credenciadoUuid={credenciadoUuid}
+                grupoUuid={grupoUuid}
+                onSelectGrupo={uuid => { setGrupoUuid(uuid); setModo('grupo') }}
+                onSelectLoja={uuid => { setCredenciadoUuid(uuid); setModo('loja') }}
+                onClose={() => setPickerOpen(false)}
+              />
+            )}
+          </div>
+
           <button className="text-bh-muted hover:text-bh-text transition-colors">
             <Bell size={16} />
           </button>

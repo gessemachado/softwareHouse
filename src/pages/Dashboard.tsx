@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import {
-  RefreshCw, Store, Calendar, ChevronDown, ChevronLeft as ChevLeft, ChevronRight as ChevRight,
+  RefreshCw, Calendar, ChevronDown, ChevronLeft as ChevLeft, ChevronRight as ChevRight,
   ArrowLeft, TrendingUp, TrendingDown, Minus, BookOpen,
   ShoppingCart, Tag, Users, Receipt, type LucideIcon,
   BarChart2, X,
@@ -14,8 +14,11 @@ import { AppLayout } from '../components/layout/AppLayout'
 import { TabNav } from '../components/ui/TabNav'
 import { ScoreGaugeSVG } from '../components/buyhelp-index/ScoreGaugeSVG'
 import { useBuyHelpIndex } from '../hooks/useBuyHelpIndex'
-import { CREDENCIADOS_MOCK, PILARES_DEF } from '../mocks/buyhelp-index.mock'
-import type { BuyHelpIndexResponse } from '../types/buyhelp-index.types'
+import { PILARES_DEF, fetchGrupoIndex } from '../mocks/buyhelp-index.mock'
+import { useLojaGrupo } from '../contexts/LojaGrupoContext'
+import { ConversaoHistoricoModal } from '../components/buyhelp-index/ConversaoHistoricoModal'
+import { DescontoAbsorcaoModal } from '../components/visao-geral/DescontoAbsorcaoModal'
+import type { BuyHelpIndexResponse, BuyHelpIndexClassificacao, GrupoIndexResponse } from '../types/buyhelp-index.types'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -154,14 +157,14 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
     Conversão: h.conversao,
     Desconto:  h.desconto,
     Recorrência: h.recorrencia,
-    'Ticket Médio': h.ticket_medio,
+    CMV: h.cmv,
     Margem:    h.margem,
   }))
   const PILAR_KEYS = [
     { key: 'Conversão',    cor: PILARES_DEF[0].cor },
     { key: 'Desconto',     cor: PILARES_DEF[1].cor },
     { key: 'Recorrência',  cor: PILARES_DEF[2].cor },
-    { key: 'Ticket Médio', cor: PILARES_DEF[3].cor },
+    { key: 'CMV',          cor: PILARES_DEF[3].cor },
     { key: 'Margem',       cor: PILARES_DEF[4].cor },
   ]
 
@@ -407,6 +410,8 @@ function PilarHistoricoModal({
 
 function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
   const [modalPilar, setModalPilar] = useState<string | null>(null)
+  const [showOperacao, setShowOperacao] = useState(false)
+  const [showDesconto, setShowDesconto] = useState(false)
 
   const pilarAtivo = modalPilar ? PILARES_DEF.find(p => p.key === modalPilar) : null
   const pilarScore = modalPilar ? data.pilares[modalPilar] : null
@@ -417,6 +422,12 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
       }))
     : []
 
+  function handleHistorico(key: string) {
+    if (key === 'conversao') setShowOperacao(true)
+    else if (key === 'desconto') setShowDesconto(true)
+    else setModalPilar(key)
+  }
+
   return (
     <div className="mb-5">
       {pilarAtivo && pilarScore && (
@@ -426,6 +437,12 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
           historico={pilarHist}
           onClose={() => setModalPilar(null)}
         />
+      )}
+      {showOperacao && (
+        <ConversaoHistoricoModal onClose={() => setShowOperacao(false)} />
+      )}
+      {showDesconto && (
+        <DescontoAbsorcaoModal onClose={() => setShowDesconto(false)} />
       )}
 
       <div className="mb-3">
@@ -481,13 +498,256 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
                   </span>
                 </div>
                 <button
-                  onClick={() => setModalPilar(pilar.key)}
+                  onClick={() => handleHistorico(pilar.key)}
                   className="flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[10px] font-semibold transition-colors hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5"
                   style={{color:'#555'}}
                 >
                   <BarChart2 size={11}/> Histórico
                 </button>
               </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ─── Grupo Econômico Section ─────────────────────────────────────────────────
+
+const CLS_COR: Record<BuyHelpIndexClassificacao, string> = {
+  excelente: '#639922',
+  saudavel:  '#22c9a0',
+  atencao:   '#EF9F27',
+  critico:   '#E24B4A',
+}
+const CLS_LABEL: Record<BuyHelpIndexClassificacao, string> = {
+  excelente: 'Excelente',
+  saudavel:  'Saudável',
+  atencao:   'Atenção',
+  critico:   'Crítico',
+}
+const PILAR_SHORT: Record<string, string> = {
+  conversao: 'Conversão', desconto: 'Desconto', recorrencia: 'Recorrência',
+  cmv: 'CMV', margem: 'Margem',
+}
+
+function GrupoSection({
+  data,
+  onVerLoja,
+}: {
+  data: GrupoIndexResponse
+  onVerLoja: (uuid: string) => void
+}) {
+  const sorted = [...data.lojas].sort((a, b) => a.index.score - b.index.score)
+
+  const dist = { excelente: 0, saudavel: 0, atencao: 0, critico: 0 } as Record<BuyHelpIndexClassificacao, number>
+  data.lojas.forEach(l => dist[l.index.classificacao]++)
+
+  const chartData = sorted.map(l => ({
+    nome: l.credenciado.nome,
+    score: l.index.score,
+    classificacao: l.index.classificacao,
+  }))
+
+  const clsGrupo  = CLS_COR[data.classificacao_grupo]
+  const deltaPos  = data.delta_grupo >= 0
+  const deltaColor = deltaPos ? '#4ade80' : '#f87171'
+
+  return (
+    <div>
+      {/* Top row */}
+      <div className="grid grid-cols-5 gap-5 mb-5">
+
+        {/* Aggregate score card */}
+        <div className="col-span-2 card-bh p-6 flex flex-col gap-5">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+              Score Consolidado do Grupo
+            </p>
+            <h2 className="text-white text-lg font-bold leading-tight">{data.grupo.nome}</h2>
+          </div>
+
+          <div className="flex items-end gap-3">
+            <span className="text-7xl font-black leading-none" style={{color: clsGrupo}}>
+              {data.score_grupo}
+            </span>
+            <div className="mb-2 flex flex-col gap-1.5">
+              <span className="px-2.5 py-1 rounded-full text-xs font-bold"
+                style={{background:`${clsGrupo}22`, color: clsGrupo}}>
+                {CLS_LABEL[data.classificacao_grupo]}
+              </span>
+              <div className="flex items-center gap-1">
+                {deltaPos ? <TrendingUp size={13} style={{color:deltaColor}}/> : <TrendingDown size={13} style={{color:deltaColor}}/>}
+                <span className="text-xs font-bold" style={{color:deltaColor}}>
+                  {deltaPos?'+':''}{data.delta_grupo.toFixed(1)} pts
+                </span>
+                <span className="text-[10px]" style={{color:'#555'}}>vs anterior</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-auto">
+            <p className="text-[9px] font-bold uppercase tracking-widest mb-2" style={{color:'#444'}}>
+              Distribuição por Classificação · {data.lojas.length} lojas
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {(['excelente','saudavel','atencao','critico'] as BuyHelpIndexClassificacao[]).map(cls => (
+                <div key={cls}
+                  className="flex items-center justify-between px-3 py-2 rounded-lg"
+                  style={{background:`${CLS_COR[cls]}12`, border:`1px solid ${CLS_COR[cls]}25`}}>
+                  <span className="text-[10px] font-semibold" style={{color:CLS_COR[cls]}}>{CLS_LABEL[cls]}</span>
+                  <span className="text-xl font-black" style={{color: dist[cls] > 0 ? CLS_COR[cls] : '#333'}}>
+                    {dist[cls]}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Ranking chart */}
+        <div className="col-span-3 card-bh p-5 flex flex-col">
+          <div className="mb-3">
+            <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+              Ranking Visual · Pior → Melhor
+            </p>
+            <p className="text-white text-base font-bold">Score por Loja</p>
+          </div>
+          <div style={{flex:1, minHeight:180}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                layout="vertical"
+                data={chartData}
+                margin={{top:4, right:52, left:0, bottom:0}}
+                barCategoryGap="30%"
+              >
+                <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="0" horizontal={false}/>
+                <XAxis type="number" domain={[0,100]} tick={{fill:'#555',fontSize:10}} axisLine={false} tickLine={false}/>
+                <YAxis type="category" dataKey="nome" width={170}
+                  tick={{fill:'#aaa',fontSize:11}} axisLine={false} tickLine={false}/>
+                <Tooltip
+                  cursor={{fill:'rgba(255,255,255,0.03)'}}
+                  contentStyle={{background:'#0a0a0a',border:'1px solid #222',borderRadius:8,fontSize:12,color:'#ccc'}}
+                  formatter={(v: number) => [`${v}/100`, 'Score']}/>
+                <ReferenceLine
+                  x={data.score_grupo}
+                  stroke="#666"
+                  strokeDasharray="4 4"
+                  label={{value:`Média: ${data.score_grupo}`, fill:'#666', fontSize:9, position:'insideTopRight'}}
+                />
+                <Bar dataKey="score" radius={[0,4,4,0]}>
+                  {chartData.map((entry, i) => (
+                    <Cell key={i} fill={CLS_COR[entry.classificacao as BuyHelpIndexClassificacao]}/>
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Store ranking cards */}
+      <div className="mb-3">
+        <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+          Análise Detalhada · Pior para Melhor
+        </p>
+        <h2 className="text-white text-base font-bold">Performance Individual das Lojas</h2>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        {sorted.map((loja, idx) => {
+          const cls       = loja.index.classificacao
+          const clsCor    = CLS_COR[cls]
+          const isAlert   = cls === 'critico' || cls === 'atencao'
+          const dPos      = loja.index.delta_periodo_anterior > 0
+          const dZero     = loja.index.delta_periodo_anterior === 0
+          const dColor    = dZero ? '#6b7280' : dPos ? '#4ade80' : '#f87171'
+
+          return (
+            <div key={loja.credenciado.uuid}
+              className="card-bh p-5 flex flex-col gap-4"
+              style={isAlert ? {borderColor:`${clsCor}40`} : undefined}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    {idx === 0 && (
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest"
+                        style={{background:`${clsCor}22`, color:clsCor}}>
+                        Maior impacto negativo
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm font-bold text-white leading-tight">{loja.credenciado.nome}</p>
+                  <p className="text-[10px] mt-0.5" style={{color:'#555'}}>{loja.credenciado.cnpj}</p>
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold flex-shrink-0"
+                  style={{background:`${clsCor}18`, color:clsCor}}>
+                  {CLS_LABEL[cls]}
+                </span>
+              </div>
+
+              {/* Score + delta */}
+              <div className="flex items-end justify-between">
+                <div>
+                  <span className="text-5xl font-black leading-none" style={{color: clsCor}}>
+                    {loja.index.score}
+                  </span>
+                  <span className="text-sm ml-1.5" style={{color:'#555'}}>/100</span>
+                </div>
+                <div className="flex items-center gap-1 mb-1">
+                  {dPos  && <TrendingUp   size={12} style={{color:dColor}}/>}
+                  {!dPos && !dZero && <TrendingDown size={12} style={{color:dColor}}/>}
+                  {dZero && <Minus        size={12} style={{color:dColor}}/>}
+                  <span className="text-xs font-bold" style={{color:dColor}}>
+                    {dPos?'+':''}{loja.index.delta_periodo_anterior.toFixed(1)} pts
+                  </span>
+                </div>
+              </div>
+
+              {/* Progress bar */}
+              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{background:'#1a1a1a'}}>
+                <div className="h-full rounded-full transition-all duration-700"
+                  style={{width:`${loja.index.score}%`, background:clsCor}}/>
+              </div>
+
+              {/* Pilar mini bars */}
+              <div className="space-y-2">
+                <p className="text-[9px] font-bold uppercase tracking-widest" style={{color:'#444'}}>
+                  Pilares — pontos fracos destacados
+                </p>
+                {PILARES_DEF.map(pilar => {
+                  const s      = loja.pilares[pilar.key].score ?? 0
+                  const isWeak = s < 50
+                  return (
+                    <div key={pilar.key} className="flex items-center gap-2">
+                      <span className="text-[10px] w-20 flex-shrink-0 truncate font-medium"
+                        style={{color: isWeak ? '#f87171' : '#666'}}>
+                        {PILAR_SHORT[pilar.key]}
+                      </span>
+                      <div className="flex-1 h-1 rounded-full overflow-hidden" style={{background:'#1a1a1a'}}>
+                        <div className="h-full rounded-full"
+                          style={{width:`${s}%`, background: isWeak ? '#f87171' : pilar.cor}}/>
+                      </div>
+                      <span className="text-[10px] font-bold w-6 text-right flex-shrink-0"
+                        style={{color: isWeak ? '#f87171' : '#666'}}>
+                        {s}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Button */}
+              <button
+                onClick={() => onVerLoja(loja.credenciado.uuid)}
+                className="w-full py-2 rounded-lg border text-xs font-semibold transition-colors hover:border-orange-500/40 hover:text-orange-400 hover:bg-orange-500/5"
+                style={{color:'#666', borderColor: isAlert ? `${clsCor}30` : 'rgba(255,255,255,0.07)'}}
+              >
+                Ver BuyHelp Index individual →
+              </button>
             </div>
           )
         })}
@@ -536,15 +796,15 @@ const COMPOSICAO_PILARES = [
     ],
   },
   {
-    key: 'ticket_medio',
-    label: 'Ticket\nMédio',
+    key: 'cmv',
+    label: 'CMV',
     peso: 15,
     cor: '#7F77DD',
     bg: 'rgba(80,60,180,0.85)',
     indicadores: [
-      { nome: 'Ticket Médio BuyHelp', descricao: 'Valor médio por cesta nas compras realizadas via plataforma BuyHelp.' },
-      { nome: 'Benchmark do Grupo',   descricao: 'Posição do ticket em relação à média do grupo econômico comparável.' },
-      { nome: 'Evolução do Ticket',   descricao: 'Variação percentual do ticket médio em relação ao período anterior.' },
+      { nome: 'CMV sobre Vendas',       descricao: 'Percentual que o Custo das Mercadorias Vendidas representa sobre o total de vendas no período.' },
+      { nome: 'Benchmark do Grupo',     descricao: 'Posição do CMV da loja em relação à média do grupo econômico comparável.' },
+      { nome: 'Evolução do CMV',        descricao: 'Variação percentual do CMV em relação ao período anterior — queda indica melhora de eficiência.' },
     ],
   },
   {
@@ -725,13 +985,36 @@ function ComposicaoView({ onBack }: { onBack: () => void }) {
 
 export function Dashboard() {
   const [view, setView] = useState<'main' | 'composicao'>('main')
+  const { modo, setModo, credenciadoUuid, setCredenciadoUuid, grupoUuid } = useLojaGrupo()
+  const [grupoData, setGrupoData]   = useState<GrupoIndexResponse | null>(null)
+  const [grupoLoading, setGrupoLoading] = useState(false)
+
   const {
     data, loading,
-    credenciadoUuid, setCredenciadoUuid,
     dataInicio, setDataInicio,
     dataFim, setDataFim,
     refetch,
-  } = useBuyHelpIndex()
+  } = useBuyHelpIndex(credenciadoUuid)
+
+  function loadGrupo(uuid: string, inicio: string, fim: string) {
+    setGrupoLoading(true)
+    fetchGrupoIndex(uuid, inicio, fim).then(d => {
+      setGrupoData(d)
+      setGrupoLoading(false)
+    })
+  }
+
+  useEffect(() => {
+    if (modo === 'grupo') loadGrupo(grupoUuid, dataInicio, dataFim)
+  }, [modo, grupoUuid, dataInicio, dataFim])
+
+  function handleVerLoja(uuid: string) {
+    setCredenciadoUuid(uuid)
+    setModo('loja')
+    setView('main')
+  }
+
+  const isLoading = modo === 'grupo' ? grupoLoading : loading
 
   return (
     <AppLayout title="" subtitle="" breadcrumb="">
@@ -756,32 +1039,18 @@ export function Dashboard() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-bh-border bg-black text-sm">
-            <Store size={14} className="text-bh-muted flex-shrink-0"/>
-            <select
-              value={credenciadoUuid}
-              onChange={e => setCredenciadoUuid(e.target.value)}
-              className="bg-transparent text-bh-text text-sm outline-none cursor-pointer"
-            >
-              {CREDENCIADOS_MOCK.map(c => (
-                <option key={c.uuid} value={c.uuid} style={{background:'#0d0d0d'}}>
-                  {c.nome} · {c.cnpj}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <MonthPicker
             dataInicio={dataInicio}
             onChange={(inicio, fim) => { setDataInicio(inicio); setDataFim(fim) }}
           />
 
           <button
-            onClick={refetch} disabled={loading}
+            onClick={modo === 'grupo' ? () => loadGrupo(grupoUuid, dataInicio, dataFim) : refetch}
+            disabled={isLoading}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            style={{background:'#ff6600',color:'#fff',opacity:loading?0.6:1,cursor:loading?'not-allowed':'pointer'}}
+            style={{background:'#ff6600',color:'#fff',opacity:isLoading?0.6:1,cursor:isLoading?'not-allowed':'pointer'}}
           >
-            <RefreshCw size={14} className={loading?'animate-spin':''}/>
+            <RefreshCw size={14} className={isLoading?'animate-spin':''}/>
             Atualizar
           </button>
         </div>
@@ -790,12 +1059,16 @@ export function Dashboard() {
       {/* ── Content ────────────────────────────────────────────────────────── */}
       {view === 'composicao'
         ? <ComposicaoView onBack={() => setView('main')} />
-        : loading || !data
-          ? <SkeletonLayout />
-          : <>
-              <OverviewSection data={data} />
-              <PilaresSection data={data} />
-            </>
+        : modo === 'grupo'
+          ? grupoLoading || !grupoData
+            ? <SkeletonLayout />
+            : <GrupoSection data={grupoData} onVerLoja={handleVerLoja} />
+          : loading || !data
+            ? <SkeletonLayout />
+            : <>
+                <OverviewSection data={data} />
+                <PilaresSection data={data} />
+              </>
       }
     </AppLayout>
   )

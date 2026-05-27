@@ -10,7 +10,7 @@ export interface PilarScore {
   delta: number          // pontos vs período anterior
 }
 
-export type PilarKey = 'conversao' | 'desconto' | 'recorrencia' | 'ticket_medio' | 'margem'
+export type PilarKey = 'conversao' | 'desconto' | 'recorrencia' | 'cmv' | 'margem'
 
 export interface PilarDefinicao {
   key: PilarKey
@@ -33,7 +33,7 @@ export interface HistoricoPilarMes {
   conversao: number
   desconto: number
   recorrencia: number
-  ticket_medio: number
+  cmv: number
   margem: number
 }
 
@@ -65,6 +65,32 @@ export interface BuyHelpIndexResponse {
   pilares: Record<PilarKey, PilarScore>
   historico_mensal: HistoricoMes[]
   historico_pilares: HistoricoPilarMes[]
+}
+
+// ─── Grupo Econômico ──────────────────────────────────────────────────────────
+
+export interface GrupoEconomico {
+  uuid: string
+  nome: string
+}
+
+export interface LojaNoGrupo {
+  credenciado: CredenciadoOption
+  index: {
+    score: number
+    classificacao: BuyHelpIndexClassificacao
+    delta_periodo_anterior: number
+  }
+  pilares: Record<PilarKey, PilarScore>
+}
+
+export interface GrupoIndexResponse {
+  grupo: GrupoEconomico
+  periodo: { inicio: string; fim: string }
+  score_grupo: number
+  classificacao_grupo: BuyHelpIndexClassificacao
+  delta_grupo: number
+  lojas: LojaNoGrupo[]
 }
 
 // ─── Insight / Recomendação ───────────────────────────────────────────────────

@@ -79,10 +79,10 @@ function gerarRecomendacoes(data: BuyHelpIndexResponse): Recomendacao[] {
       titulo: 'Fidelizar clientes existentes',
       descricao: 'Implemente comunicações pós-compra para incentivar o retorno dos clientes à loja.',
     },
-    ticket_medio: {
-      pilar: 'ticket_medio',
-      titulo: 'Elevar valor médio da cesta',
-      descricao: 'Incentive adição de produtos complementares no momento da compra com desconto BuyHelp.',
+    cmv: {
+      pilar: 'cmv',
+      titulo: 'Reduzir CMV relativo às vendas',
+      descricao: 'Revise o mix de produtos priorizando itens com menor custo de aquisição sem perda de margem.',
     },
     margem: {
       pilar: 'margem',
@@ -109,8 +109,6 @@ export interface UseBuyHelpIndexReturn {
   loading: boolean
   insights: Insight[]
   recomendacoes: Recomendacao[]
-  credenciadoUuid: string
-  setCredenciadoUuid: (uuid: string) => void
   dataInicio: string
   dataFim: string
   setDataInicio: (d: string) => void
@@ -118,8 +116,7 @@ export interface UseBuyHelpIndexReturn {
   refetch: () => void
 }
 
-export function useBuyHelpIndex(): UseBuyHelpIndexReturn {
-  const [credenciadoUuid, setCredenciadoUuid] = useState(CREDENCIADOS_MOCK[0].uuid)
+export function useBuyHelpIndex(credenciadoUuid: string): UseBuyHelpIndexReturn {
   const [dataInicio, setDataInicio] = useState('2026-05-01')
   const [dataFim, setDataFim] = useState('2026-05-20')
   const [data, setData] = useState<BuyHelpIndexResponse | null>(null)
@@ -142,7 +139,6 @@ export function useBuyHelpIndex(): UseBuyHelpIndexReturn {
 
   return {
     data, loading, insights, recomendacoes,
-    credenciadoUuid, setCredenciadoUuid,
     dataInicio, setDataInicio,
     dataFim, setDataFim,
     refetch,
