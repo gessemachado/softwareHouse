@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { fetchBuyHelpIndex, CREDENCIADOS_MOCK, PILARES_DEF } from '../mocks/buyhelp-index.mock'
+import { fetchBuyHelpIndex, PILARES_DEF } from '../mocks/buyhelp-index.mock'
 import type {
   BuyHelpIndexResponse,
   Insight,

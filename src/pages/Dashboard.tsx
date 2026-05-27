@@ -35,11 +35,6 @@ function fmtMes(mes: string) {
   return `${nomes[parseInt(m) - 1]}/${ano.slice(2)}`
 }
 
-function TendIcon({ delta }: { delta: number }) {
-  if (delta > 0) return <TrendingUp size={14} style={{ color: '#4ade80' }} />
-  if (delta < 0) return <TrendingDown size={14} style={{ color: '#f87171' }} />
-  return <Minus size={14} style={{ color: '#6b7280' }} />
-}
 
 // ─── DateRangePicker ──────────────────────────────────────────────────────────
 
@@ -386,7 +381,7 @@ function PilarHistoricoModal({
                 <Tooltip
                   cursor={{fill:'rgba(255,255,255,0.03)'}}
                   contentStyle={{background:'#0a0a0a',border:'1px solid #222',borderRadius:8,fontSize:12,color:'#ccc'}}
-                  formatter={(v: number) => [`${v}/100`, 'Score']}/>
+                  formatter={(v) => [`${v}/100`, 'Score']}/>
                 <ReferenceLine
                   y={media}
                   stroke={pilar.cor}
@@ -414,11 +409,11 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
   const [showDesconto, setShowDesconto] = useState(false)
 
   const pilarAtivo = modalPilar ? PILARES_DEF.find(p => p.key === modalPilar) : null
-  const pilarScore = modalPilar ? data.pilares[modalPilar] : null
+  const pilarScore = modalPilar ? data.pilares[modalPilar as import('../types/buyhelp-index.types').PilarKey] : null
   const pilarHist  = modalPilar
     ? data.historico_pilares.map(h => ({
         mes: fmtMes(h.mes),
-        score: (h as Record<string, number>)[modalPilar] ?? 0,
+        score: (h as unknown as Record<string, number>)[modalPilar] ?? 0,
       }))
     : []
 
@@ -629,7 +624,7 @@ function GrupoSection({
                 <Tooltip
                   cursor={{fill:'rgba(255,255,255,0.03)'}}
                   contentStyle={{background:'#0a0a0a',border:'1px solid #222',borderRadius:8,fontSize:12,color:'#ccc'}}
-                  formatter={(v: number) => [`${v}/100`, 'Score']}/>
+                  formatter={(v) => [`${v}/100`, 'Score']}/>
                 <ReferenceLine
                   x={data.score_grupo}
                   stroke="#666"

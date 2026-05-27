@@ -95,7 +95,7 @@ export function ConversaoHistoricoModal({ onClose }: { onClose: () => void }) {
                   <Tooltip
                     cursor={{ fill: 'rgba(255,255,255,0.03)' }}
                     contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: 8, fontSize: 11, color: '#ccc' }}
-                    formatter={(v: number, name: string) => [`R$ ${(v / 1000).toFixed(1)}k`, name]}
+                    formatter={(v, name) => [`R$ ${(Number(v) / 1000).toFixed(1)}k`, String(name)]}
                   />
                   <Legend
                     verticalAlign="top" align="left" wrapperStyle={{ paddingBottom: 8 }}
@@ -125,7 +125,7 @@ export function ConversaoHistoricoModal({ onClose }: { onClose: () => void }) {
                   <Tooltip
                     cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }}
                     contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: 8, fontSize: 11, color: '#ccc' }}
-                    formatter={(v: number) => [`${v}%`, 'Taxa de Conversão']}
+                    formatter={(v) => [`${v}%`, 'Taxa de Conversão']}
                   />
                   <Line
                     type="monotone" dataKey="taxa" stroke="#ff6600" strokeWidth={2.5}
