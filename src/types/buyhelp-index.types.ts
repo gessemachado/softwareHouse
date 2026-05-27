@@ -28,6 +28,15 @@ export interface HistoricoMes {
   score: number
 }
 
+export interface HistoricoPilarMes {
+  mes: string
+  conversao: number
+  desconto: number
+  recorrencia: number
+  ticket_medio: number
+  margem: number
+}
+
 // ─── Credenciado (seletor) ────────────────────────────────────────────────────
 
 export interface CredenciadoOption {
@@ -55,6 +64,7 @@ export interface BuyHelpIndexResponse {
   }
   pilares: Record<PilarKey, PilarScore>
   historico_mensal: HistoricoMes[]
+  historico_pilares: HistoricoPilarMes[]
 }
 
 // ─── Insight / Recomendação ───────────────────────────────────────────────────

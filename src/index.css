@@ -7,10 +7,12 @@
 @layer base {
   html, body {
     @apply bg-bh-bg text-bh-text font-sans m-0;
+    background-color: #000;
   }
 
   #root {
     @apply min-h-screen bg-bh-bg;
+    background-color: #000;
   }
 
   ::-webkit-scrollbar {
@@ -43,7 +45,8 @@
   }
 
   .card-bh {
-    @apply bg-bh-bg border border-bh-border rounded-lg;
+    @apply border border-bh-border rounded-lg;
+    background-color: #000;
   }
 
   .label-bh {

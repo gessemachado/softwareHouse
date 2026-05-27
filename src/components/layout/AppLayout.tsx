@@ -11,7 +11,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ title = 'BuyHelp Desconto', subtitle = 'Gestão e análise das software house', breadcrumb = 'Software House', children }: AppLayoutProps) {
   return (
-    <div className="min-h-screen bg-bh-bg flex flex-col">
+    <div className="min-h-screen bg-black flex flex-col">
       <Header />
 
       {/* Page header */}
