@@ -97,7 +97,7 @@ export function OperacaoProdutosHistoricoModal({ onClose }: Props) {
         {/* Header */}
         <div className="flex items-start justify-between px-8 py-6 border-b border-bh-border/30 shrink-0">
           <div>
-            <h2 className="text-bh-text text-xl font-bold">Operação | Produtos �" Evolução 13 Meses</h2>
+            <h2 className="text-bh-text text-xl font-bold">Operação | Produtos " Evolução 13 Meses</h2>
             <p className="text-bh-subtle text-xs mt-1">
               Abr/2025 → Abr/2026 · Aproveitado vs composição do Não Atuado
             </p>

@@ -61,7 +61,7 @@ export function AvaliacaoResultadosInline() {
           <div>
             <h3 className="text-bh-text text-lg font-bold">Avaliação de Resultados</h3>
             <p className="text-bh-subtle text-xs mt-0.5">
-              Análise comparativa de indicadores financeiros �� Antes vs Depois da Intermediação
+              Análise comparativa de indicadores financeiros  Antes vs Depois da Intermediação
             </p>
           </div>
         </div>

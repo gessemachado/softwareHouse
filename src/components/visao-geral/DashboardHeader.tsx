@@ -5,7 +5,7 @@ import { useDashboardFilter, MONTHS_FULL as MONTHS, MONTHS_SHORT, type CompareMo
 const COMPARE_OPTIONS = ['M√™s anterior', 'Mesmo m√™s ano anterior', 'Customizado']
 const WEEK_DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S√°b']
 
-// ì?ì? Day Range Picker ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?
+// ?? Day Range Picker ??????????????????????????????????????????????????????????
 function DayPickerCalendar({
   month, year, rangeStart, rangeEnd,
   onDayClick, onClose, onPrevMonth, onNextMonth,
@@ -153,7 +153,7 @@ function DayPickerCalendar({
   )
 }
 
-// ì?ì? Main Component ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?ì?
+// ?? Main Component ????????????????????????????????????????????????????????????
 export function DashboardHeader() {
   const {
     selectedMonth, selectedYear, setSelectedMonth, setSelectedYear,
@@ -212,7 +212,7 @@ export function DashboardHeader() {
     ? 'Selecione o per√≠odo'
     : !dayRangeEnd
       ? `${pad(dayRangeStart)} ${MONTHS_SHORT[selectedMonth]} ${selectedYear}`
-      : `${pad(dayRangeStart)} á" ${pad(dayRangeEnd)} ${MONTHS_SHORT[selectedMonth]}`
+      : `${pad(dayRangeStart)} " ${pad(dayRangeEnd)} ${MONTHS_SHORT[selectedMonth]}`
 
   const [showCompareDropdown, setShowCompareDropdown] = useState(false)
 
@@ -235,7 +235,7 @@ export function DashboardHeader() {
       {/* Filter cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-        {/* 1 á" Per√≠odo An√°lise (sempre di√°rio) */}
+        {/* 1 " Per√≠odo An√°lise (sempre di√°rio) */}
         <div>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center shadow-lg shadow-orange-500/30">1</span>
@@ -249,7 +249,7 @@ export function DashboardHeader() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-bh-muted text-[8px] font-semibold tracking-widest uppercase mb-1">DIA / MäS / ANO</p>
+                  <p className="text-bh-muted text-[8px] font-semibold tracking-widest uppercase mb-1">DIA / MS / ANO</p>
                   <p className={`text-sm font-bold ${!dayRangeStart ? 'text-bh-subtle' : 'text-bh-text'}`}>{rangeButtonLabel}</p>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -270,7 +270,7 @@ export function DashboardHeader() {
           </div>
         </div>
 
-        {/* 2 á" Per√≠odo de Compara√ß√£o */}
+        {/* 2 " Per√≠odo de Compara√ß√£o */}
         <div>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center shadow-lg shadow-orange-500/30">2</span>
@@ -300,7 +300,7 @@ export function DashboardHeader() {
               {/* Range auto-calculado */}
               {compareMode !== 2 && dayRangeStart && (
                 <p className="text-bh-subtle text-xs font-mono mt-1.5">
-                  {pad(dayRangeStart)}{dayRangeEnd ? ` á" ${pad(dayRangeEnd)}` : ''} {MONTHS_SHORT[compareMonth]} / {compareYear}
+                  {pad(dayRangeStart)}{dayRangeEnd ? ` " ${pad(dayRangeEnd)}` : ''} {MONTHS_SHORT[compareMonth]} / {compareYear}
                 </p>
               )}
 
@@ -319,7 +319,7 @@ export function DashboardHeader() {
                           ? 'Selecione o per√≠odo'
                           : !compareDayRangeEnd
                             ? `${pad(compareDayRangeStart)} ${MONTHS_SHORT[customMonth]} ${customYear}`
-                            : `${pad(compareDayRangeStart)} á" ${pad(compareDayRangeEnd)} ${MONTHS_SHORT[customMonth]}`}
+                            : `${pad(compareDayRangeStart)} " ${pad(compareDayRangeEnd)} ${MONTHS_SHORT[customMonth]}`}
                       </span>
                     </div>
                     <ChevronDown size={12} className={`text-bh-muted transition-transform ${showCompareDayPicker ? 'rotate-180' : ''}`} />

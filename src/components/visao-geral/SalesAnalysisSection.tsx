@@ -107,7 +107,7 @@ export function SalesAnalysisSection() {
             <TrendingUp size={20} className="text-orange-500" />
           </div>
           <div>
-            <h2 className="text-bh-text text-xl font-bold">Análise �" �ltimos 13 Meses</h2>
+            <h2 className="text-bh-text text-xl font-bold">Análise " ltimos 13 Meses</h2>
             <p className="text-bh-muted text-sm mt-0.5">Abr/2025 → Abr/2026 · Visualização mensal</p>
           </div>
         </div>

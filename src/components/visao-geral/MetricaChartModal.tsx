@@ -69,7 +69,7 @@ export function MetricaChartModal({ metricLabel, onClose }: Props) {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-bh-border/30">
-          <h3 className="text-bh-text font-bold text-base">{metricLabel} ‡" šltimos 13 Meses</h3>
+          <h3 className="text-bh-text font-bold text-base">{metricLabel} " ltimos 13 Meses</h3>
           <button
             onClick={onClose}
             className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-bh-surface2 text-bh-subtle hover:text-bh-text transition-colors"

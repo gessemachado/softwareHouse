@@ -71,7 +71,7 @@ export function DebitosHistoricoModal({ onClose }: Props) {
 
         <div className="flex items-start justify-between px-8 py-6 border-b border-bh-border/30 shrink-0">
           <div>
-            <h2 className="text-bh-text text-xl font-bold">Total de Débitos �" Histórico</h2>
+            <h2 className="text-bh-text text-xl font-bold">Total de Débitos " Histórico</h2>
             <p className="text-bh-subtle text-xs mt-1">Abr/2025 → Abr/2026 · Antes vs Depois BuyHelp</p>
           </div>
           <button onClick={onClose}

@@ -61,7 +61,7 @@ export function OperacaoGaugeHistoricoModal({ onClose }: Props) {
     ? (data2026.reduce((s, d) => s + d.conversao, 0) / data2026.length).toFixed(2)
     : '0.00'
   const maxConv           = Math.max(...data.map(d => d.conversao))
-  const maxConvMes        = data.find(d => d.conversao === maxConv)?.mes ?? '�"'
+  const maxConvMes        = data.find(d => d.conversao === maxConv)?.mes ?? '"'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -73,7 +73,7 @@ export function OperacaoGaugeHistoricoModal({ onClose }: Props) {
         {/* Header */}
         <div className="flex items-start justify-between px-8 py-6 border-b border-bh-border/30 shrink-0">
           <div>
-            <h2 className="text-bh-text text-xl font-bold">Taxa de Conversão �" Histórico</h2>
+            <h2 className="text-bh-text text-xl font-bold">Taxa de Conversão " Histórico</h2>
             <p className="text-bh-subtle text-xs mt-1">Abr/2025 → Abr/2026 · Pedidos vs Intermediações</p>
           </div>
           <button onClick={onClose}

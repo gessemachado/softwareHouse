@@ -3,7 +3,7 @@ import { ChevronRight, TrendingUp, TrendingDown } from 'lucide-react'
 const metrics = [
   {
     category: 'LanÃ§amentos/Freq.',
-    icon: 'ŸY ',
+    icon: 'Y',
     color: '#ff6600',
     value: '223',
     change: '+4.9%',
@@ -12,7 +12,7 @@ const metrics = [
   },
   {
     category: 'TraduÃ§Ãµes',
-    icon: 'ŸY¢',
+    icon: 'Y',
     color: '#20bf55',
     value: '106',
     change: '+1.9%',
@@ -21,7 +21,7 @@ const metrics = [
   },
   {
     category: 'Pedidos',
-    icon: 'Ÿ"µ',
+    icon: '"',
     color: '#2499e4',
     value: '159',
     change: '+1.9%',
@@ -30,7 +30,7 @@ const metrics = [
   },
   {
     category: 'IntermediaÃ§Ãµes/Freq.',
-    icon: 'ŸY£',
+    icon: 'Y',
     color: '#a855f7',
     value: '87',
     change: '+1.9%',
@@ -39,7 +39,7 @@ const metrics = [
   },
   {
     category: 'Desconto Aprovado',
-    icon: 'ŸY ',
+    icon: 'Y',
     color: '#ff6600',
     value: 'R$ -26,10',
     change: '-4.8%',
@@ -49,7 +49,7 @@ const metrics = [
   },
   {
     category: 'Desconto em R$',
-    icon: 'ŸY¢',
+    icon: 'Y',
     color: '#20bf55',
     value: 'R$ 897,00',
     change: '+2.1%',
@@ -59,7 +59,7 @@ const metrics = [
   },
   {
     category: 'Qtd de IntermediaÃ§Ãµes',
-    icon: 'Ÿ"µ',
+    icon: '"',
     color: '#2499e4',
     value: 'R$ 92,80',
     change: '+2.1%',

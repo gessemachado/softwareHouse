@@ -141,7 +141,7 @@ export function AvaliacaoResultadosModal({ onClose }: Props) {
             </div>
             <div>
               <h2 className="text-bh-text text-xl font-bold">Avaliação de Resultados</h2>
-              <p className="text-bh-subtle text-sm mt-0.5">Análise comparativa de indicadores financeiros �� Antes vs Depois da Intermediação</p>
+              <p className="text-bh-subtle text-sm mt-0.5">Análise comparativa de indicadores financeiros  Antes vs Depois da Intermediação</p>
             </div>
           </div>
           <button onClick={onClose}

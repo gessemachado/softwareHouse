@@ -173,7 +173,7 @@ export function DashboardConfigModal({ onClose }: Props) {
         {/* Split body */}
         <div className="flex flex-1 overflow-hidden">
 
-          {/* LEFT panel ‚á" section list */}
+          {/* LEFT panel " section list */}
           <div className="w-56 shrink-0 border-r border-bh-border/30 overflow-y-auto py-3 px-3 space-y-1">
             <p className="text-[#333] text-[9px] font-bold tracking-widest uppercase px-2 pb-1">Se√ß√µes</p>
             {draftSections.map((section, i) => {
@@ -219,7 +219,7 @@ export function DashboardConfigModal({ onClose }: Props) {
                   <p className="text-bh-text text-sm font-bold">{selectedSec.label}</p>
                   <p className="text-bh-subtle text-[11px] mt-0.5">
                     {isCarouselSection
-                      ? 'Cards fixos ‚á" configure a ordena√ß√£o'
+                      ? 'Cards fixos " configure a ordena√ß√£o'
                       : isCardsSection
                         ? 'Arraste para reordenar ¬∑ toggle para ocultar'
                         : 'Sem cards individuais'}
@@ -233,7 +233,7 @@ export function DashboardConfigModal({ onClose }: Props) {
               </div>
             )}
 
-            {/* ‚ì?‚ì? Carrossel ‚á" s√≥ ordena√ß√£o ‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì?‚ì? */}
+            {/* ?? Carrossel " s√≥ ordena√ß√£o ????????????????????????????? */}
             {isCarouselSection ? (
               <div className="rounded-xl border border-white/[0.07] overflow-hidden">
                 <div className="px-4 py-3 bg-white/[0.02] border-b border-white/[0.05]">
@@ -255,7 +255,7 @@ export function DashboardConfigModal({ onClose }: Props) {
                           : 'bg-transparent border-bh-border/40 text-bh-subtle hover:border-bh-border/60 hover:text-bh-muted'
                       }`}
                     >
-                      <span className="text-base leading-none">‚á"</span>
+                      <span className="text-base leading-none">"</span>
                       <span>Maior ‚Üí Menor</span>
                       <span className="text-[10px] opacity-60 ml-auto">mais positivo primeiro</span>
                     </button>

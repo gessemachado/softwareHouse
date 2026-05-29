@@ -142,7 +142,7 @@ export function ComposicaoClientesModal({ onClose }: Props) {
                   <th className="text-left px-5 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Origem</th>
                   <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Novos (13m)</th>
                   <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">% do Total</th>
-                  <th className="text-right px-5 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">�lt. mês</th>
+                  <th className="text-right px-5 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">lt. mês</th>
                 </tr>
               </thead>
               <tbody>
