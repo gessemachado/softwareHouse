@@ -47,7 +47,7 @@ const CARD_INNER: Record<string, { id: string; label: string }[]> = {
 const CAROUSEL_IDS = new Set(['c_desconto', 'c_gauge', 'c_debitos'])
 
 const SECTION_ICONS: Record<string, string> = {
-  carousel: '🎠', cards: '🃏', vendas: '📊', cadastros: '👥', metricas: '📈',
+  carousel: '↺', cards: '⊞', vendas: '◎', cadastros: '✎', metricas: '▶',
 }
 
 interface Props { onClose: () => void }
@@ -154,18 +154,18 @@ export function DashboardConfigModal({ onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.85)' }} onClick={onClose}>
-      <div className="w-full max-w-2xl rounded-2xl border border-white/10 shadow-2xl flex flex-col"
-        style={{ background: '#0d0d0d', height: '580px' }}
+      <div className="w-full max-w-2xl rounded-2xl border border-bh-border/40 shadow-2xl flex flex-col"
+        style={{ background: 'rgb(var(--bh-surface))', height: '580px' }}
         onClick={e => e.stopPropagation()}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-white/5 shrink-0">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-bh-border/30 shrink-0">
           <div>
-            <h2 className="text-white text-lg font-bold">Configurar Dashboard</h2>
-            <p className="text-[#555] text-xs mt-0.5">Reordene e configure visibilidade dos cards</p>
+            <h2 className="text-bh-text text-lg font-bold">Configurar Dashboard</h2>
+            <p className="text-bh-subtle text-xs mt-0.5">Reordene e configure visibilidade dos cards</p>
           </div>
           <button onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#555] hover:text-white transition-colors">
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bh-surface2 text-bh-subtle hover:text-bh-text transition-colors">
             <X size={18} />
           </button>
         </div>
@@ -173,8 +173,8 @@ export function DashboardConfigModal({ onClose }: Props) {
         {/* Split body */}
         <div className="flex flex-1 overflow-hidden">
 
-          {/* LEFT panel — section list */}
-          <div className="w-56 shrink-0 border-r border-white/5 overflow-y-auto py-3 px-3 space-y-1">
+          {/* LEFT panel �" section list */}
+          <div className="w-56 shrink-0 border-r border-bh-border/30 overflow-y-auto py-3 px-3 space-y-1">
             <p className="text-[#333] text-[9px] font-bold tracking-widest uppercase px-2 pb-1">Seções</p>
             {draftSections.map((section, i) => {
               const isSelected = selectedSection === section.id
@@ -188,17 +188,17 @@ export function DashboardConfigModal({ onClose }: Props) {
                   } ${!section.visible && !isSelected ? 'opacity-40' : ''}`}>
 
                   <span className="text-sm leading-none shrink-0">{SECTION_ICONS[section.id] ?? '▪'}</span>
-                  <span className={`flex-1 text-xs font-semibold truncate ${isSelected ? 'text-white' : 'text-[#777]'}`}>
+                  <span className={`flex-1 text-xs font-semibold truncate ${isSelected ? 'text-bh-text' : 'text-bh-muted'}`}>
                     {section.label}
                   </span>
 
                   <div className="flex flex-col gap-0.5 shrink-0" onClick={e => e.stopPropagation()}>
                     <button onClick={() => moveUp(i)} disabled={i === 0}
-                      className="w-4 h-3.5 flex items-center justify-center rounded text-[#444] hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+                      className="w-4 h-3.5 flex items-center justify-center rounded text-bh-subtle hover:text-bh-text disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
                       <ChevronUp size={9} />
                     </button>
                     <button onClick={() => moveDown(i)} disabled={i === draftSections.length - 1}
-                      className="w-4 h-3.5 flex items-center justify-center rounded text-[#444] hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+                      className="w-4 h-3.5 flex items-center justify-center rounded text-bh-subtle hover:text-bh-text disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
                       <ChevronDown size={9} />
                     </button>
                   </div>
@@ -214,36 +214,36 @@ export function DashboardConfigModal({ onClose }: Props) {
 
             {/* Section header */}
             {selectedSec && (
-              <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-bh-border/30">
                 <div>
-                  <p className="text-white text-sm font-bold">{selectedSec.label}</p>
-                  <p className="text-[#555] text-[11px] mt-0.5">
+                  <p className="text-bh-text text-sm font-bold">{selectedSec.label}</p>
+                  <p className="text-bh-subtle text-[11px] mt-0.5">
                     {isCarouselSection
-                      ? 'Cards fixos — configure a ordenação'
+                      ? 'Cards fixos �" configure a ordenação'
                       : isCardsSection
                         ? 'Arraste para reordenar · toggle para ocultar'
                         : 'Sem cards individuais'}
                   </p>
                 </div>
                 <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                  selectedSec.visible ? 'bg-orange-500/15 text-orange-400' : 'bg-white/5 text-[#555]'
+                  selectedSec.visible ? 'bg-orange-500/15 text-orange-400' : 'bg-white/5 text-bh-subtle'
                 }`}>
                   {selectedSec.visible ? 'Visível' : 'Oculta'}
                 </span>
               </div>
             )}
 
-            {/* ── Carrossel — só ordenação ───────────────────────────── */}
+            {/* �?�? Carrossel �" só ordenação �?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�? */}
             {isCarouselSection ? (
               <div className="rounded-xl border border-white/[0.07] overflow-hidden">
                 <div className="px-4 py-3 bg-white/[0.02] border-b border-white/[0.05]">
-                  <p className="text-[#999] text-[10px] font-semibold">Cards fixos</p>
-                  <p className="text-[#555] text-[10px] mt-0.5">
+                  <p className="text-bh-muted text-[10px] font-semibold">Cards fixos</p>
+                  <p className="text-bh-subtle text-[10px] mt-0.5">
                     Desconto Disponibilizado · Operação | Pedidos · Total de Débitos
                   </p>
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-[#666] text-[10px] font-semibold tracking-widest uppercase mb-3">
+                  <p className="text-bh-subtle text-[10px] font-semibold tracking-widest uppercase mb-3">
                     Ordenar por variação mensal
                   </p>
                   <div className="flex flex-col gap-2">
@@ -252,10 +252,10 @@ export function DashboardConfigModal({ onClose }: Props) {
                       className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold border transition-all ${
                         draftCarouselOrder === 'desc'
                           ? 'bg-orange-500/15 border-orange-500/40 text-orange-400'
-                          : 'bg-transparent border-white/10 text-[#555] hover:border-white/20 hover:text-[#888]'
+                          : 'bg-transparent border-bh-border/40 text-bh-subtle hover:border-bh-border/60 hover:text-bh-muted'
                       }`}
                     >
-                      <span className="text-base leading-none">↓</span>
+                      <span className="text-base leading-none">�"</span>
                       <span>Maior → Menor</span>
                       <span className="text-[10px] opacity-60 ml-auto">mais positivo primeiro</span>
                     </button>
@@ -264,10 +264,10 @@ export function DashboardConfigModal({ onClose }: Props) {
                       className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold border transition-all ${
                         draftCarouselOrder === 'asc'
                           ? 'bg-orange-500/15 border-orange-500/40 text-orange-400'
-                          : 'bg-transparent border-white/10 text-[#555] hover:border-white/20 hover:text-[#888]'
+                          : 'bg-transparent border-bh-border/40 text-bh-subtle hover:border-bh-border/60 hover:text-bh-muted'
                       }`}
                     >
-                      <span className="text-base leading-none">↑</span>
+                      <span className="text-base leading-none">→</span>
                       <span>Menor → Maior</span>
                       <span className="text-[10px] opacity-60 ml-auto">mais negativo primeiro</span>
                     </button>
@@ -301,28 +301,28 @@ export function DashboardConfigModal({ onClose }: Props) {
                         <span className="text-[#333] text-[10px] font-mono w-4 text-center shrink-0">{filteredI + 1}</span>
 
                         {/* Drag handle */}
-                        <span className="text-[#333] hover:text-[#666] cursor-grab active:cursor-grabbing shrink-0">
+                        <span className="text-[#333] hover:text-bh-subtle cursor-grab active:cursor-grabbing shrink-0">
                           <GripVertical size={14} />
                         </span>
 
                         {/* Expand toggle */}
                         <button onClick={() => toggleExpandCard(cardId)}
-                          className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10 text-[#555] hover:text-white transition-colors shrink-0">
+                          className="w-5 h-5 flex items-center justify-center rounded hover:bg-bh-surface2 text-bh-subtle hover:text-bh-text transition-colors shrink-0">
                           <ChevronRight size={12} className={`transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                         </button>
 
-                        <span className={`flex-1 text-sm font-semibold ${cardOn ? 'text-white' : 'text-[#444]'}`}>
+                        <span className={`flex-1 text-sm font-semibold ${cardOn ? 'text-bh-text' : 'text-bh-subtle'}`}>
                           {CARD_LABELS[cardId]}
                         </span>
 
                         {/* Arrow controls */}
                         <div className="flex flex-col gap-0.5 shrink-0">
                           <button onClick={() => moveCardUp(realI)} disabled={isFirst}
-                            className="w-4 h-3.5 flex items-center justify-center rounded text-[#444] hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+                            className="w-4 h-3.5 flex items-center justify-center rounded text-bh-subtle hover:text-bh-text disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
                             <ChevronUp size={9} />
                           </button>
                           <button onClick={() => moveCardDown(realI)} disabled={isLast}
-                            className="w-4 h-3.5 flex items-center justify-center rounded text-[#444] hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+                            className="w-4 h-3.5 flex items-center justify-center rounded text-bh-subtle hover:text-bh-text disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
                             <ChevronDown size={9} />
                           </button>
                         </div>
@@ -333,14 +333,14 @@ export function DashboardConfigModal({ onClose }: Props) {
 
                       {/* Inner items */}
                       {isExpanded && (
-                        <div className="border-t border-white/5">
+                        <div className="border-t border-bh-border/30">
                           {inner.map(item => {
                             const innerOn = draftCardVis[item.id] !== false
                             return (
                               <div key={item.id}
                                 className={`flex items-center gap-3 px-5 py-2.5 border-b border-white/[0.04] last:border-0 transition-opacity ${innerOn ? 'opacity-100' : 'opacity-40'}`}>
                                 <span className="w-1.5 h-1.5 rounded-full bg-[#2a2a2a] shrink-0 ml-1" />
-                                <span className={`flex-1 text-xs ${innerOn ? 'text-[#aaa]' : 'text-[#444]'}`}>
+                                <span className={`flex-1 text-xs ${innerOn ? 'text-[#aaa]' : 'text-bh-subtle'}`}>
                                   {item.label}
                                 </span>
                                 <Toggle on={innerOn} onToggle={() => toggleCard(item.id)} />
@@ -359,7 +359,7 @@ export function DashboardConfigModal({ onClose }: Props) {
                 <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-3">
                   <span className="text-2xl">{SECTION_ICONS[selectedSection] ?? '▪'}</span>
                 </div>
-                <p className="text-[#444] text-sm font-semibold">Sem cards configuráveis</p>
+                <p className="text-bh-subtle text-sm font-semibold">Sem cards configuráveis</p>
                 <p className="text-[#333] text-xs mt-1">Use o toggle ao lado para ocultar a seção</p>
               </div>
             )}
@@ -367,15 +367,15 @@ export function DashboardConfigModal({ onClose }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-white/5 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-bh-border/30 shrink-0">
           <button onClick={handleReset}
-            className="flex items-center gap-2 text-[#555] hover:text-white text-xs font-semibold transition-colors">
+            className="flex items-center gap-2 text-bh-subtle hover:text-bh-text text-xs font-semibold transition-colors">
             <RotateCcw size={13} />
             Restaurar padrão
           </button>
           <div className="flex items-center gap-2">
             <button onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-white/10 text-[#666] hover:text-white text-xs font-semibold transition-colors">
+              className="px-4 py-2 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-bh-text text-xs font-semibold transition-colors">
               Cancelar
             </button>
             <button onClick={handleSave}

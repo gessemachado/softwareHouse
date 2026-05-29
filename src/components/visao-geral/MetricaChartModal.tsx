@@ -63,37 +63,37 @@ export function MetricaChartModal({ metricLabel, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full rounded-2xl border border-white/10 overflow-hidden shadow-2xl"
-        style={{ background: '#0d0d0d', maxWidth: '90vw' }}
+        className="w-full rounded-2xl border border-bh-border/40 overflow-hidden shadow-2xl"
+        style={{ background: 'rgb(var(--bh-surface))', maxWidth: '90vw' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
-          <h3 className="text-white font-bold text-base">{metricLabel} — Últimos 13 Meses</h3>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-bh-border/30">
+          <h3 className="text-bh-text font-bold text-base">{metricLabel} �" �ltimos 13 Meses</h3>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#666] hover:text-white transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-bh-surface2 text-bh-subtle hover:text-bh-text transition-colors"
           >
             <X size={16} />
           </button>
         </div>
 
         {/* KPI strip */}
-        <div className="grid grid-cols-3 gap-4 px-6 py-4 border-b border-white/5">
-          <div className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
-            <p className="text-[#555] text-[9px] font-bold tracking-widest uppercase mb-2">{acum2026Sub}</p>
+        <div className="grid grid-cols-3 gap-4 px-6 py-4 border-b border-bh-border/30">
+          <div className="rounded-xl border border-bh-border/30 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <p className="text-bh-subtle text-[9px] font-bold tracking-widest uppercase mb-2">{acum2026Sub}</p>
             <p className="text-orange-400 text-2xl font-bold">{acum2026Label}</p>
-            <p className="text-[#444] text-[10px] mt-1">Jan → Abr/2026</p>
+            <p className="text-bh-subtle text-[10px] mt-1">Jan → Abr/2026</p>
           </div>
-          <div className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
-            <p className="text-[#555] text-[9px] font-bold tracking-widest uppercase mb-2">Média 13 Meses</p>
-            <p className="text-white text-2xl font-bold">{avgLabel}</p>
-            <p className="text-[#444] text-[10px] mt-1">Abr/2025 → Abr/2026</p>
+          <div className="rounded-xl border border-bh-border/30 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <p className="text-bh-subtle text-[9px] font-bold tracking-widest uppercase mb-2">Média 13 Meses</p>
+            <p className="text-bh-text text-2xl font-bold">{avgLabel}</p>
+            <p className="text-bh-subtle text-[10px] mt-1">Abr/2025 → Abr/2026</p>
           </div>
-          <div className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
-            <p className="text-[#555] text-[9px] font-bold tracking-widest uppercase mb-2">Pico</p>
-            <p className="text-white text-2xl font-bold">{formatTooltip(metricLabel, peak)}</p>
-            <p className="text-[#444] text-[10px] mt-1">Maior valor no período</p>
+          <div className="rounded-xl border border-bh-border/30 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <p className="text-bh-subtle text-[9px] font-bold tracking-widest uppercase mb-2">Pico</p>
+            <p className="text-bh-text text-2xl font-bold">{formatTooltip(metricLabel, peak)}</p>
+            <p className="text-bh-subtle text-[10px] mt-1">Maior valor no período</p>
           </div>
         </div>
 
@@ -103,13 +103,13 @@ export function MetricaChartModal({ metricLabel, onClose }: Props) {
             <BarChart data={data} margin={{ top: 20, right: 10, bottom: 5, left: 10 }}>
               <XAxis
                 dataKey="month"
-                tick={{ fill: '#999', fontSize: 10 }}
+                tick={{ fill: 'rgb(var(--bh-muted))', fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 tickFormatter={v => formatY(metricLabel, v)}
-                tick={{ fill: '#999', fontSize: 10 }}
+                tick={{ fill: 'rgb(var(--bh-muted))', fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
                 width={52}
@@ -138,22 +138,22 @@ export function MetricaChartModal({ metricLabel, onClose }: Props) {
         </div>
 
         {/* Footer legend */}
-        <div className="flex items-center justify-between px-6 py-3 border-t border-white/5">
+        <div className="flex items-center justify-between px-6 py-3 border-t border-bh-border/30">
           <div className="flex items-center gap-5">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-sm bg-[#ff6600]" />
-              <span className="text-[#999] text-xs">Acima da Média</span>
+              <span className="text-bh-muted text-xs">Acima da Média</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-sm bg-[rgba(255,102,0,0.3)]" />
-              <span className="text-[#999] text-xs">Abaixo da Média</span>
+              <span className="text-bh-muted text-xs">Abaixo da Média</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 border-t-2 border-dashed border-orange-500/60" />
               <span className="text-orange-500 text-xs font-medium">Média ({avgLabel})</span>
             </div>
           </div>
-          <span className="text-[#555] text-xs">
+          <span className="text-bh-subtle text-xs">
             Pico: {formatTooltip(metricLabel, peak)} | Mínimo: {formatTooltip(metricLabel, minVal)}
           </span>
         </div>

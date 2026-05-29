@@ -11,7 +11,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ title = 'BuyHelp Desconto', subtitle = 'Gestão e análise das software house', breadcrumb = 'Software House', children }: AppLayoutProps) {
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="min-h-screen bg-bh-bg flex flex-col">
       <Header />
 
       {/* Page header */}
@@ -37,10 +37,10 @@ export function AppLayout({ title = 'BuyHelp Desconto', subtitle = 'Gestão e an
       <footer className="border-t border-bh-border px-3 py-3 sm:px-8 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 text-bh-muted text-xs">
-            <div className="w-4 h-4 bg-bh-primary rounded flex items-center justify-center text-white font-bold" style={{ fontSize: '9px' }}>B</div>
+            <div className="w-4 h-4 bg-bh-primary rounded flex items-center justify-center font-bold" style={{ fontSize: '9px', color: '#fff' }}>B</div>
             <span>© 2026 BuyHelp. Todos os direitos reservados.</span>
           </div>
-          <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded font-medium">PROD</span>
+          <span className="bg-green-600 text-xs px-2 py-0.5 rounded font-medium" style={{ color: '#fff' }}>PROD</span>
         </div>
         <div className="flex items-center gap-4 text-xs text-bh-muted">
           <a href="#" className="hover:text-bh-text transition-colors">Termos de Uso</a>

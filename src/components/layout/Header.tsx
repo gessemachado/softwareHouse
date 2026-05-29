@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { Bell, Search, Store, ChevronDown, Sparkles, LayoutGrid, Layers, X, Check } from 'lucide-react'
+import { Bell, Search, Store, ChevronDown, Sparkles, LayoutGrid, Layers, X, Check, Sun, Moon } from 'lucide-react'
 import { useLojaGrupo } from '../../contexts/LojaGrupoContext'
+import { useTheme } from '../../contexts/ThemeContext'
 import { CREDENCIADOS_MOCK, GRUPOS_MOCK, GRUPO_LOJAS } from '../../mocks/buyhelp-index.mock'
 import type { CredenciadoOption } from '../../types/buyhelp-index.types'
 
@@ -25,29 +26,38 @@ function LojaGrupoPicker({
   return (
     <div
       className="absolute z-50 top-full mt-2 left-0 rounded-xl shadow-2xl border overflow-hidden flex flex-col"
-      style={{ background: '#0d0d0d', borderColor: 'rgba(255,255,255,0.1)', width: 450, maxHeight: '75vh' }}
+      style={{
+        background: 'rgb(var(--bh-bg))',
+        borderColor: 'rgb(var(--bh-border) / 0.6)',
+        width: 450,
+        maxHeight: '75vh',
+      }}
     >
       {/* Header */}
-      <div className="shrink-0 p-3 flex flex-col gap-3" style={{ background: 'rgba(36,36,36,0.5)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      <div
+        className="shrink-0 p-3 flex flex-col gap-3"
+        style={{
+          background: 'rgb(var(--bh-surface2))',
+          borderBottom: '1px solid rgb(var(--bh-border) / 0.4)',
+        }}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 pl-1">
-            <Layers size={13} style={{ color: '#ff6600' }} />
-            <span className="text-sm font-semibold" style={{ color: '#fafafa' }}>
+            <Layers size={13} className="text-bh-primary" />
+            <span className="text-sm font-semibold text-bh-text">
               Filtro Global – Loja/Grupo Econômico
             </span>
           </div>
           <div className="flex items-center gap-1">
             <button
               onClick={onClose}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-white/5"
-              style={{ color: '#fafafa' }}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium text-bh-text transition-colors hover:bg-bh-surface"
             >
               <Check size={12} /> Todos
             </button>
             <button
               onClick={onClose}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-white/5"
-              style={{ color: '#fafafa' }}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium text-bh-text transition-colors hover:bg-bh-surface"
             >
               <X size={12} /> Fechar
             </button>
@@ -56,20 +66,19 @@ function LojaGrupoPicker({
 
         {/* Search */}
         <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#666' }} />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-bh-subtle" />
           <input
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Filtrar por loja, grupo ou CNPJ..."
             autoFocus
-            className="w-full rounded-md pl-9 pr-3 py-1.5 text-sm outline-none border"
-            style={{ background: '#111', borderColor: '#242424', color: '#fafafa' }}
+            className="w-full rounded-md pl-9 pr-3 py-1.5 text-sm outline-none border bg-bh-surface border-bh-border text-bh-text"
           />
         </div>
 
         {/* Counter */}
-        <span className="self-start px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#008080', color: '#fff' }}>
+        <span className="self-start px-2.5 py-0.5 rounded-full text-xs font-semibold bg-bh-secondary" style={{ color: '#fff' }}>
           1 de {CREDENCIADOS_MOCK.length} selecionadas
         </span>
       </div>
@@ -92,19 +101,19 @@ function LojaGrupoPicker({
                 {/* Group row */}
                 <button
                   onClick={() => { onSelectGrupo(grupo.uuid); onClose() }}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors hover:bg-white/5"
+                  className="w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors hover:bg-bh-surface"
                   style={{
-                    background: isGrupoSel ? 'rgba(255,102,0,0.12)' : 'rgba(36,36,36,0.5)',
-                    border: isGrupoSel ? '1px solid rgba(255,102,0,0.3)' : '1px solid transparent',
+                    background: isGrupoSel ? 'rgb(255 102 0 / 0.12)' : 'rgb(var(--bh-surface2))',
+                    border: isGrupoSel ? '1px solid rgb(255 102 0 / 0.3)' : '1px solid transparent',
                   }}
                 >
                   <div className="w-5 h-5 rounded-full border flex-shrink-0 flex items-center justify-center"
-                    style={{ borderColor: isGrupoSel ? '#ff6600' : '#666' }}>
+                    style={{ borderColor: isGrupoSel ? '#ff6600' : 'rgb(var(--bh-subtle))' }}>
                     {isGrupoSel && <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff6600' }} />}
                   </div>
-                  <Layers size={16} style={{ color: isGrupoSel ? '#ff6600' : '#888', flexShrink: 0 }} />
-                  <span className="flex-1 text-sm font-medium" style={{ color: '#fafafa' }}>{grupo.nome}</span>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold" style={{ background: '#008080', color: '#fff' }}>
+                  <Layers size={16} style={{ color: isGrupoSel ? '#ff6600' : 'rgb(var(--bh-muted))', flexShrink: 0 }} />
+                  <span className="flex-1 text-sm font-medium text-bh-text">{grupo.nome}</span>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-bh-secondary" style={{ color: '#fff' }}>
                     {lojas.length}
                   </span>
                 </button>
@@ -117,20 +126,20 @@ function LojaGrupoPicker({
                       <button
                         key={loja.uuid}
                         onClick={() => { onSelectLoja(loja.uuid); onClose() }}
-                        className="w-full flex items-center gap-3 px-2 py-2 rounded-md text-left transition-colors hover:bg-white/5"
+                        className="w-full flex items-center gap-3 px-2 py-2 rounded-md text-left transition-colors hover:bg-bh-surface"
                         style={isSel
-                          ? { background: 'rgba(255,102,0,0.08)', border: '1px solid rgba(255,102,0,0.2)' }
+                          ? { background: 'rgb(255 102 0 / 0.08)', border: '1px solid rgb(255 102 0 / 0.2)' }
                           : { border: '1px solid transparent' }
                         }
                       >
                         <div className="w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center"
-                          style={{ borderColor: isSel ? '#ff6600' : '#666' }}>
+                          style={{ borderColor: isSel ? '#ff6600' : 'rgb(var(--bh-subtle))' }}>
                           {isSel && <div className="w-2 h-2 rounded-full" style={{ background: '#ff6600' }} />}
                         </div>
-                        <Store size={14} style={{ color: isSel ? '#ff6600' : '#777', flexShrink: 0 }} />
+                        <Store size={14} style={{ color: isSel ? '#ff6600' : 'rgb(var(--bh-muted))', flexShrink: 0 }} />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm leading-tight" style={{ color: '#fafafa' }}>{loja.nome}</p>
-                          <p className="text-xs mt-0.5" style={{ color: '#999' }}>{loja.cnpj}</p>
+                          <p className="text-sm leading-tight text-bh-text">{loja.nome}</p>
+                          <p className="text-xs mt-0.5 text-bh-muted">{loja.cnpj}</p>
                         </div>
                       </button>
                     )
@@ -149,6 +158,7 @@ function LojaGrupoPicker({
 
 export function Header() {
   const { modo, setModo, credenciadoUuid, setCredenciadoUuid, grupoUuid, setGrupoUuid, pickerOpen, setPickerOpen } = useLojaGrupo()
+  const { theme, toggle } = useTheme()
   const pickerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -169,7 +179,7 @@ export function Header() {
         {/* Logo + Nav */}
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-bh-primary rounded flex items-center justify-center text-white font-bold text-sm">
+            <div className="w-7 h-7 bg-bh-primary rounded flex items-center justify-center font-bold text-sm" style={{ color: '#fff' }}>
               B
             </div>
             <span className="text-bh-primary font-semibold text-sm">BuyHelp</span>
@@ -195,11 +205,11 @@ export function Header() {
             <button
               onClick={() => setPickerOpen(!pickerOpen)}
               className="flex items-center gap-1.5 text-xs transition-colors hover:text-bh-text"
-              style={{ color: pickerOpen ? '#ff6600' : '#999' }}
+              style={{ color: pickerOpen ? '#ff6600' : 'rgb(var(--bh-muted))' }}
             >
               {modo === 'grupo'
-                ? <Layers size={14} style={{ color: pickerOpen ? '#ff6600' : '#999' }} />
-                : <Store  size={14} style={{ color: pickerOpen ? '#ff6600' : '#999' }} />
+                ? <Layers size={14} style={{ color: pickerOpen ? '#ff6600' : 'rgb(var(--bh-muted))' }} />
+                : <Store  size={14} style={{ color: pickerOpen ? '#ff6600' : 'rgb(var(--bh-muted))' }} />
               }
               <span className="max-w-[180px] truncate">{selectorLabel}</span>
               <ChevronDown size={11} className={`transition-transform ${pickerOpen ? 'rotate-180 text-orange-500' : ''}`} />
@@ -223,8 +233,18 @@ export function Header() {
           <button className="text-bh-muted hover:text-bh-text transition-colors">
             <Search size={16} />
           </button>
+
+          {/* Theme toggle */}
+          <button
+            onClick={toggle}
+            className="text-bh-muted hover:text-bh-text transition-colors"
+            title={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
+          >
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+
           <div className="flex items-center gap-2 text-sm">
-            <div className="w-7 h-7 rounded-full bg-bh-primary flex items-center justify-center text-white text-xs font-semibold">
+            <div className="w-7 h-7 rounded-full bg-bh-primary flex items-center justify-center text-xs font-semibold" style={{ color: '#fff' }}>
               G
             </div>
             <span className="text-bh-text font-medium text-xs">Gessé</span>

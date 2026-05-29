@@ -98,7 +98,7 @@ export function SalesAnalysisSection() {
   const diffLabel      = formatFull(metric, Math.abs(diff))
 
   return (
-    <div className="rounded-lg border border-[rgba(41,41,41,0.5)] bg-black p-6 mb-5">
+    <div className="rounded-lg border border-bh-border/50 bg-bh-bg p-6 mb-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -107,8 +107,8 @@ export function SalesAnalysisSection() {
             <TrendingUp size={20} className="text-orange-500" />
           </div>
           <div>
-            <h2 className="text-white text-xl font-bold">Análise — Últimos 13 Meses</h2>
-            <p className="text-[#999] text-sm mt-0.5">Abr/2025 → Abr/2026 · Visualização mensal</p>
+            <h2 className="text-bh-text text-xl font-bold">Análise �" �ltimos 13 Meses</h2>
+            <p className="text-bh-muted text-sm mt-0.5">Abr/2025 → Abr/2026 · Visualização mensal</p>
           </div>
         </div>
 
@@ -116,14 +116,14 @@ export function SalesAnalysisSection() {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setShowDropdown(v => !v)}
-            className="flex items-center gap-2 border border-[rgba(41,41,41,0.5)] bg-black text-white px-4 py-2 rounded-lg text-sm hover:border-orange-500/40 transition-colors"
+            className="flex items-center gap-2 border border-bh-border/50 bg-bh-surface text-bh-text px-4 py-2 rounded-lg text-sm hover:border-orange-500/40 transition-colors"
           >
             {METRIC_LABELS[metric]}
-            <ChevronDown size={14} className={`text-[#999] transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+            <ChevronDown size={14} className={`text-bh-muted transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
           </button>
           {showDropdown && (
-            <div className="absolute z-20 right-0 top-full mt-1 w-52 rounded-xl border border-[rgba(41,41,41,0.8)] overflow-hidden shadow-xl"
-              style={{ background: '#000' }}>
+            <div className="absolute z-20 right-0 top-full mt-1 w-52 rounded-xl border border-bh-border overflow-hidden shadow-xl"
+              style={{ background: 'rgb(var(--bh-surface))' }}>
               {METRICS.map(m => (
                 <button
                   key={m}
@@ -131,7 +131,7 @@ export function SalesAnalysisSection() {
                   className={`w-full text-left px-4 py-3 text-sm border-b border-white/[0.04] last:border-0 transition-colors ${
                     m === metric
                       ? 'text-orange-500 bg-orange-500/10 font-semibold'
-                      : 'text-white hover:bg-white/5'
+                      : 'text-bh-text hover:bg-bh-surface2'
                   }`}
                 >
                   {METRIC_LABELS[m]}
@@ -144,19 +144,19 @@ export function SalesAnalysisSection() {
 
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Left card */}
-        <div className="w-full sm:w-64 sm:shrink-0 border border-[rgba(41,41,41,0.5)] bg-black rounded-lg p-5">
+        <div className="w-full sm:w-64 sm:shrink-0 border border-bh-border/50 bg-bh-bg rounded-lg p-5">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: 'linear-gradient(135deg, rgba(255,102,0,0.25) 0%, rgba(255,102,0,0.1) 100%)' }}>
               <TrendingUp size={20} className="text-orange-500" />
             </div>
             <div>
-              <span className="text-[#999] text-sm font-semibold leading-tight">{METRIC_LABELS[metric]}</span>
+              <span className="text-bh-muted text-sm font-semibold leading-tight">{METRIC_LABELS[metric]}</span>
               <p className="text-orange-400 text-[10px] font-mono mt-0.5">{selLabel}</p>
             </div>
           </div>
 
-          <p className="text-white text-3xl font-bold mb-4 leading-tight">{currentLabel}</p>
+          <p className="text-bh-text text-3xl font-bold mb-4 leading-tight">{currentLabel}</p>
 
           <div className="flex items-start gap-3 mb-4">
             <div className={`flex items-center gap-1.5 rounded px-2 py-1 shrink-0 ${diffPositive ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
@@ -168,16 +168,16 @@ export function SalesAnalysisSection() {
               </span>
             </div>
             <div>
-              <p className="text-[#666] text-xs">Diferença</p>
+              <p className="text-bh-subtle text-xs">Diferença</p>
               <p className={`text-base font-semibold ${diffPositive ? 'text-green-400' : 'text-red-400'}`}>
                 {diffPositive ? '+' : '-'}{diffLabel}
               </p>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-white/5">
-            <p className="text-[#666] text-xs mb-1">Período anterior <span className="text-[#555]">({compareLabel})</span></p>
-            <p className="text-white text-base font-semibold">{prevLabel}</p>
+          <div className="pt-3 border-t border-bh-border/30">
+            <p className="text-bh-subtle text-xs mb-1">Período anterior <span className="text-bh-subtle">({compareLabel})</span></p>
+            <p className="text-bh-text text-base font-semibold">{prevLabel}</p>
           </div>
         </div>
 
@@ -187,13 +187,13 @@ export function SalesAnalysisSection() {
             <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 20, left: 10 }}>
               <XAxis
                 dataKey="month"
-                tick={{ fill: '#999', fontSize: 10 }}
+                tick={{ fill: 'rgb(var(--bh-muted))', fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 tickFormatter={v => formatY(metric, v)}
-                tick={{ fill: '#999', fontSize: 10 }}
+                tick={{ fill: 'rgb(var(--bh-muted))', fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
                 width={50}
@@ -230,7 +230,7 @@ export function SalesAnalysisSection() {
       </div>
 
       {/* Footer */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4 pt-4 border-t border-white/5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4 pt-4 border-t border-bh-border/30">
         <button
           onClick={() => setShowAvaliacao(v => !v)}
           className="flex items-center gap-2 border border-orange-500/40 bg-orange-500/10 text-orange-500 px-4 py-2 rounded-lg text-sm hover:bg-orange-500/20 transition-colors w-fit"
@@ -242,18 +242,18 @@ export function SalesAnalysisSection() {
           <div className="flex flex-wrap items-center gap-3 sm:gap-5">
             <div className="flex items-center gap-2">
               <div className="w-3.5 h-3.5 rounded bg-[#ff6600]" />
-              <span className="text-[#999] text-xs">Taxa 1</span>
+              <span className="text-bh-muted text-xs">Taxa 1</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3.5 h-3.5 rounded bg-[#2a2a2a]" />
-              <span className="text-[#999] text-xs">Taxa 2</span>
+              <span className="text-bh-muted text-xs">Taxa 2</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3.5 border-t-2 border-dashed border-orange-500/50" />
               <span className="text-orange-500 text-xs font-medium">Média ({avgFormatted})</span>
             </div>
             <div className="w-px h-4 bg-white/10" />
-            <span className="text-[#666] text-xs">
+            <span className="text-bh-subtle text-xs">
               Pico: {formatFull(metric, peak)} | Mínimo: {formatFull(metric, minVal)}
             </span>
           </div>
@@ -261,22 +261,22 @@ export function SalesAnalysisSection() {
           <div className="flex flex-wrap items-center gap-3 sm:gap-5">
             <div className="flex items-center gap-2">
               <div className="w-3.5 h-3.5 rounded bg-orange-500" />
-              <span className="text-[#999] text-xs">Acima da Média / Selecionado</span>
+              <span className="text-bh-muted text-xs">Acima da Média / Selecionado</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3.5 h-3.5 rounded" style={{ background: 'rgba(255,255,255,0.25)' }} />
-              <span className="text-[#999] text-xs">Comparação</span>
+              <span className="text-bh-muted text-xs">Comparação</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3.5 h-3.5 rounded bg-orange-500/30" />
-              <span className="text-[#999] text-xs">Abaixo da Média</span>
+              <span className="text-bh-muted text-xs">Abaixo da Média</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3.5 border-t-2 border-dashed border-orange-500/50" />
               <span className="text-orange-500 text-xs font-medium">Média ({avgFormatted})</span>
             </div>
             <div className="w-px h-4 bg-white/10" />
-            <span className="text-[#666] text-xs">
+            <span className="text-bh-subtle text-xs">
               Pico: {formatFull(metric, peak)} | Mínimo: {formatFull(metric, minVal)}
             </span>
           </div>

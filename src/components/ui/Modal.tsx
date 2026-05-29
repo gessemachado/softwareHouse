@@ -45,14 +45,14 @@ export function Modal({ open, onClose, title, subtitle, icon, footer, children }
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={() => setExpanded(e => !e)}
-              className="w-9 h-9 rounded-lg border border-bh-border bg-transparent flex items-center justify-center text-bh-subtle hover:text-bh-text hover:bg-white/5 hover:border-white/20 transition-colors"
+              className="w-9 h-9 rounded-lg border border-bh-border bg-transparent flex items-center justify-center text-bh-subtle hover:text-bh-text hover:bg-bh-surface2 hover:border-bh-border/60 transition-colors"
               title={expanded ? 'Recolher' : 'Expandir'}
             >
               {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
             </button>
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-lg border border-bh-border bg-transparent flex items-center justify-center text-bh-subtle hover:text-bh-text hover:bg-white/5 hover:border-white/20 transition-colors"
+              className="w-9 h-9 rounded-lg border border-bh-border bg-transparent flex items-center justify-center text-bh-subtle hover:text-bh-text hover:bg-bh-surface2 hover:border-bh-border/60 transition-colors"
             >
               <X size={18} />
             </button>

@@ -27,9 +27,9 @@ export function CardNaoAproveitado() {
   ]
 
   return (
-    <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden h-full flex flex-col">
+    <div className="rounded-xl border border-bh-border/50 bg-bh-bg overflow-hidden h-full flex flex-col">
       {showOperacao && <OperacaoHistoricoModal onClose={() => setShowOperacao(false)} />}
-      <div className="border-b border-[#292929] px-6 py-5"
+      <div className="border-b border-bh-border px-6 py-5"
 >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -37,12 +37,12 @@ export function CardNaoAproveitado() {
               <span className="text-orange-500 text-base font-bold">%</span>
             </div>
             <div>
-              <h3 className="text-white text-lg font-semibold">Não Aproveitado</h3>
-              <p className="text-[#999] text-xs">Acompanhamento da operação | Pedido / Intermediação</p>
+              <h3 className="text-bh-text text-lg font-semibold">Não Aproveitado</h3>
+              <p className="text-bh-muted text-xs">Acompanhamento da operação | Pedido / Intermediação</p>
             </div>
           </div>
           <button onClick={() => setShowOperacao(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+            className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
             <BarChart2 size={12} /><span>Histórico</span>
           </button>
         </div>
@@ -58,59 +58,59 @@ export function CardNaoAproveitado() {
             </PieChart>
           </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-[#999] text-xs">Não Aprov.</p>
+            <p className="text-bh-muted text-xs">Não Aprov.</p>
             <p className="text-cyan-400 text-xl font-bold">{(100 - absorcaoOp).toFixed(1)}%</p>
           </div>
         </div>
         <div className="flex-1 flex flex-col gap-2">
-          {vis('c_nao_aprov.total') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+          {vis('c_nao_aprov.total') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
               <div className="flex items-center justify-between flex-1">
-                <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">NÃO APROV. | {naoAprov}</span>
+                <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">NÃO APROV. | {naoAprov}</span>
                 <div className="flex items-center gap-1.5">
                   <TrendBadge cur={naoAprov} prev={naoAprovPrev} />
-                  <span className="text-[#666] text-xs">vs {naoAprovPrev}</span>
+                  <span className="text-bh-subtle text-xs">vs {naoAprovPrev}</span>
                 </div>
               </div>
             </div>
           </div>}
-          {vis('c_nao_aprov.mesma_trib') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+          {vis('c_nao_aprov.mesma_trib') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="w-2 h-2 rounded-sm shrink-0 bg-[#fca5a5]" />
-              <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Mesma Tributação</span>
+              <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Mesma Tributação</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white text-xs font-bold">{op.mesmaTrib}</span>
+              <span className="text-bh-text text-xs font-bold">{op.mesmaTrib}</span>
               <div className="flex items-center gap-1.5">
                 <TrendBadge cur={op.mesmaTrib} prev={opPrev.mesmaTrib} />
-                <span className="text-[#666] text-xs">vs {opPrev.mesmaTrib}</span>
+                <span className="text-bh-subtle text-xs">vs {opPrev.mesmaTrib}</span>
               </div>
             </div>
           </div>}
-          {vis('c_nao_aprov.somente_item') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+          {vis('c_nao_aprov.somente_item') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="w-2 h-2 rounded-sm shrink-0 bg-[#b45309]" />
-              <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Somente um Item</span>
+              <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Somente um Item</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white text-xs font-bold">{op.somenteItem}</span>
+              <span className="text-bh-text text-xs font-bold">{op.somenteItem}</span>
               <div className="flex items-center gap-1.5">
                 <TrendBadge cur={op.somenteItem} prev={opPrev.somenteItem} />
-                <span className="text-[#666] text-xs">vs {opPrev.somenteItem}</span>
+                <span className="text-bh-subtle text-xs">vs {opPrev.somenteItem}</span>
               </div>
             </div>
           </div>}
-          {vis('c_nao_aprov.nao_aceitou') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+          {vis('c_nao_aprov.nao_aceitou') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="w-2 h-2 rounded-sm shrink-0 bg-[#7f1d1d]" />
-              <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Cliente não aceitou</span>
+              <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Cliente não aceitou</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white text-xs font-bold">{op.naoAceitou}</span>
+              <span className="text-bh-text text-xs font-bold">{op.naoAceitou}</span>
               <div className="flex items-center gap-1.5">
                 <TrendBadge cur={op.naoAceitou} prev={opPrev.naoAceitou} />
-                <span className="text-[#666] text-xs">vs {opPrev.naoAceitou}</span>
+                <span className="text-bh-subtle text-xs">vs {opPrev.naoAceitou}</span>
               </div>
             </div>
           </div>}

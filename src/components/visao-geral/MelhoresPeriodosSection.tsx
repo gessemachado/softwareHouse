@@ -3,7 +3,7 @@ import { ChevronRight, TrendingUp, TrendingDown } from 'lucide-react'
 const metrics = [
   {
     category: 'LanÃ§amentos/Freq.',
-    icon: 'ðŸŸ ',
+    icon: 'ŸY ',
     color: '#ff6600',
     value: '223',
     change: '+4.9%',
@@ -12,7 +12,7 @@ const metrics = [
   },
   {
     category: 'TraduÃ§Ãµes',
-    icon: 'ðŸŸ¢',
+    icon: 'ŸY¢',
     color: '#20bf55',
     value: '106',
     change: '+1.9%',
@@ -21,7 +21,7 @@ const metrics = [
   },
   {
     category: 'Pedidos',
-    icon: 'ðŸ”µ',
+    icon: 'Ÿ"µ',
     color: '#2499e4',
     value: '159',
     change: '+1.9%',
@@ -30,7 +30,7 @@ const metrics = [
   },
   {
     category: 'IntermediaÃ§Ãµes/Freq.',
-    icon: 'ðŸŸ£',
+    icon: 'ŸY£',
     color: '#a855f7',
     value: '87',
     change: '+1.9%',
@@ -39,7 +39,7 @@ const metrics = [
   },
   {
     category: 'Desconto Aprovado',
-    icon: 'ðŸŸ ',
+    icon: 'ŸY ',
     color: '#ff6600',
     value: 'R$ -26,10',
     change: '-4.8%',
@@ -49,7 +49,7 @@ const metrics = [
   },
   {
     category: 'Desconto em R$',
-    icon: 'ðŸŸ¢',
+    icon: 'ŸY¢',
     color: '#20bf55',
     value: 'R$ 897,00',
     change: '+2.1%',
@@ -59,7 +59,7 @@ const metrics = [
   },
   {
     category: 'Qtd de IntermediaÃ§Ãµes',
-    icon: 'ðŸ”µ',
+    icon: 'Ÿ"µ',
     color: '#2499e4',
     value: 'R$ 92,80',
     change: '+2.1%',
@@ -71,10 +71,10 @@ const metrics = [
 
 export function MelhoresPeriodosSection() {
   return (
-    <div className="rounded-lg border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 p-6 mb-5">
+    <div className="rounded-lg border border-bh-border/50 bg-bh-bg p-6 mb-5">
       <div className="flex items-center gap-2 mb-5">
         <ChevronRight size={16} className="text-orange-500" />
-        <h3 className="text-white text-sm font-semibold">Melhores PerÃ­odos - VisÃ£o Geral</h3>
+        <h3 className="text-bh-text text-sm font-semibold">Melhores PerÃ­odos - VisÃ£o Geral</h3>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
@@ -82,9 +82,9 @@ export function MelhoresPeriodosSection() {
           <div key={m.category} className="space-y-1">
             <div className="flex items-center gap-1.5">
               <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: m.color }} />
-              <span className="text-[#999] text-xs">{m.category}</span>
+              <span className="text-bh-muted text-xs">{m.category}</span>
             </div>
-            <p className="text-white text-xl font-semibold">{m.value}</p>
+            <p className="text-bh-text text-xl font-semibold">{m.value}</p>
             <div className="flex items-center gap-1.5">
               <div className={`flex items-center gap-1 rounded px-1.5 py-0.5 ${m.positive ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
                 {m.positive
@@ -93,20 +93,20 @@ export function MelhoresPeriodosSection() {
                 }
                 <span className={`text-xs ${m.positive ? 'text-green-400' : 'text-red-400'}`}>{m.change}</span>
               </div>
-              <span className="text-[#666] text-xs">{m.changeVs}</span>
+              <span className="text-bh-subtle text-xs">{m.changeVs}</span>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/5">
+      <div className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t border-bh-border/30">
         {metrics.slice(4).map((m) => (
           <div key={m.category} className="space-y-1">
             <div className="flex items-center gap-1.5">
               <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: m.color }} />
-              <span className="text-[#999] text-xs">{m.category}</span>
+              <span className="text-bh-muted text-xs">{m.category}</span>
             </div>
-            <p className="text-white text-xl font-semibold">{m.value}</p>
+            <p className="text-bh-text text-xl font-semibold">{m.value}</p>
             <div className="flex items-center gap-1.5">
               <div className={`flex items-center gap-1 rounded px-1.5 py-0.5 ${m.positive ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
                 {m.positive
@@ -115,7 +115,7 @@ export function MelhoresPeriodosSection() {
                 }
                 <span className={`text-xs ${m.positive ? 'text-green-400' : 'text-red-400'}`}>{m.change}</span>
               </div>
-              <span className="text-[#666] text-xs">{m.changeVs}</span>
+              <span className="text-bh-subtle text-xs">{m.changeVs}</span>
             </div>
           </div>
         ))}

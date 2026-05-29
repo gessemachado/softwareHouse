@@ -102,7 +102,7 @@ function fmt(v: number) {
 }
 
 function ValueCell({ value, dir }: { value: number | null; dir: string | null }) {
-  if (value === null) return <span className="text-[#555]">-</span>
+  if (value === null) return <span className="text-bh-subtle">-</span>
   return (
     <span className="flex items-center gap-1 justify-end">
       {dir === 'up' && <TrendingUp size={12} className="text-emerald-400 shrink-0" />}
@@ -113,7 +113,7 @@ function ValueCell({ value, dir }: { value: number | null; dir: string | null })
 }
 
 function DescontoCell({ value, badge }: { value: number | null; badge: string | null }) {
-  if (value === null) return <span className="text-[#555]">-</span>
+  if (value === null) return <span className="text-bh-subtle">-</span>
   const cls = badge === 'orange'
     ? 'bg-transparent border border-orange-500 text-orange-400'
     : badge === 'teal'
@@ -129,23 +129,23 @@ function DescontoCell({ value, badge }: { value: number | null; badge: string | 
 export function AvaliacaoResultadosModal({ onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.85)' }}>
-      <div className="w-full max-w-5xl rounded-2xl border border-white/10 overflow-hidden shadow-2xl"
-        style={{ background: '#0d0d0d' }}>
+      <div className="w-full max-w-5xl rounded-2xl border border-bh-border/40 overflow-hidden shadow-2xl"
+        style={{ background: 'rgb(var(--bh-surface))' }}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-5 border-b border-white/5">
+        <div className="flex items-center justify-between px-8 py-5 border-b border-bh-border/30">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, rgba(255,102,0,0.25) 0%, rgba(255,102,0,0.1) 100%)' }}>
               <BarChart2 size={22} className="text-orange-500" />
             </div>
             <div>
-              <h2 className="text-white text-xl font-bold">Avaliação de Resultados</h2>
-              <p className="text-[#666] text-sm mt-0.5">Análise comparativa de indicadores financeiros • Antes vs Depois da Intermediação</p>
+              <h2 className="text-bh-text text-xl font-bold">Avaliação de Resultados</h2>
+              <p className="text-bh-subtle text-sm mt-0.5">Análise comparativa de indicadores financeiros �� Antes vs Depois da Intermediação</p>
             </div>
           </div>
           <button onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#666] hover:text-white transition-colors">
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bh-surface2 text-bh-subtle hover:text-bh-text transition-colors">
             <X size={18} />
           </button>
         </div>
@@ -154,14 +154,14 @@ export function AvaliacaoResultadosModal({ onClose }: Props) {
         <div className="overflow-auto max-h-[75vh]">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5">
-                <th className="text-left px-8 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Avaliação Resultado</th>
-                <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Antes</th>
-                <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">%</th>
-                <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Depois</th>
-                <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">%</th>
-                <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Variação</th>
-                <th className="text-right px-8 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Desconto</th>
+              <tr className="border-b border-bh-border/30">
+                <th className="text-left px-8 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Avaliação Resultado</th>
+                <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Antes</th>
+                <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">%</th>
+                <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Depois</th>
+                <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">%</th>
+                <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Variação</th>
+                <th className="text-right px-8 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Desconto</th>
               </tr>
             </thead>
             <tbody>
@@ -176,12 +176,12 @@ export function AvaliacaoResultadosModal({ onClose }: Props) {
                         </span>
                       )}
                       {row.badge === 'teal' && (
-                        <span className="inline-flex items-center bg-teal-500 text-white text-xs font-bold px-2.5 py-0.5 rounded mr-1">
+                        <span className="inline-flex items-center bg-teal-500 text-bh-text text-xs font-bold px-2.5 py-0.5 rounded mr-1">
                           {row.label}
                         </span>
                       )}
                       {!row.badge && (
-                        <span className={row.bold ? 'text-white font-semibold' : 'text-[#aaa]'}>
+                        <span className={row.bold ? 'text-bh-text font-semibold' : 'text-[#aaa]'}>
                           {row.label}
                         </span>
                       )}
@@ -189,22 +189,22 @@ export function AvaliacaoResultadosModal({ onClose }: Props) {
                   </td>
 
                   {/* Antes */}
-                  <td className="px-4 py-3 text-right text-white">
+                  <td className="px-4 py-3 text-right text-bh-text">
                     <ValueCell value={row.antes} dir={row.antesDir} />
                   </td>
 
                   {/* Antes % */}
-                  <td className="px-4 py-3 text-right text-[#666]">
+                  <td className="px-4 py-3 text-right text-bh-subtle">
                     {row.antesP ?? '-'}
                   </td>
 
                   {/* Depois */}
-                  <td className="px-4 py-3 text-right text-white">
+                  <td className="px-4 py-3 text-right text-bh-text">
                     <ValueCell value={row.depois} dir={row.depoisDir} />
                   </td>
 
                   {/* Depois % */}
-                  <td className="px-4 py-3 text-right text-[#666]">
+                  <td className="px-4 py-3 text-right text-bh-subtle">
                     {row.depoisP ?? '-'}
                   </td>
 

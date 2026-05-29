@@ -26,9 +26,9 @@ export function CardTributacao() {
   ]
 
   return (
-    <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden h-full flex flex-col">
+    <div className="rounded-xl border border-bh-border/50 bg-bh-bg overflow-hidden h-full flex flex-col">
       {showTribHistorico && <TributacaoHistoricoModal onClose={() => setShowTribHistorico(false)} />}
-      <div className="border-b border-[#292929] px-6 py-5"
+      <div className="border-b border-bh-border px-6 py-5"
 >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -36,12 +36,12 @@ export function CardTributacao() {
               <span className="text-orange-400 text-base font-bold">T</span>
             </div>
             <div>
-              <h3 className="text-white text-lg">Tributação de Produtos</h3>
-              <p className="text-[#999] text-xs">Volume de vendas por regime tributário</p>
+              <h3 className="text-bh-text text-lg">Tributação de Produtos</h3>
+              <p className="text-bh-muted text-xs">Volume de vendas por regime tributário</p>
             </div>
           </div>
           <button onClick={() => setShowTribHistorico(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors shrink-0 ml-3">
+            className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors shrink-0 ml-3">
             <BarChart2 size={12} /><span>Histórico</span>
           </button>
         </div>
@@ -52,7 +52,7 @@ export function CardTributacao() {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={barData} margin={{ top: 24, right: 8, bottom: 8, left: 8 }}
               barCategoryGap="30%">
-              <XAxis dataKey="name" tick={{ fill: '#666', fontSize: 10 }}
+              <XAxis dataKey="name" tick={{ fill: 'rgb(var(--bh-subtle))', fontSize: 10 }}
                 axisLine={false} tickLine={false} />
               <YAxis hide />
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>
@@ -82,13 +82,13 @@ export function CardTributacao() {
               <span className="text-orange-500 text-xs font-semibold tracking-widest uppercase">Tributado</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white text-sm font-bold">{fmtK(trib.tributado)}</span>
+              <span className="text-bh-text text-sm font-bold">{fmtK(trib.tributado)}</span>
               <div className="flex items-center gap-1.5">
                 <TrendBadge cur={trib.tributado} prev={tribPrev.tributado} />
-                <span className="text-[#666] text-xs">vs {fmtK(tribPrev.tributado)}</span>
+                <span className="text-bh-subtle text-xs">vs {fmtK(tribPrev.tributado)}</span>
               </div>
             </div>
-            <p className="text-[#555] text-[10px] mt-1">{tribPct.toFixed(1)}% do total</p>
+            <p className="text-bh-subtle text-[10px] mt-1">{tribPct.toFixed(1)}% do total</p>
           </div>}
           {vis('c_tributacao.isento') && <div className="rounded-lg border border-green-500/20 bg-green-500/5 px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
@@ -96,13 +96,13 @@ export function CardTributacao() {
               <span className="text-green-400 text-xs font-semibold tracking-widest uppercase">Isento/ST</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white text-sm font-bold">{fmtK(trib.isento)}</span>
+              <span className="text-bh-text text-sm font-bold">{fmtK(trib.isento)}</span>
               <div className="flex items-center gap-1.5">
                 <TrendBadge cur={trib.isento} prev={tribPrev.isento} />
-                <span className="text-[#666] text-xs">vs {fmtK(tribPrev.isento)}</span>
+                <span className="text-bh-subtle text-xs">vs {fmtK(tribPrev.isento)}</span>
               </div>
             </div>
-            <p className="text-[#555] text-[10px] mt-1">{(100 - tribPct).toFixed(1)}% do total</p>
+            <p className="text-bh-subtle text-[10px] mt-1">{(100 - tribPct).toFixed(1)}% do total</p>
           </div>}
         </div>
       </div>

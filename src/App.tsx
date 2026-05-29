@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { ThemeProvider } from './contexts/ThemeContext'
 import { LojaGrupoProvider } from './contexts/LojaGrupoContext'
 import { SoftwareHouseList } from './pages/SoftwareHouseList'
 import { SoftwareHouseWizard } from './pages/SoftwareHouseWizard'
@@ -9,6 +10,7 @@ import { Dashboard } from './pages/Dashboard'
 
 function App() {
   return (
+    <ThemeProvider>
     <LojaGrupoProvider>
     <BrowserRouter>
       <Routes>
@@ -24,6 +26,7 @@ function App() {
       </Routes>
     </BrowserRouter>
     </LojaGrupoProvider>
+    </ThemeProvider>
   )
 }
 

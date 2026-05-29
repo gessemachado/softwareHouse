@@ -17,7 +17,7 @@ export function CardsCarousel() {
   const curIdx  = mesIdx(selectedMonth, selectedYear)
   const prevIdx = mesIdx(compareMonth, compareYear)
 
-  // â”€â”€ Desconto â€” delta na taxa de absorÃ§Ã£o â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // “?“? Desconto ‡" delta na taxa de absorÃ§Ã£o “?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?
   const desc     = DESCONTO[curIdx]
   const descPrev = DESCONTO[prevIdx]
   const totalDesc     = desc.aproveitado + desc.disponivel
@@ -25,7 +25,7 @@ export function CardsCarousel() {
   const absorcaoPct     = totalDesc     > 0 ? (desc.aproveitado     / totalDesc)     * 100 : 0
   const absorcaoPctPrev = totalDescPrev > 0 ? (descPrev.aproveitado / totalDescPrev) * 100 : 0
 
-  // â”€â”€ OperaÃ§Ã£o â€” delta na conversÃ£o â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // “?“? OperaÃ§Ã£o ‡" delta na conversÃ£o “?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?
   const pedidosVal      = METRICAS['Total de Vendas'][curIdx]
   const pedidosValPrev  = METRICAS['Total de Vendas'][prevIdx]
   const intermedVal     = METRICAS['Total de IntermediaÃ§Ãµes'][curIdx]
@@ -33,7 +33,7 @@ export function CardsCarousel() {
   const convPct     = pedidosVal     > 0 ? (intermedVal     / pedidosVal)     * 100 : 0
   const convPctPrev = pedidosValPrev > 0 ? (intermedValPrev / pedidosValPrev) * 100 : 0
 
-  // â”€â”€ DÃ©bitos â€” delta na reduÃ§Ã£o â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // “?“? DÃ©bitos ‡" delta na reduÃ§Ã£o “?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?
   const av     = AVALIACAO[curIdx]
   const avPrev = AVALIACAO[prevIdx]
   const economia      = av.debito.a - av.debito.d
@@ -80,10 +80,10 @@ export function CardsCarousel() {
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div>
-          <span className="text-[#666] text-[10px] font-semibold tracking-widest uppercase">
+          <span className="text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">
             Cards de AnÃ¡lise
           </span>
-          <p className="text-[#444] text-[10px] mt-0.5">
+          <p className="text-bh-subtle text-[10px] mt-0.5">
             {carouselOrder === 'desc' ? 'Maior â†’ Menor variaÃ§Ã£o mensal' : 'Menor â†’ Maior variaÃ§Ã£o mensal'}
           </p>
         </div>
@@ -91,7 +91,7 @@ export function CardsCarousel() {
           <div className="flex items-center gap-2">
             <button
               onClick={prev}
-              className="w-7 h-7 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
+              className="w-7 h-7 flex items-center justify-center rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
             >
               <ChevronLeft size={14} />
             </button>
@@ -110,7 +110,7 @@ export function CardsCarousel() {
             </div>
             <button
               onClick={next}
-              className="w-7 h-7 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
+              className="w-7 h-7 flex items-center justify-center rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
             >
               <ChevronRight size={14} />
             </button>
@@ -129,10 +129,10 @@ export function CardsCarousel() {
               className={`flex-1 flex items-center justify-between px-3 py-2 rounded-lg border transition-all duration-300 ${
                 cardPage === page
                   ? 'border-orange-500/40 bg-orange-500/5'
-                  : 'border-[#222] bg-transparent hover:border-[#333]'
+                  : 'border-[#222] bg-transparent hover:border-bh-border'
               }`}
             >
-              <span className={`text-[10px] font-semibold truncate ${cardPage === page ? 'text-white' : 'text-[#555]'}`}>
+              <span className={`text-[10px] font-semibold truncate ${cardPage === page ? 'text-bh-text' : 'text-bh-subtle'}`}>
                 {s.label}
               </span>
               <span className={`text-[10px] font-mono ml-2 shrink-0 ${s.delta >= 0 ? 'text-green-400' : 'text-red-400'}`}>
@@ -143,7 +143,7 @@ export function CardsCarousel() {
         })}
       </div>
 
-      {/* Carrossel â€” desliza pÃ¡ginas de PAGE_SIZE cards */}
+      {/* Carrossel ‡" desliza pÃ¡ginas de PAGE_SIZE cards */}
       {/* Usa margin-left em vez de transform para nÃ£o quebrar position:fixed dos modais */}
       <div
         className="overflow-hidden"

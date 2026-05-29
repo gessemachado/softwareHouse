@@ -4,15 +4,49 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Dark theme (default) ── matches BuyHelp Design System dark tokens ── */
+:root {
+  --bh-bg:            13 13 13;      /* #0d0d0d  --bg     */
+  --bh-surface:       22 22 22;      /* #161616  --bg-2   */
+  --bh-surface2:      26 26 26;      /* #1a1a1a  --bg-3   */
+  --bh-border:        41 41 41;      /* #292929  --border */
+  --bh-primary:       255 102 0;     /* #ff6600           */
+  --bh-primary-hover: 229 90 0;      /* #e55a00           */
+  --bh-secondary:     0 128 128;     /* #008080           */
+  --bh-text:          250 250 250;   /* #fafafa  --fg     */
+  --bh-muted:         153 153 153;   /* #999999  --fg-muted */
+  --bh-subtle:        85 85 85;      /* #555555  --fg-dim */
+  --bh-success:       34 197 94;     /* #22c55e           */
+  --bh-success-bg:    20 83 45;      /* #14532d           */
+  --bh-danger:        220 40 40;     /* #dc2828           */
+  --bh-nav:           13 13 13;      /* #0d0d0d           */
+}
+
+/* ── Light theme ── matches BuyHelp Design System light tokens ── */
+html.light {
+  --bh-bg:            255 255 255;   /* #ffffff  --bg     */
+  --bh-surface:       248 248 248;   /* #f8f8f8  --bg-2   */
+  --bh-surface2:      240 240 240;   /* #f0f0f0  --bg-4   */
+  --bh-border:        226 226 226;   /* #e2e2e2  --border */
+  --bh-primary:       255 102 0;     /* #ff6600           */
+  --bh-primary-hover: 229 90 0;      /* #e55a00           */
+  --bh-secondary:     0 128 128;     /* #008080           */
+  --bh-text:          13 13 13;      /* #0d0d0d  --fg     */
+  --bh-muted:         102 102 102;   /* #666666  --fg-muted */
+  --bh-subtle:        153 153 153;   /* #999999  --fg-dim */
+  --bh-success:       34 197 94;     /* #22c55e           */
+  --bh-success-bg:    220 252 231;   /* #dcfce7           */
+  --bh-danger:        220 40 40;     /* #dc2828           */
+  --bh-nav:           255 255 255;   /* #ffffff           */
+}
+
 @layer base {
   html, body {
     @apply bg-bh-bg text-bh-text font-sans m-0;
-    background-color: #000;
   }
 
   #root {
     @apply min-h-screen bg-bh-bg;
-    background-color: #000;
   }
 
   ::-webkit-scrollbar {
@@ -41,12 +75,11 @@
   }
 
   .input-bh {
-    @apply w-full bg-bh-bg border border-bh-border text-bh-text placeholder-bh-subtle rounded px-3 py-2 text-sm focus:outline-none focus:border-bh-primary transition-colors;
+    @apply w-full bg-bh-surface border border-bh-border text-bh-text placeholder-bh-subtle rounded px-3 py-2 text-sm focus:outline-none focus:border-bh-primary transition-colors;
   }
 
   .card-bh {
-    @apply border border-bh-border rounded-lg;
-    background-color: #000;
+    @apply border border-bh-border rounded-lg bg-bh-bg;
   }
 
   .label-bh {

@@ -55,42 +55,42 @@ export function CadastrosHistoricoModal({ onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full rounded-2xl border border-white/10 shadow-2xl flex flex-col"
-        style={{ background: '#0d0d0d', maxWidth: '95vw', maxHeight: '95vh' }}
+        className="w-full rounded-2xl border border-bh-border/40 shadow-2xl flex flex-col"
+        style={{ background: 'rgb(var(--bh-surface))', maxWidth: '95vw', maxHeight: '95vh' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between px-8 py-6 border-b border-white/5 shrink-0">
+        <div className="flex items-start justify-between px-8 py-6 border-b border-bh-border/30 shrink-0">
           <div>
-            <h2 className="text-white text-xl font-bold">Histórico de Cadastros (13 Meses)</h2>
-            <p className="text-[#666] text-xs mt-1">
+            <h2 className="text-bh-text text-xl font-bold">Histórico de Cadastros (13 Meses)</h2>
+            <p className="text-bh-subtle text-xs mt-1">
               Abr/2025 → Abr/2026 · Movimentação de base de clientes
             </p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#666] hover:text-white transition-colors shrink-0 ml-4"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bh-surface2 text-bh-subtle hover:text-bh-text transition-colors shrink-0 ml-4"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* KPI strip */}
-        <div className="grid grid-cols-3 gap-4 px-8 py-5 border-b border-white/5 shrink-0">
-          <div className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
-            <p className="text-[#555] text-[9px] font-bold tracking-widest uppercase mb-2">Novos Cadastros</p>
-            <p className="text-white text-2xl font-bold">{totalNovos2026}</p>
-            <p className="text-[#444] text-[10px] mt-0.5">Acumulado 2026</p>
+        <div className="grid grid-cols-3 gap-4 px-8 py-5 border-b border-bh-border/30 shrink-0">
+          <div className="rounded-xl border border-bh-border/30 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <p className="text-bh-subtle text-[9px] font-bold tracking-widest uppercase mb-2">Novos Cadastros</p>
+            <p className="text-bh-text text-2xl font-bold">{totalNovos2026}</p>
+            <p className="text-bh-subtle text-[10px] mt-0.5">Acumulado 2026</p>
           </div>
-          <div className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
-            <p className="text-[#555] text-[9px] font-bold tracking-widest uppercase mb-2">Clientes Perdidos</p>
+          <div className="rounded-xl border border-bh-border/30 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <p className="text-bh-subtle text-[9px] font-bold tracking-widest uppercase mb-2">Clientes Perdidos</p>
             <p className="text-red-400 text-2xl font-bold">{totalPerdidos2026}</p>
-            <p className="text-[#444] text-[10px] mt-0.5">Acumulado 2026</p>
+            <p className="text-bh-subtle text-[10px] mt-0.5">Acumulado 2026</p>
           </div>
-          <div className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
-            <p className="text-[#555] text-[9px] font-bold tracking-widest uppercase mb-2">Clientes Recuperados</p>
+          <div className="rounded-xl border border-bh-border/30 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <p className="text-bh-subtle text-[9px] font-bold tracking-widest uppercase mb-2">Clientes Recuperados</p>
             <p className="text-emerald-400 text-2xl font-bold">{totalRecuperados2026}</p>
-            <p className="text-[#444] text-[10px] mt-0.5">Acumulado 2026</p>
+            <p className="text-bh-subtle text-[10px] mt-0.5">Acumulado 2026</p>
           </div>
         </div>
 
@@ -101,12 +101,12 @@ export function CadastrosHistoricoModal({ onClose }: Props) {
               <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="0" vertical={false} />
               <XAxis
                 dataKey="mes"
-                tick={{ fill: '#666', fontSize: 10, fontWeight: 600 }}
+                tick={{ fill: 'rgb(var(--bh-subtle))', fontSize: 10, fontWeight: 600 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: '#555', fontSize: 10 }}
+                tick={{ fill: 'rgb(var(--bh-subtle))', fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
                 width={28}

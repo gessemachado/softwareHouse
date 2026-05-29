@@ -127,7 +127,7 @@ export function RelatorioFinanceiro() {
 
           <div className="card-bh">
             <div className="p-4 border-b border-bh-border flex items-center gap-3">
-              <div className="w-7 h-7 bg-bh-primary rounded flex items-center justify-center text-white text-xs font-bold">b</div>
+              <div className="w-7 h-7 bg-bh-primary rounded flex items-center justify-center text-bh-text text-xs font-bold">b</div>
               <div>
                 <h3 className="text-bh-text font-medium text-sm">Relatório</h3>
                 <p className="text-bh-muted text-xs">Visualizar dados consolidados</p>
@@ -282,7 +282,7 @@ export function RelatorioFinanceiro() {
 
           <div className="card-bh">
             <div className="p-4 border-b border-bh-border flex items-center gap-3">
-              <div className="w-7 h-7 bg-bh-primary rounded flex items-center justify-center text-white text-xs font-bold">b</div>
+              <div className="w-7 h-7 bg-bh-primary rounded flex items-center justify-center text-bh-text text-xs font-bold">b</div>
               <div>
                 <h3 className="text-bh-text font-medium text-sm">Relatório — Finger</h3>
                 <p className="text-bh-muted text-xs">Visualizar dados consolidados por finger</p>

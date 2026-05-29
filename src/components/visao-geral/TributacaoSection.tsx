@@ -38,26 +38,25 @@ export function TributacaoSection() {
 
   return (
     <div className="grid grid-cols-3 gap-5 mb-5">
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 overflow-hidden flex flex-col">
+      <div className="rounded-xl border border-bh-border/50 bg-bh-bg overflow-hidden flex flex-col">
 
         {/* Header */}
-        <div className="border-b border-[#292929] px-6 py-5"
-          style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)' }}>
+        <div className="border-b border-bh-border px-6 py-5 bg-bh-surface2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
                 <span className="text-orange-400 text-base font-bold">T</span>
               </div>
               <div>
-                <h3 className="text-white text-lg">Tributação de Produtos</h3>
-                <p className="text-[#999] text-xs">Volume de vendas por regime tributário</p>
+                <h3 className="text-bh-text text-lg">Tributação de Produtos</h3>
+                <p className="text-bh-muted text-xs">Volume de vendas por regime tributário</p>
               </div>
             </div>
             <div className="relative group cursor-help shrink-0 ml-3">
-              <HelpCircle size={14} className="text-[#444] hover:text-[#888] transition-colors" />
-              <div className="absolute bottom-full right-0 mb-2 w-60 bg-[#1a1a1a] border border-[#333] text-[#ccc] text-[10px] rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 leading-relaxed shadow-xl">
+              <HelpCircle size={14} className="text-bh-subtle hover:text-bh-muted transition-colors" />
+              <div className="absolute bottom-full right-0 mb-2 w-60 bg-bh-surface2 border border-bh-border text-bh-muted text-[10px] rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 leading-relaxed shadow-xl">
                 Volume de vendas dividido entre produtos tributados (com incidência de impostos) e isentos (sem incidência). Barras escuras = período anterior.
-                <div className="absolute top-full right-3 border-4 border-transparent border-t-[#333]" />
+                <div className="absolute top-full right-3 border-4 border-transparent border-t-bh-surface2" />
               </div>
             </div>
           </div>
@@ -67,7 +66,7 @@ export function TributacaoSection() {
         <div className="flex-1 flex flex-col items-center justify-center py-4 px-2">
           <ResponsiveContainer width="100%" height={130}>
             <BarChart data={chartData} barGap={3} barCategoryGap="35%">
-              <XAxis dataKey="name" tick={{ fill: '#666', fontSize: 10 }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="name" tick={{ fill: 'rgb(var(--bh-subtle))', fontSize: 10 }} axisLine={false} tickLine={false} />
               <YAxis hide />
               <Tooltip
                 cursor={{ fill: 'rgba(255,255,255,0.04)' }}
@@ -87,17 +86,17 @@ export function TributacaoSection() {
         </div>
 
         {/* Footer KPIs */}
-        <div className="grid grid-cols-2 border-t border-[#292929]">
-          <div className="px-4 py-3 border-r border-[#292929]">
-            <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-1">Tributados</p>
+        <div className="grid grid-cols-2 border-t border-bh-border">
+          <div className="px-4 py-3 border-r border-bh-border">
+            <p className="text-bh-subtle text-[9px] font-semibold tracking-widest uppercase mb-1">Tributados</p>
             <p className="text-orange-400 text-sm font-bold">{fmt(trib.tributado)}</p>
-            <p className="text-[#444] text-[10px] mb-1">vs {fmtK(tribPrev.tributado)} Ant.</p>
+            <p className="text-bh-subtle text-[10px] mb-1">vs {fmtK(tribPrev.tributado)} Ant.</p>
             <TrendBadge cur={trib.tributado} prev={tribPrev.tributado} />
           </div>
           <div className="px-4 py-3">
-            <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-1">Isentos</p>
+            <p className="text-bh-subtle text-[9px] font-semibold tracking-widest uppercase mb-1">Isentos</p>
             <p className="text-green-400 text-sm font-bold">{fmt(trib.isento)}</p>
-            <p className="text-[#444] text-[10px] mb-1">vs {fmtK(tribPrev.isento)} Ant.</p>
+            <p className="text-bh-subtle text-[10px] mb-1">vs {fmtK(tribPrev.isento)} Ant.</p>
             <TrendBadge cur={trib.isento} prev={tribPrev.isento} />
           </div>
         </div>

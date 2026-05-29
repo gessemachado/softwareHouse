@@ -32,9 +32,9 @@ export function CardDebitos() {
   ]
 
   return (
-    <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden h-full flex flex-col">
+    <div className="rounded-xl border border-bh-border/50 bg-bh-bg overflow-hidden h-full flex flex-col">
       {showDebitHistorico && <DebitosHistoricoModal onClose={() => setShowDebitHistorico(false)} />}
-      <div className="border-b border-[#292929] px-6 py-5"
+      <div className="border-b border-bh-border px-6 py-5"
 >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -42,12 +42,12 @@ export function CardDebitos() {
               <span className="text-red-400 text-base font-bold">D</span>
             </div>
             <div>
-              <h3 className="text-white text-lg">Total de Débitos</h3>
-              <p className="text-[#999] text-xs">Antes e depois BuyHelp</p>
+              <h3 className="text-bh-text text-lg">Total de Débitos</h3>
+              <p className="text-bh-muted text-xs">Antes e depois BuyHelp</p>
             </div>
           </div>
           <button onClick={() => setShowDebitHistorico(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors shrink-0 ml-3">
+            className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors shrink-0 ml-3">
             <BarChart2 size={12} /><span>Histórico</span>
           </button>
         </div>
@@ -65,8 +65,8 @@ export function CardDebitos() {
             </PieChart>
           </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-[#999] text-xs">Redução</p>
-            <p className="text-white text-xl font-bold">{reducaoPct.toFixed(1)}%</p>
+            <p className="text-bh-muted text-xs">Redução</p>
+            <p className="text-bh-text text-xl font-bold">{reducaoPct.toFixed(1)}%</p>
           </div>
         </div>
         <div className="flex-1 flex flex-col gap-2">
@@ -76,13 +76,13 @@ export function CardDebitos() {
               <span className="text-red-400 text-xs font-semibold tracking-widest uppercase">Antes</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white text-sm font-bold">{fmtM(debitoA)}</span>
+              <span className="text-bh-text text-sm font-bold">{fmtM(debitoA)}</span>
               <div className="flex items-center gap-1.5">
                 <TrendBadge cur={debitoA} prev={debitoAPrev} />
-                <span className="text-[#666] text-xs">vs {fmtM(debitoAPrev)}</span>
+                <span className="text-bh-subtle text-xs">vs {fmtM(debitoAPrev)}</span>
               </div>
             </div>
-            <p className="text-[#555] text-[10px] mt-1">Sem BuyHelp</p>
+            <p className="text-bh-subtle text-[10px] mt-1">Sem BuyHelp</p>
           </div>}
           {vis('c_debitos.depois') && <div className="rounded-lg border border-green-500/20 bg-green-500/5 px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
@@ -90,23 +90,23 @@ export function CardDebitos() {
               <span className="text-green-400 text-xs font-semibold tracking-widest uppercase">Depois</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white text-sm font-bold">{fmtM(debitoD)}</span>
+              <span className="text-bh-text text-sm font-bold">{fmtM(debitoD)}</span>
               <div className="flex items-center gap-1.5">
                 <TrendBadge cur={debitoD} prev={debitoDPrev} />
-                <span className="text-[#666] text-xs">vs {fmtM(debitoDPrev)}</span>
+                <span className="text-bh-subtle text-xs">vs {fmtM(debitoDPrev)}</span>
               </div>
             </div>
-            <p className="text-[#555] text-[10px] mt-1">Com BuyHelp</p>
+            <p className="text-bh-subtle text-[10px] mt-1">Com BuyHelp</p>
           </div>}
-          {vis('c_debitos.economia') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+          {vis('c_debitos.economia') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Economia</span>
+              <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Economia</span>
               <div className="flex items-center gap-1.5">
                 <span className="text-green-400 text-sm font-bold">{fmtM(economia)}</span>
                 <TrendBadge cur={reducaoPct} prev={reducaoPctPrev} />
               </div>
             </div>
-            <p className="text-[#555] text-[10px] mt-1">vs {fmtM(economiaPrev)} anterior · {reducaoPct.toFixed(1)}% redução</p>
+            <p className="text-bh-subtle text-[10px] mt-1">vs {fmtM(economiaPrev)} anterior · {reducaoPct.toFixed(1)}% redução</p>
           </div>}
         </div>
       </div>

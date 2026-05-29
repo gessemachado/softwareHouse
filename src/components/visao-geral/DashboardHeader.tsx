@@ -5,7 +5,7 @@ import { useDashboardFilter, MONTHS_FULL as MONTHS, MONTHS_SHORT, type CompareMo
 const COMPARE_OPTIONS = ['MÃªs anterior', 'Mesmo mÃªs ano anterior', 'Customizado']
 const WEEK_DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'SÃ¡b']
 
-// â”€â”€ Day Range Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// “?“? Day Range Picker “?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?
 function DayPickerCalendar({
   month, year, rangeStart, rangeEnd,
   onDayClick, onClose, onPrevMonth, onNextMonth,
@@ -65,10 +65,10 @@ function DayPickerCalendar({
     <div
       ref={ref}
       className="absolute z-30 top-full mt-2 left-0 rounded-xl shadow-2xl border border-orange-500/30 p-4 w-72"
-      style={{ background: '#000' }}
+      style={{ background: 'rgb(var(--bh-surface))' }}
     >
       {/* Date display */}
-      <div className="mb-3 px-1 py-1.5 rounded-lg border border-white/5 bg-black/30">
+      <div className="mb-3 px-1 py-1.5 rounded-lg border border-bh-border/30 bg-bh-surface2/50">
         <p className="text-center text-orange-400 text-xs font-mono font-semibold tracking-wider">
           {rangeText}
         </p>
@@ -77,12 +77,12 @@ function DayPickerCalendar({
       {/* Month nav */}
       <div className="flex items-center justify-between mb-2">
         <button onClick={onPrevMonth}
-          className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#999] hover:text-white transition-colors">
+          className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-bh-surface2 text-bh-muted hover:text-bh-text transition-colors">
           <ChevronLeft size={16} />
         </button>
-        <span className="text-white font-semibold text-sm">{MONTHS[month]}  {year}</span>
+        <span className="text-bh-text font-semibold text-sm">{MONTHS[month]}  {year}</span>
         <button onClick={onNextMonth}
-          className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#999] hover:text-white transition-colors">
+          className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-bh-surface2 text-bh-muted hover:text-bh-text transition-colors">
           <ChevronRight size={16} />
         </button>
       </div>
@@ -90,7 +90,7 @@ function DayPickerCalendar({
       {/* Weekday headers */}
       <div className="grid grid-cols-7 mb-0.5">
         {WEEK_DAYS.map(d => (
-          <span key={d} className="text-center text-[#555] text-[10px] font-semibold py-1">{d}</span>
+          <span key={d} className="text-center text-bh-subtle text-[10px] font-semibold py-1">{d}</span>
         ))}
       </div>
 
@@ -127,7 +127,7 @@ function DayPickerCalendar({
                       ? 'bg-orange-500/70 text-white'
                       : 'bg-orange-500 text-white shadow shadow-orange-500/40'
                     : highlighted
-                      ? 'text-white/90'
+                      ? 'text-bh-text/90'
                       : 'text-[#aaa] hover:bg-orange-500/10 hover:text-orange-400'
                 }`}
               >
@@ -139,9 +139,9 @@ function DayPickerCalendar({
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
+      <div className="flex items-center justify-between mt-2 pt-2 border-t border-bh-border/30">
         <button onClick={() => { onDayClick(-1) }}
-          className="text-[#555] text-xs hover:text-red-400 transition-colors">
+          className="text-bh-subtle text-xs hover:text-red-400 transition-colors">
           Limpar
         </button>
         <button onClick={onClose}
@@ -153,7 +153,7 @@ function DayPickerCalendar({
   )
 }
 
-// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// “?“? Main Component “?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?“?
 export function DashboardHeader() {
   const {
     selectedMonth, selectedYear, setSelectedMonth, setSelectedYear,
@@ -212,14 +212,14 @@ export function DashboardHeader() {
     ? 'Selecione o perÃ­odo'
     : !dayRangeEnd
       ? `${pad(dayRangeStart)} ${MONTHS_SHORT[selectedMonth]} ${selectedYear}`
-      : `${pad(dayRangeStart)} â€“ ${pad(dayRangeEnd)} ${MONTHS_SHORT[selectedMonth]}`
+      : `${pad(dayRangeStart)} ‡" ${pad(dayRangeEnd)} ${MONTHS_SHORT[selectedMonth]}`
 
   const [showCompareDropdown, setShowCompareDropdown] = useState(false)
 
   const shortLabel = `${MONTHS_SHORT[compareMonth]} / ${compareYear}`
 
   return (
-    <div className="rounded-lg border border-orange-500/20 bg-black p-4 sm:p-6 mb-5">
+    <div className="rounded-lg border border-orange-500/20 bg-bh-bg p-4 sm:p-6 mb-5">
       {/* Title row */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -227,34 +227,34 @@ export function DashboardHeader() {
           <Eye size={20} className="text-orange-500" />
         </div>
         <div>
-          <h1 className="text-white text-2xl font-bold leading-tight">VisÃ£o Geral</h1>
-          <p className="text-[#999] text-sm mt-0.5">Acompanhe o desempenho de todas as software house ativas</p>
+          <h1 className="text-bh-text text-2xl font-bold leading-tight">VisÃ£o Geral</h1>
+          <p className="text-bh-muted text-sm mt-0.5">Acompanhe o desempenho de todas as software house ativas</p>
         </div>
       </div>
 
       {/* Filter cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-        {/* 1 â€” PerÃ­odo AnÃ¡lise (sempre diÃ¡rio) */}
+        {/* 1 ‡" PerÃ­odo AnÃ¡lise (sempre diÃ¡rio) */}
         <div>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center shadow-lg shadow-orange-500/30">1</span>
-            <span className="text-[#999] text-[9px] font-semibold tracking-widest uppercase">PerÃ­odo AnÃ¡lise</span>
+            <span className="text-bh-muted text-[9px] font-semibold tracking-widest uppercase">PerÃ­odo AnÃ¡lise</span>
           </div>
           <div className="relative">
             <button
               onClick={() => { setShowDayPicker(v => !v); setShowCompareDropdown(false) }}
               className="w-full rounded-lg border border-orange-500/30 px-4 py-2.5 text-left transition-colors hover:border-orange-500/50"
-              style={{ background: 'linear-gradient(164deg, rgba(41,41,41,0.8) 0%, rgba(26,26,26,0.9) 100%)' }}
+              style={{ background: 'rgb(var(--bh-surface2))' }}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[#999] text-[8px] font-semibold tracking-widest uppercase mb-1">DIA / MÃŠS / ANO</p>
-                  <p className={`text-sm font-bold ${!dayRangeStart ? 'text-[#555]' : 'text-white'}`}>{rangeButtonLabel}</p>
+                  <p className="text-bh-muted text-[8px] font-semibold tracking-widest uppercase mb-1">DIA / MŠS / ANO</p>
+                  <p className={`text-sm font-bold ${!dayRangeStart ? 'text-bh-subtle' : 'text-bh-text'}`}>{rangeButtonLabel}</p>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar size={14} className="text-orange-500" />
-                  <ChevronDown size={13} className={`text-[#999] transition-transform ${showDayPicker ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={13} className={`text-bh-muted transition-transform ${showDayPicker ? 'rotate-180' : ''}`} />
                 </div>
               </div>
             </button>
@@ -270,17 +270,17 @@ export function DashboardHeader() {
           </div>
         </div>
 
-        {/* 2 â€” PerÃ­odo de ComparaÃ§Ã£o */}
+        {/* 2 ‡" PerÃ­odo de ComparaÃ§Ã£o */}
         <div>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center shadow-lg shadow-orange-500/30">2</span>
-            <span className="text-[#999] text-[9px] font-semibold tracking-widest uppercase">PerÃ­odo de ComparaÃ§Ã£o</span>
+            <span className="text-bh-muted text-[9px] font-semibold tracking-widest uppercase">PerÃ­odo de ComparaÃ§Ã£o</span>
           </div>
 
           <div className="relative">
             <div
               className="rounded-lg border border-orange-500/30 px-4 py-2.5"
-              style={{ background: 'linear-gradient(164deg, rgba(41,41,41,0.8) 0%, rgba(26,26,26,0.9) 100%)' }}
+              style={{ background: 'rgb(var(--bh-surface2))' }}
             >
               {/* Mode selector trigger */}
               <button
@@ -288,25 +288,25 @@ export function DashboardHeader() {
                 className="w-full flex items-center justify-between text-left"
               >
                 <div>
-                  <p className="text-[#999] text-[8px] font-semibold tracking-widest uppercase mb-1">COMPARAR COM</p>
+                  <p className="text-bh-muted text-[8px] font-semibold tracking-widest uppercase mb-1">COMPARAR COM</p>
                   <div className="flex items-center gap-2">
-                    <p className="text-white text-sm font-bold">{COMPARE_OPTIONS[compareMode]}</p>
-                    {compareMode !== 2 && <span className="text-[#666] text-xs">{shortLabel}</span>}
+                    <p className="text-bh-text text-sm font-bold">{COMPARE_OPTIONS[compareMode]}</p>
+                    {compareMode !== 2 && <span className="text-bh-subtle text-xs">{shortLabel}</span>}
                   </div>
                 </div>
-                <ChevronDown size={14} className={`text-[#999] transition-transform ${showCompareDropdown ? 'rotate-180' : ''}`} />
+                <ChevronDown size={14} className={`text-bh-muted transition-transform ${showCompareDropdown ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Range auto-calculado */}
               {compareMode !== 2 && dayRangeStart && (
-                <p className="text-[#666] text-xs font-mono mt-1.5">
-                  {pad(dayRangeStart)}{dayRangeEnd ? ` â€“ ${pad(dayRangeEnd)}` : ''} {MONTHS_SHORT[compareMonth]} / {compareYear}
+                <p className="text-bh-subtle text-xs font-mono mt-1.5">
+                  {pad(dayRangeStart)}{dayRangeEnd ? ` ‡" ${pad(dayRangeEnd)}` : ''} {MONTHS_SHORT[compareMonth]} / {compareYear}
                 </p>
               )}
 
               {/* Customizado */}
               {compareMode === 2 && (
-                <div className="mt-2 pt-2 border-t border-white/5">
+                <div className="mt-2 pt-2 border-t border-bh-border/30">
                   <button
                     onClick={() => { setShowCompareDayPicker(v => !v); setShowCompareDropdown(false) }}
                     className="w-full flex items-center justify-between rounded-md border border-orange-500/20 px-3 py-1.5 hover:border-orange-500/40 transition-colors"
@@ -314,15 +314,15 @@ export function DashboardHeader() {
                   >
                     <div className="flex items-center gap-2">
                       <Calendar size={13} className="text-orange-500" />
-                      <span className={`text-xs font-semibold ${compareDayRangeStart ? 'text-white' : 'text-[#555]'}`}>
+                      <span className={`text-xs font-semibold ${compareDayRangeStart ? 'text-bh-text' : 'text-bh-subtle'}`}>
                         {!compareDayRangeStart
                           ? 'Selecione o perÃ­odo'
                           : !compareDayRangeEnd
                             ? `${pad(compareDayRangeStart)} ${MONTHS_SHORT[customMonth]} ${customYear}`
-                            : `${pad(compareDayRangeStart)} â€“ ${pad(compareDayRangeEnd)} ${MONTHS_SHORT[customMonth]}`}
+                            : `${pad(compareDayRangeStart)} ‡" ${pad(compareDayRangeEnd)} ${MONTHS_SHORT[customMonth]}`}
                       </span>
                     </div>
-                    <ChevronDown size={12} className={`text-[#999] transition-transform ${showCompareDayPicker ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={12} className={`text-bh-muted transition-transform ${showCompareDayPicker ? 'rotate-180' : ''}`} />
                   </button>
                 </div>
               )}
@@ -332,7 +332,7 @@ export function DashboardHeader() {
             {/* Dropdown options */}
             {showCompareDropdown && (
               <div className="absolute z-20 top-full mt-1 w-full rounded-xl border border-orange-500/30 overflow-hidden shadow-xl"
-                style={{ background: '#000' }}>
+                style={{ background: 'rgb(var(--bh-surface))' }}>
                 {COMPARE_OPTIONS.map((opt, i) => (
                   <button key={opt}
                     onClick={() => {
@@ -340,8 +340,8 @@ export function DashboardHeader() {
                       setShowCompareDropdown(false)
                       if (i !== 2) { setShowDayPicker(false); setShowCompareDayPicker(false) }
                     }}
-                    className={`w-full text-left px-4 py-3 text-sm transition-colors border-b border-white/5 last:border-0 ${
-                      i === compareMode ? 'text-orange-500 bg-orange-500/10' : 'text-white hover:bg-white/5'
+                    className={`w-full text-left px-4 py-3 text-sm transition-colors border-b border-bh-border/30 last:border-0 ${
+                      i === compareMode ? 'text-orange-500 bg-orange-500/10' : 'text-bh-text hover:bg-bh-surface2'
                     }`}>
                     {opt}
                   </button>

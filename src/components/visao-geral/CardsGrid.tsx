@@ -24,7 +24,7 @@ export function CardsGrid() {
 
   return (
     <div className="mb-5">
-      <span className="block text-[#444] text-[10px] font-semibold tracking-widest uppercase mb-3">
+      <span className="block text-bh-subtle text-[10px] font-semibold tracking-widest uppercase mb-3">
         Indicadores Complementares
       </span>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5" style={{ gridAutoRows: '1fr' }}>

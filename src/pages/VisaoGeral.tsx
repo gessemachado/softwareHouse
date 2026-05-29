@@ -33,7 +33,7 @@ function DashboardContent() {
       <div className="flex justify-end mb-4 -mt-1">
         <button
           onClick={() => setShowConfig(true)}
-          className="flex items-center gap-2 rounded-lg border border-white/10 text-[#555] hover:text-bh-primary hover:border-bh-primary/40 hover:bg-bh-primary/5 px-3 py-1.5 text-xs font-semibold transition-colors"
+          className="flex items-center gap-2 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-bh-primary hover:border-bh-primary/40 hover:bg-bh-primary/5 px-3 py-1.5 text-xs font-semibold transition-colors"
         >
           <Settings2 size={13} />
           Configurar dashboard

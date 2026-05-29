@@ -13,14 +13,14 @@ function pctStr(cur: number, prev: number) {
 
 const composicaoData = [
   { label: 'Comprando hoje', desc: 'Clientes comprando hoje',               value: 520, pct: 9.9,  color: '#20bf55' },
-  { label: '7 dias',         desc: '7 dias da última compra',               value: 890, pct: 17.0, color: '#66cdf6' },
-  { label: '15 dias',        desc: '15 dias da última compra',              value: 750, pct: 14.3, color: '#2499e4' },
-  { label: '15–30 dias',     desc: 'Entre 15 e 30 dias da última compra',   value: 680, pct: 13.0, color: '#a78bfa' },
-  { label: '30–60 dias',     desc: 'Entre 30 e 60 dias da última compra',   value: 610, pct: 11.7, color: '#f1d954' },
-  { label: '60–90 dias',     desc: 'Entre 60 e 90 dias da última compra',   value: 480, pct: 9.2,  color: '#f97316' },
-  { label: '90–120 dias',    desc: 'Entre 90 e 120 dias da última compra',  value: 380, pct: 7.3,  color: '#ef4444' },
-  { label: '120–180 dias',   desc: 'Entre 120 e 180 dias da última compra', value: 450, pct: 8.6,  color: '#dc2626' },
-  { label: '> 180 dias',     desc: 'Mais de 180 dias da última compra',     value: 475, pct: 9.1,  color: '#7f1d1d' },
+  { label: '7 dias',         desc: '7 dias da ï¿½ltima compra',               value: 890, pct: 17.0, color: '#66cdf6' },
+  { label: '15 dias',        desc: '15 dias da ï¿½ltima compra',              value: 750, pct: 14.3, color: '#2499e4' },
+  { label: '15ï¿½30 dias',     desc: 'Entre 15 e 30 dias da ï¿½ltima compra',   value: 680, pct: 13.0, color: '#a78bfa' },
+  { label: '30ï¿½60 dias',     desc: 'Entre 30 e 60 dias da ï¿½ltima compra',   value: 610, pct: 11.7, color: '#f1d954' },
+  { label: '60ï¿½90 dias',     desc: 'Entre 60 e 90 dias da ï¿½ltima compra',   value: 480, pct: 9.2,  color: '#f97316' },
+  { label: '90ï¿½120 dias',    desc: 'Entre 90 e 120 dias da ï¿½ltima compra',  value: 380, pct: 7.3,  color: '#ef4444' },
+  { label: '120ï¿½180 dias',   desc: 'Entre 120 e 180 dias da ï¿½ltima compra', value: 450, pct: 8.6,  color: '#dc2626' },
+  { label: '> 180 dias',     desc: 'Mais de 180 dias da ï¿½ltima compra',     value: 475, pct: 9.1,  color: '#7f1d1d' },
 ]
 
 export function CadastrosSection() {
@@ -41,33 +41,33 @@ export function CadastrosSection() {
       {showComposicao && <ComposicaoClientesModal   onClose={() => setShowComposicao(false)} />}
 
       {/* Cadastros Ativos */}
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden flex flex-col">
-        <div className="border-b border-[#292929] px-5 py-4 flex items-center justify-between">
+      <div className="rounded-xl border border-bh-border/50 bg-bh-bg overflow-hidden flex flex-col">
+        <div className="border-b border-bh-border px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-green-500/10 flex items-center justify-center">
               <TrendingUp size={16} className="text-green-400" />
             </div>
             <div>
-              <p className="text-white text-sm font-semibold">Cadastros Ativos</p>
-              <p className="text-[#555] text-[10px]">Movimentação do mês</p>
+              <p className="text-bh-text text-sm font-semibold">Cadastros Ativos</p>
+              <p className="text-bh-subtle text-[10px]">Movimentaï¿½ï¿½o do mï¿½s</p>
             </div>
           </div>
           <button
             onClick={() => setShowHistorico(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors"
+            className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors"
           >
             <LineChartIcon size={12} />
-            <span>Histórico</span>
+            <span>Histï¿½rico</span>
           </button>
         </div>
 
         <div className="px-5 py-4 border-b border-white/[0.04] flex items-center justify-between">
           <div>
-            <p className="text-[#555] text-[9px] font-semibold tracking-widest uppercase mb-1">Saldo do mês</p>
+            <p className="text-bh-subtle text-[9px] font-semibold tracking-widest uppercase mb-1">Saldo do mï¿½s</p>
             <p className={`text-3xl font-bold ${saldo >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {saldo >= 0 ? '+' : ''}{saldo}
             </p>
-            <p className="text-[#444] text-xs font-mono mt-1">novos – perdidos + recuperados</p>
+            <p className="text-bh-subtle text-xs font-mono mt-1">novos ï¿½ perdidos + recuperados</p>
           </div>
           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${saldo >= 0 ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
             {saldo >= 0
@@ -78,11 +78,11 @@ export function CadastrosSection() {
 
         <div className="flex-1 p-4 grid grid-cols-2 gap-3">
           {/* Cadastrados */}
-          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: '#000' }}>
+          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: 'rgb(var(--bh-surface))' }}>
             <div className="w-7 h-7 rounded-lg bg-orange-500/10 flex items-center justify-center mb-3">
               <TrendingUp size={13} className="text-orange-500" />
             </div>
-            <p className="text-[#555] text-xs font-semibold tracking-widest uppercase mb-3">Cadastrados</p>
+            <p className="text-bh-subtle text-xs font-semibold tracking-widest uppercase mb-3">Cadastrados</p>
             <div className="flex items-center gap-2 mt-auto">
               <p className="text-orange-500 text-2xl font-bold">{cur.novos}</p>
               <div className={`inline-flex items-center gap-1 rounded px-2 py-1 ${cur.novos >= prev.novos ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
@@ -95,17 +95,17 @@ export function CadastrosSection() {
           </div>
 
           {/* Perdidos */}
-          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: '#000' }}>
+          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: 'rgb(var(--bh-surface))' }}>
             <div className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center mb-3">
               <TrendingDown size={13} className="text-red-400" />
             </div>
             <div className="flex items-center gap-1 mb-3">
-              <p className="text-[#555] text-xs font-semibold tracking-widest uppercase">Perdidos</p>
+              <p className="text-bh-subtle text-xs font-semibold tracking-widest uppercase">Perdidos</p>
               <div className="relative group">
-                <HelpCircle size={11} className="text-[#444] cursor-help hover:text-[#888] transition-colors" />
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-[#1a1a1a] border border-[#333] text-[#ccc] text-[10px] rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 leading-relaxed shadow-xl">
-                  Clientes que deixaram de comprar após 60 dias
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#333]" />
+                <HelpCircle size={11} className="text-bh-subtle cursor-help hover:text-bh-muted transition-colors" />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-bh-surface2 border border-bh-border text-bh-muted text-[10px] rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 leading-relaxed shadow-xl">
+                  Clientes que deixaram de comprar apï¿½s 60 dias
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-bh-surface2" />
                 </div>
               </div>
             </div>
@@ -121,17 +121,17 @@ export function CadastrosSection() {
           </div>
 
           {/* Recuperados */}
-          <div className="col-span-2 rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: '#000' }}>
+          <div className="col-span-2 rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: 'rgb(var(--bh-surface))' }}>
             <div className="w-7 h-7 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-3">
               <RefreshCw size={13} className="text-cyan-400" />
             </div>
             <div className="flex items-center gap-1 mb-3">
-              <p className="text-[#555] text-xs font-semibold tracking-widest uppercase">Recuperados</p>
+              <p className="text-bh-subtle text-xs font-semibold tracking-widest uppercase">Recuperados</p>
               <div className="relative group">
-                <HelpCircle size={11} className="text-[#444] cursor-help hover:text-[#888] transition-colors" />
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-[#1a1a1a] border border-[#333] text-[#ccc] text-[10px] rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 leading-relaxed shadow-xl">
-                  Clientes que não compravam há mais de 60 dias e voltaram a comprar
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#333]" />
+                <HelpCircle size={11} className="text-bh-subtle cursor-help hover:text-bh-muted transition-colors" />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-bh-surface2 border border-bh-border text-bh-muted text-[10px] rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 leading-relaxed shadow-xl">
+                  Clientes que nï¿½o compravam hï¿½ mais de 60 dias e voltaram a comprar
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-bh-surface2" />
                 </div>
               </div>
             </div>
@@ -148,19 +148,19 @@ export function CadastrosSection() {
         </div>
       </div>
 
-      {/* Composição dos Clientes */}
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black p-5">
+      {/* Composiï¿½ï¿½o dos Clientes */}
+      <div className="rounded-xl border border-bh-border/50 bg-bh-bg p-5">
         <div className="flex items-center justify-between mb-0.5">
-          <p className="text-white text-sm font-semibold">Composição dos clientes</p>
+          <p className="text-bh-text text-sm font-semibold">Composiï¿½ï¿½o dos clientes</p>
           <button
             onClick={() => setShowComposicao(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors"
+            className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors"
           >
             <Users size={12} />
             <span>Origem</span>
           </button>
         </div>
-        <p className="text-[#666] text-xs mb-5">Total: 5235 clientes Ativos</p>
+        <p className="text-bh-subtle text-xs mb-5">Total: 5235 clientes Ativos</p>
 
         <div className="space-y-3">
           {composicaoData.map((item) => (
@@ -168,15 +168,15 @@ export function CadastrosSection() {
               <div className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: item.color }} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-white text-sm font-semibold">{item.label}</span>
-                  <span className="text-[#555] text-xs truncate">{item.desc}</span>
+                  <span className="text-bh-text text-sm font-semibold">{item.label}</span>
+                  <span className="text-bh-subtle text-xs truncate">{item.desc}</span>
                 </div>
                 <div className="mt-1 h-1.5 rounded-full bg-white/5 overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${item.pct}%`, backgroundColor: item.color, opacity: 0.6 }} />
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-white text-sm font-bold">{item.value}</span>
+                <span className="text-bh-text text-sm font-bold">{item.value}</span>
                 <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ color: item.color, background: `${item.color}20` }}>{item.pct}%</span>
               </div>
             </div>

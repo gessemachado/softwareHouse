@@ -31,31 +31,31 @@ export function MetricasSection() {
     <>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
       {/* Métricas de Vendas */}
-      <div className="rounded-xl border border-[#1a1a1a] bg-black overflow-hidden">
-        <div className="border-b border-[#292929] px-6 py-5">
+      <div className="rounded-xl border border-bh-surface2 bg-bh-bg overflow-hidden">
+        <div className="border-b border-bh-border px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
               <TrendingUp size={18} className="text-blue-400" />
             </div>
             <div>
-              <h3 className="text-white text-lg">Métricas de Vendas</h3>
-              <p className="text-[#999] text-xs">Principais indicadores de performance</p>
+              <h3 className="text-bh-text text-lg">Métricas de Vendas</h3>
+              <p className="text-bh-muted text-xs">Principais indicadores de performance</p>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 p-5">
           {metricasCards.map((card) => (
-            <div key={card.label} className="relative rounded-xl border border-[rgba(41,41,41,0.5)] bg-black p-4">
+            <div key={card.label} className="relative rounded-xl border border-bh-border/50 bg-bh-surface p-4">
               <button
                 onClick={() => setActiveChart(card.label)}
-                className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-lg border border-white/10 text-[#444] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2 py-1 text-[10px] font-semibold transition-colors"
+                className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2 py-1 text-[10px] font-semibold transition-colors"
               >
                 <BarChart2 size={11} />
                 <span>Histórico</span>
               </button>
-              <p className="text-[#999] text-sm mb-3">{card.label}</p>
-              <p className="text-white text-2xl font-light mb-3">{card.value}</p>
+              <p className="text-bh-muted text-sm mb-3">{card.label}</p>
+              <p className="text-bh-text text-2xl font-light mb-3">{card.value}</p>
               <div className="flex items-center gap-2">
                 <div className={`flex items-center gap-1 rounded px-2 py-1 ${card.positive ? 'bg-green-400/10' : 'bg-red-500/10'}`}>
                   {card.positive
@@ -64,7 +64,7 @@ export function MetricasSection() {
                   }
                   <span className={`text-sm ${card.positive ? 'text-green-400' : 'text-red-400'}`}>{card.change}</span>
                 </div>
-                <span className="text-[#666] text-xs">{card.vs}</span>
+                <span className="text-bh-subtle text-xs">{card.vs}</span>
               </div>
             </div>
           ))}
@@ -72,8 +72,8 @@ export function MetricasSection() {
       </div>
 
       {/* Intermediações */}
-      <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden">
-        <div className="border-b border-[#292929] px-6 py-5">
+      <div className="rounded-xl border border-bh-border/50 bg-bh-bg overflow-hidden">
+        <div className="border-b border-bh-border px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -81,15 +81,15 @@ export function MetricasSection() {
               </svg>
             </div>
             <div>
-              <h3 className="text-white text-lg font-semibold">Intermediações</h3>
-              <p className="text-[#999] text-xs">Operações de intermediação</p>
+              <h3 className="text-bh-text text-lg font-semibold">Intermediações</h3>
+              <p className="text-bh-muted text-xs">Operações de intermediação</p>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 p-5">
           {/* Qtd de Intermediações */}
-          <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black p-4">
+          <div className="rounded-xl border border-bh-border/50 bg-bh-surface p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
@@ -97,15 +97,15 @@ export function MetricasSection() {
                     <path d="M2 10h16M6 5l-4 5 4 5M14 5l4 5-4 5" stroke="#a855f7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <span className="text-[#999] text-xs">Qtd de Intermediações</span>
+                <span className="text-bh-muted text-xs">Qtd de Intermediações</span>
               </div>
               <button onClick={() => setActiveChart('Qtd de Intermediações')}
-                className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+                className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
                 <BarChart2 size={12} />
                 <span>Histórico</span>
               </button>
             </div>
-            <p className="text-white text-2xl font-light mb-3">{qtdInter}</p>
+            <p className="text-bh-text text-2xl font-light mb-3">{qtdInter}</p>
             <div className="flex items-center gap-2">
               <div className={`flex items-center gap-1 rounded px-2 py-1 ${qtdInter >= qtdInterP ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
                 {qtdInter >= qtdInterP
@@ -115,12 +115,12 @@ export function MetricasSection() {
                   {pctStr(qtdInter, qtdInterP)}
                 </span>
               </div>
-              <span className="text-[#666] text-xs">vs {qtdInterP} Ant.</span>
+              <span className="text-bh-subtle text-xs">vs {qtdInterP} Ant.</span>
             </div>
           </div>
 
           {/* Total de Intermediações */}
-          <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black p-4">
+          <div className="rounded-xl border border-bh-border/50 bg-bh-surface p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
@@ -128,15 +128,15 @@ export function MetricasSection() {
                     <path d="M2 10h16M6 5l-4 5 4 5M14 5l4 5-4 5" stroke="#a855f7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <span className="text-[#999] text-xs">Total de Intermediações</span>
+                <span className="text-bh-muted text-xs">Total de Intermediações</span>
               </div>
               <button onClick={() => setActiveChart('Total de Intermediações')}
-                className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+                className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
                 <BarChart2 size={12} />
                 <span>Histórico</span>
               </button>
             </div>
-            <p className="text-white text-2xl font-light mb-3">{fmtK(totalInter)}</p>
+            <p className="text-bh-text text-2xl font-light mb-3">{fmtK(totalInter)}</p>
             <div className="flex items-center gap-2">
               <div className={`flex items-center gap-1 rounded px-2 py-1 ${totalInter >= totalInterP ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
                 {totalInter >= totalInterP
@@ -146,26 +146,26 @@ export function MetricasSection() {
                   {pctStr(totalInter, totalInterP)}
                 </span>
               </div>
-              <span className="text-[#666] text-xs">vs {fmtK(totalInterP)} Ant.</span>
+              <span className="text-bh-subtle text-xs">vs {fmtK(totalInterP)} Ant.</span>
             </div>
           </div>
 
           {/* Desconto Usado */}
-          <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black p-4">
+          <div className="rounded-xl border border-bh-border/50 bg-bh-surface p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
                   <span className="text-red-400 text-sm font-bold">%</span>
                 </div>
-                <span className="text-[#999] text-xs">Desconto Usado</span>
+                <span className="text-bh-muted text-xs">Desconto Usado</span>
               </div>
               <button onClick={() => setActiveChart('Desconto Usado')}
-                className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+                className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
                 <BarChart2 size={12} />
                 <span>Histórico</span>
               </button>
             </div>
-            <p className="text-white text-2xl font-light mb-3">{fmtK(descUsado)}</p>
+            <p className="text-bh-text text-2xl font-light mb-3">{fmtK(descUsado)}</p>
             <div className="flex items-center gap-2">
               <div className={`flex items-center gap-1 rounded px-2 py-1 ${descUsado >= descUsadoP ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
                 {descUsado >= descUsadoP
@@ -175,7 +175,7 @@ export function MetricasSection() {
                   {pctStr(descUsado, descUsadoP)}
                 </span>
               </div>
-              <span className="text-[#666] text-xs">vs {fmtK(descUsadoP)} Ant.</span>
+              <span className="text-bh-subtle text-xs">vs {fmtK(descUsadoP)} Ant.</span>
             </div>
           </div>
         </div>

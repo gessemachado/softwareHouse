@@ -76,43 +76,43 @@ export function ComposicaoClientesModal({ onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full rounded-2xl border border-white/10 shadow-2xl flex flex-col"
-        style={{ background: '#0d0d0d', maxWidth: '95vw', maxHeight: '95vh' }}
+        className="w-full rounded-2xl border border-bh-border/40 shadow-2xl flex flex-col"
+        style={{ background: 'rgb(var(--bh-surface))', maxWidth: '95vw', maxHeight: '95vh' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between px-8 py-6 border-b border-white/5 shrink-0">
+        <div className="flex items-start justify-between px-8 py-6 border-b border-bh-border/30 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, rgba(255,102,0,0.25) 0%, rgba(255,102,0,0.1) 100%)' }}>
               <Users size={18} className="text-orange-500" />
             </div>
             <div>
-              <h2 className="text-white text-xl font-bold">Composição por Origem</h2>
-              <p className="text-[#666] text-xs mt-1">
+              <h2 className="text-bh-text text-xl font-bold">Composição por Origem</h2>
+              <p className="text-bh-subtle text-xs mt-1">
                 Total: {TOTAL_ATIVOS.toLocaleString('pt-BR')} clientes ativos · Abr/2025 → Abr/2026
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#666] hover:text-white transition-colors shrink-0 ml-4"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bh-surface2 text-bh-subtle hover:text-bh-text transition-colors shrink-0 ml-4"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* KPI strip */}
-        <div className="grid grid-cols-3 gap-4 px-8 py-5 border-b border-white/5 shrink-0">
+        <div className="grid grid-cols-3 gap-4 px-8 py-5 border-b border-bh-border/30 shrink-0">
           {origens.map(o => (
-            <div key={o.key} className="rounded-xl border border-white/5 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <div key={o.key} className="rounded-xl border border-bh-border/30 p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-2 h-2 rounded-full" style={{ background: o.color }} />
-                <p className="text-[#555] text-[9px] font-bold tracking-widest uppercase">{o.label}</p>
+                <p className="text-bh-subtle text-[9px] font-bold tracking-widest uppercase">{o.label}</p>
               </div>
-              <p className="text-white text-2xl font-bold">{o.total.toLocaleString('pt-BR')}</p>
+              <p className="text-bh-text text-2xl font-bold">{o.total.toLocaleString('pt-BR')}</p>
               <div className="flex items-center justify-between mt-1">
-                <p className="text-[#444] text-[10px]">Novos cadastros (13 meses)</p>
+                <p className="text-bh-subtle text-[10px]">Novos cadastros (13 meses)</p>
                 <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ color: o.color, background: `${o.color}18` }}>{o.pct}%</span>
               </div>
             </div>
@@ -124,8 +124,8 @@ export function ComposicaoClientesModal({ onClose }: Props) {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={ORIGEM_DATA} margin={{ top: 10, right: 10, bottom: 5, left: 0 }} barCategoryGap="25%">
               <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="0" vertical={false} />
-              <XAxis dataKey="mes" tick={{ fill: '#666', fontSize: 10, fontWeight: 600 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: '#555', fontSize: 10 }} axisLine={false} tickLine={false} width={28} />
+              <XAxis dataKey="mes" tick={{ fill: 'rgb(var(--bh-subtle))', fontSize: 10, fontWeight: 600 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: 'rgb(var(--bh-subtle))', fontSize: 10 }} axisLine={false} tickLine={false} width={28} />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
               <Legend content={<CustomLegend />} verticalAlign="top" align="right" wrapperStyle={{ paddingBottom: 12 }} />
               <Bar dataKey="crm"       name="Cadastro Externo (CRM)" fill={CORES.crm}       radius={[3,3,0,0]} maxBarSize={22} />
@@ -135,14 +135,14 @@ export function ComposicaoClientesModal({ onClose }: Props) {
           </ResponsiveContainer>
 
           {/* Tabela de distribuição */}
-          <div className="rounded-xl border border-white/5 overflow-hidden">
+          <div className="rounded-xl border border-bh-border/30 overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                  <th className="text-left px-5 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Origem</th>
-                  <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Novos (13m)</th>
-                  <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">% do Total</th>
-                  <th className="text-right px-5 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Últ. mês</th>
+                <tr className="border-b border-bh-border/30" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                  <th className="text-left px-5 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Origem</th>
+                  <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Novos (13m)</th>
+                  <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">% do Total</th>
+                  <th className="text-right px-5 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">�lt. mês</th>
                 </tr>
               </thead>
               <tbody>
@@ -153,10 +153,10 @@ export function ComposicaoClientesModal({ onClose }: Props) {
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full shrink-0" style={{ background: o.color }} />
-                          <span className="text-white text-sm">{o.label}</span>
+                          <span className="text-bh-text text-sm">{o.label}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right text-white font-semibold">{o.total.toLocaleString('pt-BR')}</td>
+                      <td className="px-4 py-3 text-right text-bh-text font-semibold">{o.total.toLocaleString('pt-BR')}</td>
                       <td className="px-4 py-3 text-right">
                         <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ color: o.color, background: `${o.color}18` }}>{o.pct}%</span>
                       </td>
@@ -165,9 +165,9 @@ export function ComposicaoClientesModal({ onClose }: Props) {
                   )
                 })}
                 <tr className="bg-white/[0.02]">
-                  <td className="px-5 py-3 text-white font-semibold">Total</td>
-                  <td className="px-4 py-3 text-right text-white font-bold">{totalGeral.toLocaleString('pt-BR')}</td>
-                  <td className="px-4 py-3 text-right text-[#666] text-xs">100%</td>
+                  <td className="px-5 py-3 text-bh-text font-semibold">Total</td>
+                  <td className="px-4 py-3 text-right text-bh-text font-bold">{totalGeral.toLocaleString('pt-BR')}</td>
+                  <td className="px-4 py-3 text-right text-bh-subtle text-xs">100%</td>
                   <td className="px-5 py-3 text-right text-[#aaa] font-semibold">
                     {ORIGEM_DATA[ORIGEM_DATA.length - 1].crm + ORIGEM_DATA[ORIGEM_DATA.length - 1].loja + ORIGEM_DATA[ORIGEM_DATA.length - 1].afiliados}
                   </td>

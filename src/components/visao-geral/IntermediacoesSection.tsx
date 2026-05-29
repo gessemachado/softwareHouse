@@ -39,7 +39,7 @@ export function IntermediacoesSection() {
   const curIdx  = mesIdx(selectedMonth, selectedYear)
   const prevIdx = mesIdx(compareMonth, compareYear)
 
-  // ── Desconto ────────────────────────────────────────────────────────────────
+  // -- Desconto ----------------------------------------------------------------
   const desc        = DESCONTO[curIdx]
   const descPrev    = DESCONTO[prevIdx]
   const totalDesc   = desc.aproveitado + desc.disponivel
@@ -52,7 +52,7 @@ export function IntermediacoesSection() {
     { name: 'Disponível',  value: dispPct,     fill: '#2a2a2a' },
   ]
 
-  // ── Operação ────────────────────────────────────────────────────────────────
+  // -- Operação ----------------------------------------------------------------
   const op      = OPERACAO[curIdx]
   const opPrev  = OPERACAO[prevIdx]
   const naoAprov     = op.mesmaTrib + op.somenteItem + op.naoAceitou
@@ -64,7 +64,7 @@ export function IntermediacoesSection() {
     { name: 'Não Aproveitado', value: 100 - absorcaoOp, fill: '#01baef' },
   ]
 
-  // ── Operação | Produtos ──────────────────────────────────────────────────────
+  // -- Operação | Produtos ------------------------------------------------------
   const prod        = OPERACAO_PRODUTOS[curIdx]
   const prodPrev    = OPERACAO_PRODUTOS[prevIdx]
   const totalProd   = prod.aproveitado + prod.naoAtuou
@@ -88,9 +88,9 @@ export function IntermediacoesSection() {
       {showOperacao && <OperacaoHistoricoModal onClose={() => setShowOperacao(false)} />}
       {showProdutos && <OperacaoProdutosHistoricoModal onClose={() => setShowProdutos(false)} />}
 
-      {/* ── Desconto Disponibilizado ──────────────────────────────────────────── */}
-      {vis('c_desconto') && <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden">
-        <div className="border-b border-[#292929] px-6 py-5"
+      {/* -- Desconto Disponibilizado -------------------------------------------- */}
+      {vis('c_desconto') && <div className="rounded-xl border border-bh-border/50 bg-bh-bg overflow-hidden">
+        <div className="border-b border-bh-border px-6 py-5"
           >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -98,12 +98,12 @@ export function IntermediacoesSection() {
                 <span className="text-orange-500 text-base font-bold">%</span>
               </div>
               <div>
-                <h3 className="text-white text-lg">Desconto Disponibilizado</h3>
-                <p className="text-[#999] text-xs">Acompanhamento do desconto disponibilizado</p>
+                <h3 className="text-bh-text text-lg">Desconto Disponibilizado</h3>
+                <p className="text-bh-muted text-xs">Acompanhamento do desconto disponibilizado</p>
               </div>
             </div>
             <button onClick={() => setShowAbsorcao(true)}
-              className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+              className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
               <BarChart2 size={12} />
               <span>Histórico</span>
             </button>
@@ -121,26 +121,26 @@ export function IntermediacoesSection() {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <p className="text-[#999] text-xs">Aproveitado</p>
-              <p className="text-white text-xl font-bold">{absorcaoPct.toFixed(1)}%</p>
+              <p className="text-bh-muted text-xs">Aproveitado</p>
+              <p className="text-bh-text text-xl font-bold">{absorcaoPct.toFixed(1)}%</p>
               <p className="text-orange-500 text-sm">{fmtK(desc.aproveitado)}</p>
             </div>
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            {vis('c_desconto.disponivel') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+            {vis('c_desconto.disponivel') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
-                <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Disponível</span>
+                <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Disponível</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white text-sm font-bold">{fmtK(desc.disponivel)}</span>
+                <span className="text-bh-text text-sm font-bold">{fmtK(desc.disponivel)}</span>
                 <div className="flex items-center gap-1.5">
                   <TrendBadge cur={desc.disponivel} prev={descPrev.disponivel} positiveIsUp={false} />
-                  <span className="text-[#666] text-xs">vs {fmtK(descPrev.disponivel)}</span>
+                  <span className="text-bh-subtle text-xs">vs {fmtK(descPrev.disponivel)}</span>
                 </div>
               </div>
-              <p className="text-[#555] text-[10px] mt-1">{dispPct.toFixed(1)}% restante</p>
+              <p className="text-bh-subtle text-[10px] mt-1">{dispPct.toFixed(1)}% restante</p>
             </div>}
 
             {vis('c_desconto.aproveitado') && <div className="rounded-lg border border-orange-500/20 bg-orange-500/5 px-3 py-2.5">
@@ -149,25 +149,25 @@ export function IntermediacoesSection() {
                 <span className="text-orange-500 text-xs font-semibold tracking-widest uppercase">Aproveitado</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white text-sm font-bold">{fmtK(desc.aproveitado)}</span>
+                <span className="text-bh-text text-sm font-bold">{fmtK(desc.aproveitado)}</span>
                 <div className="flex items-center gap-1.5">
                   <TrendBadge cur={desc.aproveitado} prev={descPrev.aproveitado} />
-                  <span className="text-[#666] text-xs">vs {fmtK(descPrev.aproveitado)}</span>
+                  <span className="text-bh-subtle text-xs">vs {fmtK(descPrev.aproveitado)}</span>
                 </div>
               </div>
-              <p className="text-[#555] text-[10px] mt-1">{absorcaoPct.toFixed(1)}% do total</p>
+              <p className="text-bh-subtle text-[10px] mt-1">{absorcaoPct.toFixed(1)}% do total</p>
             </div>}
 
-            {vis('c_desconto.total') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+            {vis('c_desconto.total') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
-                <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">Total Disponibilizado</span>
+                <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Total Disponibilizado</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white text-sm font-bold">{fmtK(totalDesc)}</span>
+                <span className="text-bh-text text-sm font-bold">{fmtK(totalDesc)}</span>
                 <div className="flex items-center gap-1.5">
                   <TrendBadge cur={totalDesc} prev={totalDescP} />
-                  <span className="text-[#666] text-xs">vs {fmtK(totalDescP)}</span>
+                  <span className="text-bh-subtle text-xs">vs {fmtK(totalDescP)}</span>
                 </div>
               </div>
             </div>}
@@ -175,9 +175,9 @@ export function IntermediacoesSection() {
         </div>
       </div>}
 
-      {/* ── Não Aproveitado ──────────────────────────────────────────────────── */}
-      {vis('c_nao_aprov') && <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden">
-        <div className="border-b border-[#292929] px-6 py-5"
+      {/* -- Não Aproveitado ---------------------------------------------------- */}
+      {vis('c_nao_aprov') && <div className="rounded-xl border border-bh-border/50 bg-bh-bg overflow-hidden">
+        <div className="border-b border-bh-border px-6 py-5"
           >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -185,12 +185,12 @@ export function IntermediacoesSection() {
                 <span className="text-orange-500 text-base font-bold">%</span>
               </div>
               <div>
-                <h3 className="text-white text-lg font-semibold">Não Aproveitado</h3>
-                <p className="text-[#999] text-xs">Acompanhamento da operação | Pedido / Intermediação</p>
+                <h3 className="text-bh-text text-lg font-semibold">Não Aproveitado</h3>
+                <p className="text-bh-muted text-xs">Acompanhamento da operação | Pedido / Intermediação</p>
               </div>
             </div>
             <button onClick={() => setShowOperacao(true)}
-              className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+              className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
               <BarChart2 size={12} />
               <span>Histórico</span>
             </button>
@@ -208,63 +208,63 @@ export function IntermediacoesSection() {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <p className="text-[#999] text-xs">Não Aprov.</p>
+              <p className="text-bh-muted text-xs">Não Aprov.</p>
               <p className="text-cyan-400 text-xl font-bold">{(100 - absorcaoOp).toFixed(1)}%</p>
             </div>
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            {vis('c_nao_aprov.total') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+            {vis('c_nao_aprov.total') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <div className="flex items-center justify-between flex-1">
-                  <span className="text-[#999] text-xs font-semibold tracking-widest uppercase">NÃO APROV. | {naoAprov}</span>
+                  <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">NÃO APROV. | {naoAprov}</span>
                   <div className="flex items-center gap-1.5">
                     <TrendBadge cur={naoAprov} prev={naoAprovPrev} positiveIsUp={false} />
-                    <span className="text-[#666] text-xs">vs {naoAprovPrev}</span>
+                    <span className="text-bh-subtle text-xs">vs {naoAprovPrev}</span>
                   </div>
                 </div>
               </div>
             </div>}
 
-            {vis('c_nao_aprov.mesma_trib') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+            {vis('c_nao_aprov.mesma_trib') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-sm shrink-0 bg-[#fca5a5]" />
-                <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">Mesma Tributação</span>
+                <span className="text-bh-muted text-[10px] font-semibold tracking-widest uppercase">Mesma Tributação</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white text-xs font-bold">{op.mesmaTrib}</span>
+                <span className="text-bh-text text-xs font-bold">{op.mesmaTrib}</span>
                 <div className="flex items-center gap-1.5">
                   <TrendBadge cur={op.mesmaTrib} prev={opPrev.mesmaTrib} positiveIsUp={false} />
-                  <span className="text-[#666] text-[10px]">vs {opPrev.mesmaTrib}</span>
+                  <span className="text-bh-subtle text-[10px]">vs {opPrev.mesmaTrib}</span>
                 </div>
               </div>
             </div>}
 
-            {vis('c_nao_aprov.somente_item') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+            {vis('c_nao_aprov.somente_item') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-sm shrink-0 bg-[#b45309]" />
-                <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">Somente um Item</span>
+                <span className="text-bh-muted text-[10px] font-semibold tracking-widest uppercase">Somente um Item</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white text-xs font-bold">{op.somenteItem}</span>
+                <span className="text-bh-text text-xs font-bold">{op.somenteItem}</span>
                 <div className="flex items-center gap-1.5">
                   <TrendBadge cur={op.somenteItem} prev={opPrev.somenteItem} positiveIsUp={false} />
-                  <span className="text-[#666] text-[10px]">vs {opPrev.somenteItem}</span>
+                  <span className="text-bh-subtle text-[10px]">vs {opPrev.somenteItem}</span>
                 </div>
               </div>
             </div>}
 
-            {vis('c_nao_aprov.nao_aceitou') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+            {vis('c_nao_aprov.nao_aceitou') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-sm shrink-0 bg-[#7f1d1d]" />
-                <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">Cliente não aceitou</span>
+                <span className="text-bh-muted text-[10px] font-semibold tracking-widest uppercase">Cliente não aceitou</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white text-xs font-bold">{op.naoAceitou}</span>
+                <span className="text-bh-text text-xs font-bold">{op.naoAceitou}</span>
                 <div className="flex items-center gap-1.5">
                   <TrendBadge cur={op.naoAceitou} prev={opPrev.naoAceitou} positiveIsUp={false} />
-                  <span className="text-[#666] text-[10px]">vs {opPrev.naoAceitou}</span>
+                  <span className="text-bh-subtle text-[10px]">vs {opPrev.naoAceitou}</span>
                 </div>
               </div>
             </div>}
@@ -272,9 +272,9 @@ export function IntermediacoesSection() {
         </div>
       </div>}
 
-      {/* ── Operação | Produtos ────────────────────────────────────────────────── */}
-      {vis('c_op_prod') && <div className="rounded-xl border border-[rgba(41,41,41,0.5)] bg-black overflow-hidden">
-        <div className="border-b border-[#292929] px-6 py-5"
+      {/* -- Operação | Produtos -------------------------------------------------- */}
+      {vis('c_op_prod') && <div className="rounded-xl border border-bh-border/50 bg-bh-bg overflow-hidden">
+        <div className="border-b border-bh-border px-6 py-5"
           >
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
@@ -282,12 +282,12 @@ export function IntermediacoesSection() {
                 <span className="text-orange-500 text-base font-bold">%</span>
               </div>
               <div>
-                <h3 className="text-white text-lg font-semibold">Operação | Produtos</h3>
-                <p className="text-[#999] text-xs">Acompanhamento dos produtos que não atuamos</p>
+                <h3 className="text-bh-text text-lg font-semibold">Operação | Produtos</h3>
+                <p className="text-bh-muted text-xs">Acompanhamento dos produtos que não atuamos</p>
               </div>
             </div>
             <button onClick={() => setShowProdutos(true)}
-              className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
+              className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors">
               <BarChart2 size={12} />
               <span>Histórico</span>
             </button>
@@ -305,39 +305,39 @@ export function IntermediacoesSection() {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <p className="text-[#999] text-xs">Aproveitado</p>
-              <p className="text-white text-xl font-bold">{aprovPct.toFixed(1)}%</p>
+              <p className="text-bh-muted text-xs">Aproveitado</p>
+              <p className="text-bh-text text-xl font-bold">{aprovPct.toFixed(1)}%</p>
               <p className="text-orange-500 text-sm">{fmtK(prod.aproveitado)}</p>
             </div>
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            {vis('c_op_prod.nao_atuou') && <div className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+            {vis('c_op_prod.nao_atuou') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <div className="flex items-center justify-between flex-1">
-                  <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">
+                  <span className="text-bh-muted text-[10px] font-semibold tracking-widest uppercase">
                     NÃO ATUOU | {fmtK(prod.naoAtuou)}
                   </span>
                   <div className="flex items-center gap-1.5">
                     <TrendBadge cur={prod.naoAtuou} prev={prodPrev.naoAtuou} positiveIsUp={false} />
-                    <span className="text-[#666] text-xs">vs {fmtK(prodPrev.naoAtuou)}</span>
+                    <span className="text-bh-subtle text-xs">vs {fmtK(prodPrev.naoAtuou)}</span>
                   </div>
                 </div>
               </div>
             </div>}
 
             {prodSubItems.map(({ id, label, cur, prev, color }) => vis(id) && (
-              <div key={label} className="rounded-lg border border-[#1a1a1a] bg-black px-3 py-2.5">
+              <div key={label} className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
                 <div className="flex items-center gap-1.5 mb-1.5">
                   <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: color }} />
-                  <span className="text-[#999] text-[10px] font-semibold tracking-widest uppercase">{label}</span>
+                  <span className="text-bh-muted text-[10px] font-semibold tracking-widest uppercase">{label}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-white text-xs font-bold">{fmtK(cur)}</span>
+                  <span className="text-bh-text text-xs font-bold">{fmtK(cur)}</span>
                   <div className="flex items-center gap-1.5">
                     <TrendBadge cur={cur} prev={prev} positiveIsUp={false} />
-                    <span className="text-[#666] text-[10px]">vs {fmtK(prev)}</span>
+                    <span className="text-bh-subtle text-[10px]">vs {fmtK(prev)}</span>
                   </div>
                 </div>
               </div>

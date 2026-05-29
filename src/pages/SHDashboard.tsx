@@ -37,7 +37,7 @@ function SHDashboardContent({ sh }: { sh: SoftwareHouse }) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/software-house')}
-              className="w-9 h-9 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-white hover:border-white/20 transition-colors shrink-0"
+              className="w-9 h-9 flex items-center justify-center rounded-lg border border-bh-border/40 text-bh-subtle hover:text-bh-text hover:border-bh-border/60 transition-colors shrink-0"
             >
               <ArrowLeft size={16} />
             </button>
@@ -46,8 +46,8 @@ function SHDashboardContent({ sh }: { sh: SoftwareHouse }) {
               <Eye size={20} className="text-bh-primary" />
             </div>
             <div>
-              <h1 className="text-white text-2xl font-bold leading-tight">{sh.nome_fantasia}</h1>
-              <p className="text-[#999] text-sm mt-0.5">
+              <h1 className="text-bh-text text-2xl font-bold leading-tight">{sh.nome_fantasia}</h1>
+              <p className="text-bh-muted text-sm mt-0.5">
                 {sh.estado}, {sh.municipio} · CNPJ {sh.cnpj}
               </p>
             </div>
@@ -66,7 +66,7 @@ function SHDashboardContent({ sh }: { sh: SoftwareHouse }) {
       <div className="flex justify-end mb-4 -mt-1">
         <button
           onClick={() => setShowConfig(true)}
-          className="flex items-center gap-2 rounded-lg border border-white/10 text-[#555] hover:text-bh-primary hover:border-bh-primary/40 hover:bg-bh-primary/5 px-3 py-1.5 text-xs font-semibold transition-colors"
+          className="flex items-center gap-2 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-bh-primary hover:border-bh-primary/40 hover:bg-bh-primary/5 px-3 py-1.5 text-xs font-semibold transition-colors"
         >
           <Settings2 size={13} />
           Configurar dashboard
@@ -102,7 +102,7 @@ export function SHDashboard() {
   if (loading) {
     return (
       <AppLayout title="">
-        <div className="flex items-center justify-center h-64 text-[#555] text-sm">
+        <div className="flex items-center justify-center h-64 text-bh-subtle text-sm">
           Carregando...
         </div>
       </AppLayout>

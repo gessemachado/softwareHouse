@@ -9,17 +9,17 @@ function fmt(v: number) {
 }
 
 function ValueCell({ value, dir, varPct }: { value: number | null; dir: string | null; varPct?: string | null }) {
-  if (value === null) return <span className="text-[#555]">-</span>
-  const pctColor = dir === 'up' ? 'text-emerald-400' : dir === 'down' ? 'text-red-400' : 'text-[#666]'
+  if (value === null) return <span className="text-bh-subtle">-</span>
+  const pctColor = dir === 'up' ? 'text-emerald-400' : dir === 'down' ? 'text-red-400' : 'text-bh-subtle'
   return (
     <span className="flex items-center gap-1.5 justify-end">
       {(dir || varPct) && (
         <span className={`flex items-center gap-0.5 text-[10px] font-mono font-semibold shrink-0 ${pctColor}`}>
-          <span className="text-[#444]">(</span>
+          <span className="text-bh-subtle">(</span>
           {dir === 'up'   && <TrendingUp   size={10} className="text-emerald-400 shrink-0" />}
           {dir === 'down' && <TrendingDown size={10} className="text-red-400 shrink-0" />}
           {varPct && <span>{varPct}</span>}
-          <span className="text-[#444]">)</span>
+          <span className="text-bh-subtle">)</span>
         </span>
       )}
       <span>{fmt(value)}</span>
@@ -28,7 +28,7 @@ function ValueCell({ value, dir, varPct }: { value: number | null; dir: string |
 }
 
 function DescontoCell({ value, badge }: { value: number | null; badge: string | null }) {
-  if (value === null) return <span className="text-[#555]">-</span>
+  if (value === null) return <span className="text-bh-subtle">-</span>
   const cls = badge === 'orange'
     ? 'border border-orange-500 text-orange-400'
     : badge === 'teal'
@@ -50,7 +50,7 @@ export function AvaliacaoResultadosInline() {
   const { avaliacao: rows } = getPeriodData(selectedMonth, selectedYear, compareMonth, compareYear)
 
   return (
-    <div className="mt-5 pt-5 border-t border-white/5">
+    <div className="mt-5 pt-5 border-t border-bh-border/30">
       {/* Section header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
@@ -59,16 +59,16 @@ export function AvaliacaoResultadosInline() {
             <BarChart2 size={18} className="text-orange-500" />
           </div>
           <div>
-            <h3 className="text-white text-lg font-bold">Avaliação de Resultados</h3>
-            <p className="text-[#666] text-xs mt-0.5">
-              Análise comparativa de indicadores financeiros • Antes vs Depois da Intermediação
+            <h3 className="text-bh-text text-lg font-bold">Avaliação de Resultados</h3>
+            <p className="text-bh-subtle text-xs mt-0.5">
+              Análise comparativa de indicadores financeiros �� Antes vs Depois da Intermediação
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowHistorico(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/10 text-[#555] hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors"
+            className="flex items-center gap-1.5 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2.5 py-1.5 text-[10px] font-semibold transition-colors"
           >
             <History size={12} />
             <span>Histórico</span>
@@ -79,23 +79,23 @@ export function AvaliacaoResultadosInline() {
       {showHistorico && <DREHistoricoModal onClose={() => setShowHistorico(false)} />}
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-white/5">
+      <div className="overflow-x-auto rounded-xl border border-bh-border/30">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-              <th className="text-left px-5 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Avaliação Resultado</th>
-              <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase whitespace-nowrap">
+            <tr className="border-b border-bh-border/30" style={{ background: 'rgba(255,255,255,0.02)' }}>
+              <th className="text-left px-5 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Avaliação Resultado</th>
+              <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase whitespace-nowrap">
                 Antes
                 <span className="block text-[9px] font-normal text-[#3a3a3a] normal-case tracking-normal mt-0.5">vs {compareLabel}</span>
               </th>
-              <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">%</th>
-              <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase whitespace-nowrap">
+              <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">%</th>
+              <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase whitespace-nowrap">
                 Depois
                 <span className="block text-[9px] font-normal text-[#3a3a3a] normal-case tracking-normal mt-0.5">vs {compareLabel}</span>
               </th>
-              <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">%</th>
-              <th className="text-right px-4 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Variação</th>
-              <th className="text-right px-5 py-3 text-[#555] text-[10px] font-semibold tracking-widest uppercase">Desconto</th>
+              <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">%</th>
+              <th className="text-right px-4 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Variação</th>
+              <th className="text-right px-5 py-3 text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">Desconto</th>
             </tr>
           </thead>
           <tbody>
@@ -109,25 +109,25 @@ export function AvaliacaoResultadosInline() {
                       </span>
                     )}
                     {row.badge === 'teal' && (
-                      <span className="inline-flex items-center bg-teal-500 text-white text-xs font-bold px-2.5 py-0.5 rounded">
+                      <span className="inline-flex items-center bg-teal-500 text-bh-text text-xs font-bold px-2.5 py-0.5 rounded">
                         {row.label}
                       </span>
                     )}
                     {!row.badge && (
-                      <span className={row.bold ? 'text-white font-semibold' : 'text-[#aaa]'}>
+                      <span className={row.bold ? 'text-bh-text font-semibold' : 'text-[#aaa]'}>
                         {row.label}
                       </span>
                     )}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-right text-white">
+                <td className="px-4 py-3 text-right text-bh-text">
                   <ValueCell value={row.antes} dir={row.antesDir} varPct={row.antesVarPct} />
                 </td>
-                <td className="px-4 py-3 text-right text-[#666] text-xs">{row.antesP ?? '-'}</td>
-                <td className="px-4 py-3 text-right text-white">
+                <td className="px-4 py-3 text-right text-bh-subtle text-xs">{row.antesP ?? '-'}</td>
+                <td className="px-4 py-3 text-right text-bh-text">
                   <ValueCell value={row.depois} dir={row.depoisDir} varPct={row.depoisVarPct} />
                 </td>
-                <td className="px-4 py-3 text-right text-[#666] text-xs">{row.depoisP ?? '-'}</td>
+                <td className="px-4 py-3 text-right text-bh-subtle text-xs">{row.depoisP ?? '-'}</td>
                 <td className={`px-4 py-3 text-right font-semibold text-xs ${row.variacaoCor === 'green' ? 'text-emerald-400' : 'text-[#aaa]'}`}>
                   {row.variacao ?? '-'}
                 </td>

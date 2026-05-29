@@ -26,25 +26,25 @@ function ComparisonChart({
   format: (v: number) => string
 }) {
   return (
-    <div className="rounded-lg border border-[rgba(41,41,41,0.5)] bg-[#0d0d0d]/80 p-6">
+    <div className="rounded-lg border border-bh-border/50 bg-bh-bg p-6">
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-white text-lg font-bold">{title}</h3>
+        <h3 className="text-bh-text text-lg font-bold">{title}</h3>
         <div className={`flex items-center gap-1.5 rounded px-3 py-1 text-xs ${badgePositive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
           <span className="font-semibold">{badge}</span>
-          <span className="text-[#999]">vs período anterior</span>
+          <span className="text-bh-muted">vs período anterior</span>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={240}>
         <BarChart data={data} margin={{ top: 20, right: 10, bottom: 10, left: 50 }} barSize={80}>
           <XAxis
             dataKey="name"
-            tick={{ fill: '#999', fontSize: 11 }}
+            tick={{ fill: 'rgb(var(--bh-muted))', fontSize: 11 }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
             tickFormatter={format}
-            tick={{ fill: '#999', fontSize: 10 }}
+            tick={{ fill: 'rgb(var(--bh-muted))', fontSize: 10 }}
             axisLine={false}
             tickLine={false}
           />
