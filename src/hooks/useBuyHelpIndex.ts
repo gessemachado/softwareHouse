@@ -84,11 +84,6 @@ function gerarRecomendacoes(data: BuyHelpIndexResponse): Recomendacao[] {
       titulo: 'Reduzir CMV relativo às vendas',
       descricao: 'Revise o mix de produtos priorizando itens com menor custo de aquisição sem perda de margem.',
     },
-    margem: {
-      pilar: 'margem',
-      titulo: 'Otimizar margem de contribuição',
-      descricao: 'Revise o mix de produtos com desconto priorizando itens de maior margem gerencial.',
-    },
   }
 
   const pilares = data.pilares

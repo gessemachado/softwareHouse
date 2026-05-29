@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import {
   RefreshCw, Calendar, ChevronDown, ChevronLeft as ChevLeft, ChevronRight as ChevRight,
-  ArrowLeft, TrendingUp, TrendingDown, Minus, BookOpen,
+  ArrowLeft, TrendingUp, TrendingDown, Minus, BookOpen, Settings2,
   ShoppingCart, Tag, Users, Receipt, type LucideIcon,
   BarChart2, X,
 } from 'lucide-react'
@@ -18,6 +18,7 @@ import { PILARES_DEF, fetchGrupoIndex } from '../mocks/buyhelp-index.mock'
 import { useLojaGrupo } from '../contexts/LojaGrupoContext'
 import { ConversaoHistoricoModal } from '../components/buyhelp-index/ConversaoHistoricoModal'
 import { DescontoAbsorcaoModal } from '../components/visao-geral/DescontoAbsorcaoModal'
+import { ConfiguracaoIndexView } from '../components/buyhelp-index/ConfiguracaoIndexView'
 import type { BuyHelpIndexResponse, BuyHelpIndexClassificacao, GrupoIndexResponse } from '../types/buyhelp-index.types'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -77,23 +78,23 @@ function MonthPicker({ dataInicio, onChange }: {
   return (
     <div className="relative" ref={ref}>
       <button onClick={() => setOpen(v => !v)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-bh-border bg-black text-sm transition-colors hover:border-orange-500/50">
+        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-bh-border bg-bh-surface text-sm transition-colors hover:border-orange-500/50">
         <Calendar size={14} className="text-orange-500 flex-shrink-0"/>
         <span className={dataInicio ? 'text-bh-text' : 'text-bh-muted'}>{label}</span>
         <ChevronDown size={12} className={`text-bh-muted transition-transform ${open ? 'rotate-180' : ''}`}/>
       </button>
       {open && (
         <div className="absolute z-30 top-full mt-2 right-0 rounded-xl shadow-2xl border border-orange-500/30 p-4 w-56"
-          style={{background:'#000'}}>
+          style={{background:'rgb(var(--bh-surface))'}}>
           {/* Year nav */}
           <div className="flex items-center justify-between mb-3">
             <button onClick={() => setCalYear(y => y - 1)}
-              className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#999] hover:text-white transition-colors">
+              className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-bh-surface2 text-bh-muted hover:text-bh-text transition-colors">
               <ChevLeft size={16}/>
             </button>
-            <span className="text-white font-semibold text-sm">{calYear}</span>
+            <span className="text-bh-text font-semibold text-sm">{calYear}</span>
             <button onClick={() => setCalYear(y => y + 1)}
-              className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/5 text-[#999] hover:text-white transition-colors">
+              className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-bh-surface2 text-bh-muted hover:text-bh-text transition-colors">
               <ChevRight size={16}/>
             </button>
           </div>
@@ -122,7 +123,7 @@ function MonthPicker({ dataInicio, onChange }: {
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
 function Sk({ className='' }: { className?: string }) {
-  return <div className={`rounded animate-pulse ${className}`} style={{background:'#1a1a1a'}}/>
+  return <div className={`rounded animate-pulse ${className}`} style={{background:'rgb(var(--bh-surface2))'}}/>
 }
 function SkeletonLayout() {
   return (
@@ -153,14 +154,12 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
     Desconto:  h.desconto,
     Recorrência: h.recorrencia,
     CMV: h.cmv,
-    Margem:    h.margem,
   }))
   const PILAR_KEYS = [
     { key: 'Conversão',    cor: PILARES_DEF[0].cor },
     { key: 'Desconto',     cor: PILARES_DEF[1].cor },
     { key: 'Recorrência',  cor: PILARES_DEF[2].cor },
     { key: 'CMV',          cor: PILARES_DEF[3].cor },
-    { key: 'Margem',       cor: PILARES_DEF[4].cor },
   ]
 
   return (
@@ -169,10 +168,10 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
       {/* Gauge + faixas */}
       <div className="col-span-2 card-bh p-6 flex flex-col">
         <div className="mb-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
             Índice de Saúde Comercial
           </p>
-          <h2 className="text-white text-lg font-bold">BuyHelp Index</h2>
+          <h2 className="text-bh-text text-lg font-bold">BuyHelp Index</h2>
         </div>
 
         <div className="flex-1 flex items-center justify-center py-2">
@@ -185,7 +184,7 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
 
 
         <div className="mt-4 space-y-2">
-          <p className="text-[9px] font-semibold uppercase tracking-widest mb-2" style={{color:'#444'}}>
+          <p className="text-[9px] font-semibold uppercase tracking-widest mb-2" style={{color:'rgb(var(--bh-subtle))'}}>
             Faixas de Classificação
           </p>
           {FAIXAS.map(f => (
@@ -196,7 +195,7 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
                 <div className="w-2 h-2 rounded-full flex-shrink-0" style={{background:f.cor}}/>
                 <span className="text-xs font-semibold" style={{color:f.cor}}>{f.label}</span>
               </div>
-              <span className="text-xs font-mono" style={{color:'#666'}}>{f.range}</span>
+              <span className="text-xs font-mono" style={{color:'rgb(var(--bh-subtle))'}}>{f.range}</span>
             </div>
           ))}
         </div>
@@ -207,23 +206,23 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
 
         {/* Evolução mensal */}
         <div className="card-bh p-5 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
             Evolução Mensal do BuyHelp Index
           </p>
           <p className="text-xs font-medium text-bh-text mb-3">Score ao longo do tempo</p>
           <div style={{height:130}}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={evoData} margin={{top:4,right:8,left:-16,bottom:0}}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e1e1e"/>
-                <XAxis dataKey="mes" tick={{fill:'#555',fontSize:10}} axisLine={false} tickLine={false}/>
-                <YAxis domain={[0,100]} tick={{fill:'#555',fontSize:10}} axisLine={false} tickLine={false}/>
-                <Tooltip contentStyle={{background:'#0a0a0a',border:'1px solid #222',borderRadius:8,fontSize:12,color:'#ccc'}}/>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--bh-surface2))"/>
+                <XAxis dataKey="mes" tick={{fill:'rgb(var(--bh-subtle))',fontSize:10}} axisLine={false} tickLine={false}/>
+                <YAxis domain={[0,100]} tick={{fill:'rgb(var(--bh-subtle))',fontSize:10}} axisLine={false} tickLine={false}/>
+                <Tooltip contentStyle={{background:'rgb(var(--bh-surface))',border:'1px solid #222',borderRadius:8,fontSize:12,color:'rgb(var(--bh-border))'}}/>
                 <ReferenceLine y={80} stroke="#639922" strokeDasharray="4 4" strokeOpacity={0.4}/>
                 <ReferenceLine y={60} stroke="#22c9a0" strokeDasharray="4 4" strokeOpacity={0.4}/>
                 <ReferenceLine y={40} stroke="#EF9F27" strokeDasharray="4 4" strokeOpacity={0.4}/>
                 <Line type="monotone" dataKey="score" stroke={cls.cor} strokeWidth={2.5}
-                  dot={{fill:cls.cor,stroke:'#000',strokeWidth:2,r:4}}
-                  activeDot={{r:6,fill:cls.cor,stroke:'#000',strokeWidth:2}}/>
+                  dot={{fill:cls.cor,stroke:'rgb(var(--bh-surface))',strokeWidth:2,r:4}}
+                  activeDot={{r:6,fill:cls.cor,stroke:'rgb(var(--bh-surface))',strokeWidth:2}}/>
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -231,28 +230,28 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
 
         {/* Evolução por pilar */}
         <div className="card-bh p-5 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
             Evolução por Pilar
           </p>
           <div className="flex flex-wrap gap-3 mb-3 mt-1">
             {PILAR_KEYS.map(pk => (
               <div key={pk.key} className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full" style={{background:pk.cor}}/>
-                <span className="text-[10px]" style={{color:'#888'}}>{pk.key}</span>
+                <span className="text-[10px]" style={{color:'rgb(var(--bh-muted))'}}>{pk.key}</span>
               </div>
             ))}
           </div>
           <div style={{height:130}}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={pilarEvoData} margin={{top:4,right:16,left:-20,bottom:0}}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a"/>
-                <XAxis dataKey="mes" tick={{fill:'#555',fontSize:10}} axisLine={false} tickLine={false}/>
-                <YAxis domain={[0,100]} tick={{fill:'#555',fontSize:10}} axisLine={false} tickLine={false}/>
-                <Tooltip contentStyle={{background:'#0a0a0a',border:'1px solid #222',borderRadius:8,fontSize:11,color:'#ccc'}}/>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--bh-surface2))"/>
+                <XAxis dataKey="mes" tick={{fill:'rgb(var(--bh-subtle))',fontSize:10}} axisLine={false} tickLine={false}/>
+                <YAxis domain={[0,100]} tick={{fill:'rgb(var(--bh-subtle))',fontSize:10}} axisLine={false} tickLine={false}/>
+                <Tooltip contentStyle={{background:'rgb(var(--bh-surface))',border:'1px solid #222',borderRadius:8,fontSize:11,color:'rgb(var(--bh-border))'}}/>
                 {PILAR_KEYS.map(pk => (
                   <Line key={pk.key} type="monotone" dataKey={pk.key}
                     stroke={pk.cor} strokeWidth={2} dot={false}
-                    activeDot={{r:4,fill:pk.cor,stroke:'#000',strokeWidth:1}}/>
+                    activeDot={{r:4,fill:pk.cor,stroke:'rgb(var(--bh-surface))',strokeWidth:1}}/>
                 ))}
               </LineChart>
             </ResponsiveContainer>
@@ -299,22 +298,22 @@ function PilarHistoricoModal({
       onClick={onClose}
     >
       <div
-        className="w-full rounded-2xl border border-white/10 shadow-2xl flex flex-col"
-        style={{background:'#0d0d0d', maxWidth:'92vw', height:'88vh', maxHeight:'88vh'}}
+        className="w-full rounded-2xl border border-bh-border/40 shadow-2xl flex flex-col"
+        style={{background:'rgb(var(--bh-surface))', maxWidth:'92vw', height:'88vh', maxHeight:'88vh'}}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-start justify-between px-8 pt-7 pb-5 shrink-0">
           <div>
-            <h2 className="text-white text-2xl font-bold leading-tight">
+            <h2 className="text-bh-text text-2xl font-bold leading-tight">
               {pilar.label} — Últimos {historico.length} Meses
             </h2>
-            <p className="text-xs mt-1" style={{color:'#555'}}>
+            <p className="text-xs mt-1" style={{color:'rgb(var(--bh-subtle))'}}>
               {historico[0]?.mes} → {historico[historico.length - 1]?.mes} · Evolução mensal do score por período
             </p>
           </div>
           <button onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 text-[#555] hover:text-white hover:border-white/20 transition-colors mt-1 shrink-0">
+            className="w-8 h-8 flex items-center justify-center rounded-lg border border-bh-border/40 text-bh-subtle hover:text-bh-text hover:border-bh-border/60 transition-colors mt-1 shrink-0">
             <X size={15}/>
           </button>
         </div>
@@ -322,14 +321,14 @@ function PilarHistoricoModal({
         {/* KPI strip */}
         <div className="grid grid-cols-3 gap-4 px-8 pb-6 shrink-0">
           {kpis.map(k => (
-            <div key={k.label} className="rounded-xl border border-white/5 px-6 py-5"
+            <div key={k.label} className="rounded-xl border border-bh-border/30 px-6 py-5"
               style={{background:'rgba(255,255,255,0.02)'}}>
-              <p className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{color:'#555'}}>{k.label}</p>
+              <p className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{color:'rgb(var(--bh-subtle))'}}>{k.label}</p>
               <p className="leading-none mb-2">
                 <span className="text-4xl font-black" style={{color: k.color}}>{k.value}</span>
                 <span className="text-lg font-bold ml-1" style={{color:'rgba(255,255,255,0.2)'}}>{k.suffix}</span>
               </p>
-              <p className="text-[10px]" style={{color:'#555'}}>{k.sub}</p>
+              <p className="text-[10px]" style={{color:'rgb(var(--bh-subtle))'}}>{k.sub}</p>
             </div>
           ))}
         </div>
@@ -340,19 +339,19 @@ function PilarHistoricoModal({
           <div className="flex items-center gap-5 mb-4">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-sm" style={{background: pilar.cor}}/>
-              <span className="text-[10px] font-semibold uppercase tracking-widest" style={{color:'#888'}}>Acima da Média</span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest" style={{color:'rgb(var(--bh-muted))'}}>Acima da Média</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-sm" style={{background: BELOW_COLOR, border:'1px solid #555'}}/>
-              <span className="text-[10px] font-semibold uppercase tracking-widest" style={{color:'#888'}}>Abaixo da Média</span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest" style={{color:'rgb(var(--bh-muted))'}}>Abaixo da Média</span>
             </div>
             <div className="flex items-center gap-2">
               <div style={{width:20, borderTop:`2px dashed ${pilar.cor}`, opacity:0.7}}/>
-              <span className="text-[10px] font-semibold uppercase tracking-widest" style={{color:'#888'}}>
+              <span className="text-[10px] font-semibold uppercase tracking-widest" style={{color:'rgb(var(--bh-muted))'}}>
                 Média ({media} pts)
               </span>
             </div>
-            <div className="ml-auto text-[10px]" style={{color:'#555'}}>
+            <div className="ml-auto text-[10px]" style={{color:'rgb(var(--bh-subtle))'}}>
               Pico: {pico}/100 &nbsp;|&nbsp; Mínimo: {minScore}/100
             </div>
           </div>
@@ -361,12 +360,12 @@ function PilarHistoricoModal({
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={historico} margin={{top:4,right:56,bottom:0,left:0}} barCategoryGap="28%">
                 <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="0" vertical={false}/>
-                <XAxis dataKey="mes" tick={{fill:'#666',fontSize:11}} axisLine={false} tickLine={false}/>
-                <YAxis domain={[0,100]} tick={{fill:'#555',fontSize:11}} axisLine={false} tickLine={false} width={32}
+                <XAxis dataKey="mes" tick={{fill:'rgb(var(--bh-subtle))',fontSize:11}} axisLine={false} tickLine={false}/>
+                <YAxis domain={[0,100]} tick={{fill:'rgb(var(--bh-subtle))',fontSize:11}} axisLine={false} tickLine={false} width={32}
                   tickFormatter={v => `${v}`}/>
                 <Tooltip
                   cursor={{fill:'rgba(255,255,255,0.03)'}}
-                  contentStyle={{background:'#0a0a0a',border:'1px solid #222',borderRadius:8,fontSize:12,color:'#ccc'}}
+                  contentStyle={{background:'rgb(var(--bh-surface))',border:'1px solid #222',borderRadius:8,fontSize:12,color:'rgb(var(--bh-border))'}}
                   formatter={(v) => [`${v}/100`, 'Score']}/>
                 <ReferenceLine
                   y={media}
@@ -427,12 +426,12 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
       )}
 
       <div className="mb-3">
-        <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+        <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
           Composição do Índice
         </p>
-        <h2 className="text-white text-base font-bold">Pilares de Desempenho</h2>
+        <h2 className="text-bh-text text-base font-bold">Pilares de Desempenho</h2>
       </div>
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-4 gap-4">
         {PILARES_DEF.map(pilar => {
           const p = data.pilares[pilar.key]
           const score = p.score ?? 0
@@ -459,11 +458,11 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
                 <span className="text-4xl font-black tabular-nums leading-none" style={{color:'#f9fafb'}}>
                   {score}
                 </span>
-                <span className="text-sm font-normal ml-1.5" style={{color:'#555'}}>/100</span>
+                <span className="text-sm font-normal ml-1.5" style={{color:'rgb(var(--bh-subtle))'}}>/100</span>
               </div>
 
               {/* Barra de progresso */}
-              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{background:'#1a1a1a'}}>
+              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{background:'rgb(var(--bh-surface2))'}}>
                 <div className="h-full rounded-full transition-all duration-700"
                   style={{width:`${score}%`, background:pilar.cor}}/>
               </div>
@@ -480,8 +479,8 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
                 </div>
                 <button
                   onClick={() => handleHistorico(pilar.key)}
-                  className="flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[10px] font-semibold transition-colors hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5"
-                  style={{color:'#555'}}
+                  className="flex items-center gap-1 rounded-lg border border-bh-border/40 px-2 py-1 text-[10px] font-semibold transition-colors hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5"
+                  style={{color:'rgb(var(--bh-subtle))'}}
                 >
                   <BarChart2 size={11}/> Histórico
                 </button>
@@ -510,7 +509,7 @@ const CLS_LABEL: Record<BuyHelpIndexClassificacao, string> = {
 }
 const PILAR_SHORT: Record<string, string> = {
   conversao: 'Conversão', desconto: 'Desconto', recorrencia: 'Recorrência',
-  cmv: 'CMV', margem: 'Margem',
+  cmv: 'CMV',
 }
 
 function GrupoSection({
@@ -543,10 +542,10 @@ function GrupoSection({
         {/* Aggregate score card */}
         <div className="col-span-2 card-bh p-6 flex flex-col gap-5">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+            <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
               Score Consolidado do Grupo
             </p>
-            <h2 className="text-white text-lg font-bold leading-tight">{data.grupo.nome}</h2>
+            <h2 className="text-bh-text text-lg font-bold leading-tight">{data.grupo.nome}</h2>
           </div>
 
           <div className="flex items-end gap-3">
@@ -563,13 +562,13 @@ function GrupoSection({
                 <span className="text-xs font-bold" style={{color:deltaColor}}>
                   {deltaPos?'+':''}{data.delta_grupo.toFixed(1)} pts
                 </span>
-                <span className="text-[10px]" style={{color:'#555'}}>vs anterior</span>
+                <span className="text-[10px]" style={{color:'rgb(var(--bh-subtle))'}}>vs anterior</span>
               </div>
             </div>
           </div>
 
           <div className="mt-auto">
-            <p className="text-[9px] font-bold uppercase tracking-widest mb-2" style={{color:'#444'}}>
+            <p className="text-[9px] font-bold uppercase tracking-widest mb-2" style={{color:'rgb(var(--bh-subtle))'}}>
               Distribuição por Classificação · {data.lojas.length} lojas
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -578,7 +577,7 @@ function GrupoSection({
                   className="flex items-center justify-between px-3 py-2 rounded-lg"
                   style={{background:`${CLS_COR[cls]}12`, border:`1px solid ${CLS_COR[cls]}25`}}>
                   <span className="text-[10px] font-semibold" style={{color:CLS_COR[cls]}}>{CLS_LABEL[cls]}</span>
-                  <span className="text-xl font-black" style={{color: dist[cls] > 0 ? CLS_COR[cls] : '#333'}}>
+                  <span className="text-xl font-black" style={{color: dist[cls] > 0 ? CLS_COR[cls] : 'rgb(var(--bh-border))'}}>
                     {dist[cls]}
                   </span>
                 </div>
@@ -590,10 +589,10 @@ function GrupoSection({
         {/* Ranking chart */}
         <div className="col-span-3 card-bh p-5 flex flex-col">
           <div className="mb-3">
-            <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+            <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
               Ranking Visual · Pior → Melhor
             </p>
-            <p className="text-white text-base font-bold">Score por Loja</p>
+            <p className="text-bh-text text-base font-bold">Score por Loja</p>
           </div>
           <div style={{flex:1, minHeight:180}}>
             <ResponsiveContainer width="100%" height="100%">
@@ -604,18 +603,18 @@ function GrupoSection({
                 barCategoryGap="30%"
               >
                 <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="0" horizontal={false}/>
-                <XAxis type="number" domain={[0,100]} tick={{fill:'#555',fontSize:10}} axisLine={false} tickLine={false}/>
+                <XAxis type="number" domain={[0,100]} tick={{fill:'rgb(var(--bh-subtle))',fontSize:10}} axisLine={false} tickLine={false}/>
                 <YAxis type="category" dataKey="nome" width={170}
-                  tick={{fill:'#aaa',fontSize:11}} axisLine={false} tickLine={false}/>
+                  tick={{fill:'rgb(var(--bh-muted))',fontSize:11}} axisLine={false} tickLine={false}/>
                 <Tooltip
                   cursor={{fill:'rgba(255,255,255,0.03)'}}
-                  contentStyle={{background:'#0a0a0a',border:'1px solid #222',borderRadius:8,fontSize:12,color:'#ccc'}}
+                  contentStyle={{background:'rgb(var(--bh-surface))',border:'1px solid #222',borderRadius:8,fontSize:12,color:'rgb(var(--bh-border))'}}
                   formatter={(v) => [`${v}/100`, 'Score']}/>
                 <ReferenceLine
                   x={data.score_grupo}
-                  stroke="#666"
+                  stroke="rgb(var(--bh-subtle))"
                   strokeDasharray="4 4"
-                  label={{value:`Média: ${data.score_grupo}`, fill:'#666', fontSize:9, position:'insideTopRight'}}
+                  label={{value:`Média: ${data.score_grupo}`, fill:'rgb(var(--bh-subtle))', fontSize:9, position:'insideTopRight'}}
                 />
                 <Bar dataKey="score" radius={[0,4,4,0]}>
                   {chartData.map((entry, i) => (
@@ -630,10 +629,10 @@ function GrupoSection({
 
       {/* Store ranking cards */}
       <div className="mb-3">
-        <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+        <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
           Análise Detalhada · Pior para Melhor
         </p>
-        <h2 className="text-white text-base font-bold">Performance Individual das Lojas</h2>
+        <h2 className="text-bh-text text-base font-bold">Performance Individual das Lojas</h2>
       </div>
 
       <div className="grid grid-cols-3 gap-4">
@@ -661,8 +660,8 @@ function GrupoSection({
                       </span>
                     )}
                   </div>
-                  <p className="text-sm font-bold text-white leading-tight">{loja.credenciado.nome}</p>
-                  <p className="text-[10px] mt-0.5" style={{color:'#555'}}>{loja.credenciado.cnpj}</p>
+                  <p className="text-sm font-bold text-bh-text leading-tight">{loja.credenciado.nome}</p>
+                  <p className="text-[10px] mt-0.5" style={{color:'rgb(var(--bh-subtle))'}}>{loja.credenciado.cnpj}</p>
                 </div>
                 <span className="px-2.5 py-1 rounded-full text-[10px] font-bold flex-shrink-0"
                   style={{background:`${clsCor}18`, color:clsCor}}>
@@ -676,7 +675,7 @@ function GrupoSection({
                   <span className="text-5xl font-black leading-none" style={{color: clsCor}}>
                     {loja.index.score}
                   </span>
-                  <span className="text-sm ml-1.5" style={{color:'#555'}}>/100</span>
+                  <span className="text-sm ml-1.5" style={{color:'rgb(var(--bh-subtle))'}}>/100</span>
                 </div>
                 <div className="flex items-center gap-1 mb-1">
                   {dPos  && <TrendingUp   size={12} style={{color:dColor}}/>}
@@ -689,14 +688,14 @@ function GrupoSection({
               </div>
 
               {/* Progress bar */}
-              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{background:'#1a1a1a'}}>
+              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{background:'rgb(var(--bh-surface2))'}}>
                 <div className="h-full rounded-full transition-all duration-700"
                   style={{width:`${loja.index.score}%`, background:clsCor}}/>
               </div>
 
               {/* Pilar mini bars */}
               <div className="space-y-2">
-                <p className="text-[9px] font-bold uppercase tracking-widest" style={{color:'#444'}}>
+                <p className="text-[9px] font-bold uppercase tracking-widest" style={{color:'rgb(var(--bh-subtle))'}}>
                   Pilares — pontos fracos destacados
                 </p>
                 {PILARES_DEF.map(pilar => {
@@ -705,15 +704,15 @@ function GrupoSection({
                   return (
                     <div key={pilar.key} className="flex items-center gap-2">
                       <span className="text-[10px] w-20 flex-shrink-0 truncate font-medium"
-                        style={{color: isWeak ? '#f87171' : '#666'}}>
+                        style={{color: isWeak ? '#f87171' : 'rgb(var(--bh-subtle))'}}>
                         {PILAR_SHORT[pilar.key]}
                       </span>
-                      <div className="flex-1 h-1 rounded-full overflow-hidden" style={{background:'#1a1a1a'}}>
+                      <div className="flex-1 h-1 rounded-full overflow-hidden" style={{background:'rgb(var(--bh-surface2))'}}>
                         <div className="h-full rounded-full"
                           style={{width:`${s}%`, background: isWeak ? '#f87171' : pilar.cor}}/>
                       </div>
                       <span className="text-[10px] font-bold w-6 text-right flex-shrink-0"
-                        style={{color: isWeak ? '#f87171' : '#666'}}>
+                        style={{color: isWeak ? '#f87171' : 'rgb(var(--bh-subtle))'}}>
                         {s}
                       </span>
                     </div>
@@ -725,7 +724,7 @@ function GrupoSection({
               <button
                 onClick={() => onVerLoja(loja.credenciado.uuid)}
                 className="w-full py-2 rounded-lg border text-xs font-semibold transition-colors hover:border-orange-500/40 hover:text-orange-400 hover:bg-orange-500/5"
-                style={{color:'#666', borderColor: isAlert ? `${clsCor}30` : 'rgba(255,255,255,0.07)'}}
+                style={{color:'rgb(var(--bh-subtle))', borderColor: isAlert ? `${clsCor}30` : 'rgba(255,255,255,0.07)'}}
               >
                 Ver BuyHelp Index individual →
               </button>
@@ -743,7 +742,7 @@ const COMPOSICAO_PILARES = [
   {
     key: 'conversao',
     label: 'Conversão\nBuyHelp × Loja',
-    peso: 25,
+    peso: 30,
     cor: '#0F6E56',
     bg: 'rgba(15,110,86,0.85)',
     indicadores: [
@@ -755,7 +754,7 @@ const COMPOSICAO_PILARES = [
   {
     key: 'desconto',
     label: 'Conversão\nde Desconto',
-    peso: 20,
+    peso: 25,
     cor: '#EF9F27',
     bg: 'rgba(180,110,0,0.85)',
     indicadores: [
@@ -767,7 +766,7 @@ const COMPOSICAO_PILARES = [
   {
     key: 'recorrencia',
     label: 'Recorrência\nde Clientes',
-    peso: 25,
+    peso: 30,
     cor: '#378ADD',
     bg: 'rgba(30,80,160,0.85)',
     indicadores: [
@@ -788,18 +787,6 @@ const COMPOSICAO_PILARES = [
       { nome: 'Evolução do CMV',        descricao: 'Variação percentual do CMV em relação ao período anterior — queda indica melhora de eficiência.' },
     ],
   },
-  {
-    key: 'margem',
-    label: 'Margem de\nContribuição',
-    peso: 15,
-    cor: '#97C459',
-    bg: 'rgba(70,110,20,0.85)',
-    indicadores: [
-      { nome: 'Margem Líquida BuyHelp', descricao: 'Percentual de margem gerada nas vendas intermediadas pela plataforma.' },
-      { nome: 'Contribuição Absoluta',  descricao: 'Valor líquido total gerado pela operação BuyHelp no período.' },
-      { nome: 'Comparativo Direto',     descricao: 'Margem das vendas BuyHelp versus margem de venda direta ao consumidor.' },
-    ],
-  },
 ]
 
 function ComposicaoView({ onBack }: { onBack: () => void }) {
@@ -811,15 +798,15 @@ function ComposicaoView({ onBack }: { onBack: () => void }) {
       <div className="flex items-center gap-3 mb-5">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-bh-border text-bh-muted hover:text-bh-text hover:border-white/20 text-xs font-medium transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-bh-border text-bh-muted hover:text-bh-text hover:border-bh-border/60 text-xs font-medium transition-colors"
         >
           <ArrowLeft size={13}/> Voltar
         </button>
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{color:'#555'}}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{color:'rgb(var(--bh-subtle))'}}>
             Composição do Índice
           </p>
-          <h2 className="text-white text-lg font-bold leading-tight">
+          <h2 className="text-bh-text text-lg font-bold leading-tight">
             BuyHelp Index — Metodologia e Indicadores
           </h2>
         </div>
@@ -828,8 +815,8 @@ function ComposicaoView({ onBack }: { onBack: () => void }) {
       {/* Stats header */}
       <div className="card-bh px-6 py-5 mb-4 flex items-center justify-between">
         <div>
-          <p className="text-xl font-black tracking-tight text-white">BUYHELP INDEX</p>
-          <p className="text-xs uppercase tracking-widest mt-0.5" style={{color:'#555'}}>
+          <p className="text-xl font-black tracking-tight text-bh-text">BUYHELP INDEX</p>
+          <p className="text-xs uppercase tracking-widest mt-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
             Índice de Saúde Comercial de Credenciados
           </p>
         </div>
@@ -840,7 +827,7 @@ function ComposicaoView({ onBack }: { onBack: () => void }) {
           ].map(s => (
             <div key={s.label} className="text-right">
               <p className="text-3xl font-black leading-none" style={{color:'#ff6600'}}>{s.value}</p>
-              <p className="text-[10px] uppercase tracking-widest mt-1" style={{color:'#555'}}>{s.label}</p>
+              <p className="text-[10px] uppercase tracking-widest mt-1" style={{color:'rgb(var(--bh-subtle))'}}>{s.label}</p>
             </div>
           ))}
         </div>
@@ -859,7 +846,7 @@ function ComposicaoView({ onBack }: { onBack: () => void }) {
               ].map(h => (
                 <th key={h.label}
                   className="text-left px-5 py-3"
-                  style={{width: h.w, color:'#555', fontWeight:700, fontSize:10,
+                  style={{width: h.w, color:'rgb(var(--bh-subtle))', fontWeight:700, fontSize:10,
                     textTransform:'uppercase', letterSpacing:'0.08em'}}>
                   {h.label}
                 </th>
@@ -935,7 +922,7 @@ function ComposicaoView({ onBack }: { onBack: () => void }) {
 
                     {/* DESCRIÇÃO */}
                     <td className="px-5 py-4">
-                      <span className="text-sm leading-relaxed" style={{color:'#888'}}>{ind.descricao}</span>
+                      <span className="text-sm leading-relaxed" style={{color:'rgb(var(--bh-muted))'}}>{ind.descricao}</span>
                     </td>
                   </tr>
                 )
@@ -947,14 +934,14 @@ function ComposicaoView({ onBack }: { onBack: () => void }) {
 
       {/* Classification legend */}
       <div className="card-bh px-6 py-4 flex items-center gap-8 flex-wrap">
-        <p className="text-[10px] font-bold uppercase tracking-widest" style={{color:'#444'}}>
+        <p className="text-[10px] font-bold uppercase tracking-widest" style={{color:'rgb(var(--bh-subtle))'}}>
           Classificação por Score
         </p>
         {FAIXAS.map(f => (
           <div key={f.label} className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full flex-shrink-0" style={{background: f.cor}}/>
             <span className="text-sm font-bold" style={{color: f.cor}}>{f.range}</span>
-            <span className="text-xs font-medium" style={{color:'#555'}}>{f.label}</span>
+            <span className="text-xs font-medium" style={{color:'rgb(var(--bh-subtle))'}}>{f.label}</span>
           </div>
         ))}
       </div>
@@ -965,7 +952,7 @@ function ComposicaoView({ onBack }: { onBack: () => void }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function Dashboard() {
-  const [view, setView] = useState<'main' | 'composicao'>('main')
+  const [view, setView] = useState<'main' | 'composicao' | 'config'>('main')
   const { modo, setModo, credenciadoUuid, setCredenciadoUuid, grupoUuid } = useLojaGrupo()
   const [grupoData, setGrupoData]   = useState<GrupoIndexResponse | null>(null)
   const [grupoLoading, setGrupoLoading] = useState(false)
@@ -1005,7 +992,7 @@ export function Dashboard() {
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div className="flex items-center gap-3">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'#555'}}>
+            <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
               Saúde Comercial
             </p>
             <h1 className="text-bh-text text-xl font-bold">BuyHelp Index</h1>
@@ -1013,9 +1000,16 @@ export function Dashboard() {
           <button
             onClick={() => setView('composicao')}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-bh-border text-xs font-medium transition-colors hover:border-orange-500/40 hover:text-orange-400 mt-1"
-            style={{color:'#666'}}
+            style={{color:'rgb(var(--bh-subtle))'}}
           >
             <BookOpen size={12}/> Metodologia
+          </button>
+          <button
+            onClick={() => setView('config')}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-bh-border text-xs font-medium transition-colors hover:border-orange-500/40 hover:text-orange-400 mt-1"
+            style={{color:'rgb(var(--bh-subtle))'}}
+          >
+            <Settings2 size={12}/> Configuração
           </button>
         </div>
 
@@ -1038,7 +1032,9 @@ export function Dashboard() {
       </div>
 
       {/* ── Content ────────────────────────────────────────────────────────── */}
-      {view === 'composicao'
+      {view === 'config'
+        ? <ConfiguracaoIndexView onBack={() => setView('main')} />
+        : view === 'composicao'
         ? <ComposicaoView onBack={() => setView('main')} />
         : modo === 'grupo'
           ? grupoLoading || !grupoData

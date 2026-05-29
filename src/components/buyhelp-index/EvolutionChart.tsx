@@ -20,7 +20,7 @@ const CustomDot = (props: any) => {
     <circle
       cx={cx} cy={cy} r={5}
       fill="#0F6E56"
-      stroke="#000"
+      stroke="rgb(var(--bh-surface))"
       strokeWidth={2}
     />
   )
@@ -30,8 +30,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null
   return (
     <div style={{
-      background: '#111', border: '1px solid #222', borderRadius: 8,
-      padding: '8px 12px', fontSize: 12, color: '#ccc',
+      background: 'rgb(var(--bh-surface))', border: '1px solid #222', borderRadius: 8,
+      padding: '8px 12px', fontSize: 12, color: 'rgb(var(--bh-border))',
     }}>
       <p style={{ color: '#9ca3af', marginBottom: 2 }}>{label}</p>
       <p style={{ color: '#0F6E56', fontWeight: 700, fontSize: 16 }}>
@@ -65,16 +65,16 @@ export function EvolutionChart({ historico }: Props) {
                 <stop offset="100%" stopColor="#0F6E56" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e1e1e" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--bh-surface2))" />
             <XAxis
               dataKey="mes"
-              tick={{ fill: '#666', fontSize: 11 }}
+              tick={{ fill: 'rgb(var(--bh-subtle))', fontSize: 11 }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
               domain={[0, 100]}
-              tick={{ fill: '#666', fontSize: 11 }}
+              tick={{ fill: 'rgb(var(--bh-subtle))', fontSize: 11 }}
               axisLine={false}
               tickLine={false}
             />
@@ -89,7 +89,7 @@ export function EvolutionChart({ historico }: Props) {
               stroke="#0F6E56"
               strokeWidth={2.5}
               dot={<CustomDot />}
-              activeDot={{ r: 7, fill: '#0F6E56', stroke: '#000', strokeWidth: 2 }}
+              activeDot={{ r: 7, fill: '#0F6E56', stroke: 'rgb(var(--bh-surface))', strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>

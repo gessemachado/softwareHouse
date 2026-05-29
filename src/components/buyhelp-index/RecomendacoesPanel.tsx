@@ -46,12 +46,12 @@ export function RecomendacoesPanel({ recomendacoes }: Props) {
               <div
                 key={i}
                 className="flex gap-3 p-3 rounded-lg"
-                style={{ background: '#0d0d0d', border: '1px solid #2a2a2a' }}
+                style={{ background: 'rgb(var(--bh-surface))', border: '1px solid #2a2a2a' }}
               >
                 {/* Número */}
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold"
-                  style={{ background: '#1a1a1a', color: '#9ca3af' }}
+                  style={{ background: 'rgb(var(--bh-surface2))', color: '#9ca3af' }}
                 >
                   {i + 1}
                 </div>

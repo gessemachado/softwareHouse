@@ -85,7 +85,7 @@ export function PilarCard({ pilar, dados }: Props) {
       )}
 
       {/* Barra de progresso */}
-      <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: '#1a1a1a' }}>
+      <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{

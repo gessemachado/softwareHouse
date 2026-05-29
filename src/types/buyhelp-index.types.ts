@@ -10,7 +10,7 @@ export interface PilarScore {
   delta: number          // pontos vs período anterior
 }
 
-export type PilarKey = 'conversao' | 'desconto' | 'recorrencia' | 'cmv' | 'margem'
+export type PilarKey = 'conversao' | 'desconto' | 'recorrencia' | 'cmv'
 
 export interface PilarDefinicao {
   key: PilarKey
@@ -34,7 +34,6 @@ export interface HistoricoPilarMes {
   desconto: number
   recorrencia: number
   cmv: number
-  margem: number
 }
 
 // ─── Credenciado (seletor) ────────────────────────────────────────────────────

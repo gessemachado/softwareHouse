@@ -111,7 +111,7 @@ export function ScoreGaugeSVG({ score, classificacao, delta, onClick }: Props) {
         </defs>
 
         {/* ── Track background ──────────────────────────────────── */}
-        <path d={arcPath(0, 100)} fill="#1a1a1a" />
+        <path d={arcPath(0, 100)} fill="rgb(var(--bh-surface2))" />
 
         {/* ── Colored segments ─────────────────────────────────── */}
         {SEGMENTS.map(s => (
@@ -120,13 +120,13 @@ export function ScoreGaugeSVG({ score, classificacao, delta, onClick }: Props) {
 
         {/* ── Segment gap lines ─────────────────────────────────── */}
         {[39, 59, 79].map(v => (
-          <path key={v} d={arcPath(v, v + 1)} fill="#000" />
+          <path key={v} d={arcPath(v, v + 1)} fill="rgb(var(--bh-surface))" />
         ))}
 
         {/* ── Outer progress ring background ───────────────────── */}
         <path
           d={thinArc(0, 100, R_PROGRESS)}
-          fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" strokeLinecap="round"
+          fill="none" stroke="rgb(var(--bh-border) / 0.25)" strokeWidth="5" strokeLinecap="round"
         />
 
         {/* ── Outer progress ring filled ────────────────────────── */}
@@ -155,7 +155,7 @@ export function ScoreGaugeSVG({ score, classificacao, delta, onClick }: Props) {
               />
               <text
                 x={lx.toFixed(1)} y={ly.toFixed(1)}
-                textAnchor="middle" fill="#444" fontSize="9"
+                textAnchor="middle" fill="rgb(var(--bh-subtle))" fontSize="9"
                 fontFamily="Inter, system-ui, sans-serif" fontWeight="600"
               >
                 {v}
@@ -173,7 +173,7 @@ export function ScoreGaugeSVG({ score, classificacao, delta, onClick }: Props) {
         />
 
         {/* ── Center hub ────────────────────────────────────────── */}
-        <circle cx={CX} cy={CY} r={13} fill="#111" stroke={cls.cor} strokeWidth="2" />
+        <circle cx={CX} cy={CY} r={13} fill="rgb(var(--bh-surface))" stroke={cls.cor} strokeWidth="2" />
         <circle cx={CX} cy={CY} r={5.5} fill={cls.cor} />
 
         {/* ── Outer rim dot (glowing) ───────────────────────────── */}
@@ -207,11 +207,11 @@ export function ScoreGaugeSVG({ score, classificacao, delta, onClick }: Props) {
         <span className="text-base font-bold" style={{ color: corDelta }}>
           {deltaPos ? '↑' : '↓'} {Math.abs(delta).toFixed(1)} pts
         </span>
-        <span className="text-xs" style={{ color: '#555' }}>vs período anterior</span>
+        <span className="text-xs" style={{ color: 'rgb(var(--bh-subtle))' }}>vs período anterior</span>
       </div>
 
       {onClick && (
-        <p className="text-[10px] mt-2 font-medium uppercase tracking-widest" style={{ color: '#555' }}>
+        <p className="text-[10px] mt-2 font-medium uppercase tracking-widest" style={{ color: 'rgb(var(--bh-subtle))' }}>
           Clique para ver detalhes
         </p>
       )}
