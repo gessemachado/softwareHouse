@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+﻿import { X } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
@@ -56,7 +56,7 @@ export function CadastrosHistoricoModal({ onClose }: Props) {
     >
       <div
         className="w-full rounded-2xl border border-bh-border/40 shadow-2xl flex flex-col"
-        style={{ background: 'rgb(var(--bh-surface))', maxWidth: '95vw', maxHeight: '95vh' }}
+        style={{ background: '#000000', maxWidth: '95vw', maxHeight: '95vh' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}

@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+﻿import { X } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Cell, Tooltip
 } from 'recharts'
@@ -64,7 +64,7 @@ export function MetricaChartModal({ metricLabel, onClose }: Props) {
     >
       <div
         className="w-full rounded-2xl border border-bh-border/40 overflow-hidden shadow-2xl"
-        style={{ background: 'rgb(var(--bh-surface))', maxWidth: '90vw' }}
+        style={{ background: '#000000', maxWidth: '90vw' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}

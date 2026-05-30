@@ -1,4 +1,4 @@
-import { X, BarChart2, TrendingUp, TrendingDown } from 'lucide-react'
+﻿import { X, BarChart2, TrendingUp, TrendingDown } from 'lucide-react'
 
 interface Props {
   onClose: () => void
@@ -130,7 +130,7 @@ export function AvaliacaoResultadosModal({ onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.85)' }}>
       <div className="w-full max-w-5xl rounded-2xl border border-bh-border/40 overflow-hidden shadow-2xl"
-        style={{ background: 'rgb(var(--bh-surface))' }}>
+        style={{ background: '#000000' }}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-5 border-b border-bh-border/30">

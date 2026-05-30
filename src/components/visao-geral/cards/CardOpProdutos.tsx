@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { BarChart2 } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { OperacaoProdutosHistoricoModal } from '../OperacaoProdutosHistoricoModal'
@@ -69,7 +69,7 @@ export function CardOpProdutos() {
           </div>
         </div>
         <div className="flex-1 flex flex-col gap-2">
-          {vis('c_op_prod.nao_atuou') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+          {vis('c_op_prod.nao_atuou') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
               <div className="flex items-center justify-between flex-1">
@@ -84,7 +84,7 @@ export function CardOpProdutos() {
             </div>
           </div>}
           {prodSubItems.map(({ id, label, cur, prev, color }) => vis(id) && (
-            <div key={label} className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+            <div key={label} className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: color }} />
                 <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">{label}</span>

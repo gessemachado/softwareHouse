@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { BarChart2 } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { OperacaoGaugeHistoricoModal } from '../OperacaoGaugeHistoricoModal'
@@ -67,7 +67,7 @@ export function CardGaugeOperacao() {
           </div>
         </div>
         <div className="flex-1 flex flex-col gap-2">
-          {vis('c_gauge.pedidos') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2">
+          {vis('c_gauge.pedidos') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2">
             <div className="flex items-center gap-1.5 mb-1">
               <span className="w-1.5 h-1.5 rounded-full bg-[#6b7280]" />
               <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">

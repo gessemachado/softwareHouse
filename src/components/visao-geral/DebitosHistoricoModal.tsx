@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+﻿import { X } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
@@ -66,7 +66,7 @@ export function DebitosHistoricoModal({ onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.88)' }} onClick={onClose}>
       <div className="w-full rounded-2xl border border-bh-border/40 shadow-2xl flex flex-col"
-        style={{ background: 'rgb(var(--bh-surface))', maxWidth: '92vw', maxHeight: '92vh' }}
+        style={{ background: '#000000', maxWidth: '92vw', maxHeight: '92vh' }}
         onClick={e => e.stopPropagation()}>
 
         <div className="flex items-start justify-between px-8 py-6 border-b border-bh-border/30 shrink-0">

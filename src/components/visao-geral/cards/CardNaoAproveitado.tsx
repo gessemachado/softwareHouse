@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { BarChart2 } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { OperacaoHistoricoModal } from '../OperacaoHistoricoModal'
@@ -63,7 +63,7 @@ export function CardNaoAproveitado() {
           </div>
         </div>
         <div className="flex-1 flex flex-col gap-2">
-          {vis('c_nao_aprov.total') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+          {vis('c_nao_aprov.total') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
               <div className="flex items-center justify-between flex-1">
@@ -75,7 +75,7 @@ export function CardNaoAproveitado() {
               </div>
             </div>
           </div>}
-          {vis('c_nao_aprov.mesma_trib') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+          {vis('c_nao_aprov.mesma_trib') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="w-2 h-2 rounded-sm shrink-0 bg-[#fca5a5]" />
               <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Mesma Tributação</span>
@@ -88,7 +88,7 @@ export function CardNaoAproveitado() {
               </div>
             </div>
           </div>}
-          {vis('c_nao_aprov.somente_item') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+          {vis('c_nao_aprov.somente_item') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="w-2 h-2 rounded-sm shrink-0 bg-[#b45309]" />
               <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Somente um Item</span>
@@ -101,7 +101,7 @@ export function CardNaoAproveitado() {
               </div>
             </div>
           </div>}
-          {vis('c_nao_aprov.nao_aceitou') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+          {vis('c_nao_aprov.nao_aceitou') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="w-2 h-2 rounded-sm shrink-0 bg-[#7f1d1d]" />
               <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Cliente não aceitou</span>

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 import { TrendingUp, ChevronDown, FileText, TrendingDown } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Cell, Tooltip
@@ -116,14 +116,14 @@ export function SalesAnalysisSection() {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setShowDropdown(v => !v)}
-            className="flex items-center gap-2 border border-bh-border/50 bg-bh-surface text-bh-text px-4 py-2 rounded-lg text-sm hover:border-orange-500/40 transition-colors"
+            className="flex items-center gap-2 border border-bh-border/50 bg-black text-bh-text px-4 py-2 rounded-lg text-sm hover:border-orange-500/40 transition-colors"
           >
             {METRIC_LABELS[metric]}
             <ChevronDown size={14} className={`text-bh-muted transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
           </button>
           {showDropdown && (
             <div className="absolute z-20 right-0 top-full mt-1 w-52 rounded-xl border border-bh-border overflow-hidden shadow-xl"
-              style={{ background: 'rgb(var(--bh-surface))' }}>
+              style={{ background: '#000000' }}>
               {METRICS.map(m => (
                 <button
                   key={m}

@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+﻿import { X } from 'lucide-react'
 import {
   BarChart, Bar, LineChart, Line, ReferenceLine,
   XAxis, YAxis, CartesianGrid,
@@ -78,7 +78,7 @@ export function DescontoAbsorcaoModal({ onClose }: Props) {
     >
       <div
         className="w-full rounded-2xl border border-bh-border/40 shadow-2xl flex flex-col"
-        style={{ background: 'rgb(var(--bh-surface))', maxWidth: '90vw', height: '92vh', maxHeight: '92vh' }}
+        style={{ background: '#000000', maxWidth: '90vw', height: '92vh', maxHeight: '92vh' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -164,7 +164,7 @@ export function DescontoAbsorcaoModal({ onClose }: Props) {
                   />
                   <Tooltip
                     cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }}
-                    contentStyle={{ background: 'rgb(var(--bh-surface))', border: '1px solid #222', borderRadius: 8, fontSize: 11 }}
+                    contentStyle={{ background: '#000000', border: '1px solid #222', borderRadius: 8, fontSize: 11 }}
                     formatter={(v) => [`${v}%`, 'Taxa de Absorção']}
                   />
                   <ReferenceLine
@@ -183,8 +183,8 @@ export function DescontoAbsorcaoModal({ onClose }: Props) {
                   />
                   <Line
                     type="monotone" dataKey="taxa" stroke="#EF9F27" strokeWidth={2.5}
-                    dot={{ fill: '#EF9F27', stroke: 'rgb(var(--bh-surface))', strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6, fill: '#EF9F27', stroke: 'rgb(var(--bh-surface))', strokeWidth: 2 }}
+                    dot={{ fill: '#EF9F27', stroke: '#000000', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, fill: '#EF9F27', stroke: '#000000', strokeWidth: 2 }}
                   />
                 </LineChart>
               </ResponsiveContainer>

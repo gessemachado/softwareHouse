@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+﻿import { useState, useRef } from 'react'
 import {
   X, ChevronUp, ChevronDown,
   ChevronRight, RotateCcw, Check, GripVertical,
@@ -155,7 +155,7 @@ export function DashboardConfigModal({ onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.85)' }} onClick={onClose}>
       <div className="w-full max-w-2xl rounded-2xl border border-bh-border/40 shadow-2xl flex flex-col"
-        style={{ background: 'rgb(var(--bh-surface))', height: '580px' }}
+        style={{ background: '#000000', height: '580px' }}
         onClick={e => e.stopPropagation()}>
 
         {/* Header */}

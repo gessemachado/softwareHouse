@@ -6,7 +6,7 @@
 
 /* ── Dark theme (default) ── matches BuyHelp Design System dark tokens ── */
 :root {
-  --bh-bg:            13 13 13;      /* #0d0d0d  --bg     */
+  --bh-bg:            0 0 0;         /* #000000  --bg     */
   --bh-surface:       22 22 22;      /* #161616  --bg-2   */
   --bh-surface2:      26 26 26;      /* #1a1a1a  --bg-3   */
   --bh-border:        41 41 41;      /* #292929  --border */

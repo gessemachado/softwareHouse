@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { BarChart2 } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { DescontoAbsorcaoModal } from '../DescontoAbsorcaoModal'
@@ -64,7 +64,7 @@ export function CardDesconto() {
           </div>
         </div>
         <div className="flex-1 flex flex-col gap-2">
-          {vis('c_desconto.total') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+          {vis('c_desconto.total') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
               <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Total Disponibilizado</span>
@@ -91,7 +91,7 @@ export function CardDesconto() {
             </div>
             <p className="text-bh-subtle text-[10px] mt-1">{absorcaoPct.toFixed(1)}% do total</p>
           </div>}
-          {vis('c_desconto.disponivel') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+          {vis('c_desconto.disponivel') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
               <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Disponível</span>

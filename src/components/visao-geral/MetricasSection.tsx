@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { TrendingUp, TrendingDown, BarChart2 } from 'lucide-react'
 import { MetricaChartModal } from './MetricaChartModal'
 import { useDashboardFilter } from '../../contexts/DashboardFilterContext'
@@ -46,7 +46,7 @@ export function MetricasSection() {
 
         <div className="grid grid-cols-2 gap-4 p-5">
           {metricasCards.map((card) => (
-            <div key={card.label} className="relative rounded-xl border border-bh-border/50 bg-bh-surface p-4">
+            <div key={card.label} className="relative rounded-xl border border-bh-border/50 bg-black p-4">
               <button
                 onClick={() => setActiveChart(card.label)}
                 className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 px-2 py-1 text-[10px] font-semibold transition-colors"
@@ -89,7 +89,7 @@ export function MetricasSection() {
 
         <div className="grid grid-cols-2 gap-4 p-5">
           {/* Qtd de Intermediações */}
-          <div className="rounded-xl border border-bh-border/50 bg-bh-surface p-4">
+          <div className="rounded-xl border border-bh-border/50 bg-black p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
@@ -120,7 +120,7 @@ export function MetricasSection() {
           </div>
 
           {/* Total de Intermediações */}
-          <div className="rounded-xl border border-bh-border/50 bg-bh-surface p-4">
+          <div className="rounded-xl border border-bh-border/50 bg-black p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
@@ -151,7 +151,7 @@ export function MetricasSection() {
           </div>
 
           {/* Desconto Usado */}
-          <div className="rounded-xl border border-bh-border/50 bg-bh-surface p-4">
+          <div className="rounded-xl border border-bh-border/50 bg-black p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">

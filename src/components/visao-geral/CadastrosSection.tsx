@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { TrendingUp, TrendingDown, RefreshCw, LineChart as LineChartIcon, Users, HelpCircle } from 'lucide-react'
 import { CadastrosHistoricoModal } from './CadastrosHistoricoModal'
 import { ComposicaoClientesModal } from './ComposicaoClientesModal'
@@ -78,7 +78,7 @@ export function CadastrosSection() {
 
         <div className="flex-1 p-4 grid grid-cols-2 gap-3">
           {/* Cadastrados */}
-          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: 'rgb(var(--bh-surface))' }}>
+          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: '#000000' }}>
             <div className="w-7 h-7 rounded-lg bg-orange-500/10 flex items-center justify-center mb-3">
               <TrendingUp size={13} className="text-orange-500" />
             </div>
@@ -95,7 +95,7 @@ export function CadastrosSection() {
           </div>
 
           {/* Perdidos */}
-          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: 'rgb(var(--bh-surface))' }}>
+          <div className="rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: '#000000' }}>
             <div className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center mb-3">
               <TrendingDown size={13} className="text-red-400" />
             </div>
@@ -121,7 +121,7 @@ export function CadastrosSection() {
           </div>
 
           {/* Recuperados */}
-          <div className="col-span-2 rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: 'rgb(var(--bh-surface))' }}>
+          <div className="col-span-2 rounded-xl border border-white/[0.06] p-4 flex flex-col" style={{ background: '#000000' }}>
             <div className="w-7 h-7 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-3">
               <RefreshCw size={13} className="text-cyan-400" />
             </div>

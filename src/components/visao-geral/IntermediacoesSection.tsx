@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { TrendingDown, TrendingUp, BarChart2 } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { DescontoAbsorcaoModal } from './DescontoAbsorcaoModal'
@@ -128,7 +128,7 @@ export function IntermediacoesSection() {
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            {vis('c_desconto.disponivel') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+            {vis('c_desconto.disponivel') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Disponível</span>
@@ -158,7 +158,7 @@ export function IntermediacoesSection() {
               <p className="text-bh-subtle text-[10px] mt-1">{absorcaoPct.toFixed(1)}% do total</p>
             </div>}
 
-            {vis('c_desconto.total') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+            {vis('c_desconto.total') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Total Disponibilizado</span>
@@ -214,7 +214,7 @@ export function IntermediacoesSection() {
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            {vis('c_nao_aprov.total') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+            {vis('c_nao_aprov.total') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <div className="flex items-center justify-between flex-1">
@@ -227,7 +227,7 @@ export function IntermediacoesSection() {
               </div>
             </div>}
 
-            {vis('c_nao_aprov.mesma_trib') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+            {vis('c_nao_aprov.mesma_trib') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-sm shrink-0 bg-[#fca5a5]" />
                 <span className="text-bh-muted text-[10px] font-semibold tracking-widest uppercase">Mesma Tributação</span>
@@ -241,7 +241,7 @@ export function IntermediacoesSection() {
               </div>
             </div>}
 
-            {vis('c_nao_aprov.somente_item') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+            {vis('c_nao_aprov.somente_item') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-sm shrink-0 bg-[#b45309]" />
                 <span className="text-bh-muted text-[10px] font-semibold tracking-widest uppercase">Somente um Item</span>
@@ -255,7 +255,7 @@ export function IntermediacoesSection() {
               </div>
             </div>}
 
-            {vis('c_nao_aprov.nao_aceitou') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+            {vis('c_nao_aprov.nao_aceitou') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-sm shrink-0 bg-[#7f1d1d]" />
                 <span className="text-bh-muted text-[10px] font-semibold tracking-widest uppercase">Cliente não aceitou</span>
@@ -312,7 +312,7 @@ export function IntermediacoesSection() {
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            {vis('c_op_prod.nao_atuou') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+            {vis('c_op_prod.nao_atuou') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <div className="flex items-center justify-between flex-1">
@@ -328,7 +328,7 @@ export function IntermediacoesSection() {
             </div>}
 
             {prodSubItems.map(({ id, label, cur, prev, color }) => vis(id) && (
-              <div key={label} className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+              <div key={label} className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
                 <div className="flex items-center gap-1.5 mb-1.5">
                   <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: color }} />
                   <span className="text-bh-muted text-[10px] font-semibold tracking-widest uppercase">{label}</span>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { BarChart2 } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { DebitosHistoricoModal } from '../DebitosHistoricoModal'
@@ -98,7 +98,7 @@ export function CardDebitos() {
             </div>
             <p className="text-bh-subtle text-[10px] mt-1">Com BuyHelp</p>
           </div>}
-          {vis('c_debitos.economia') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+          {vis('c_debitos.economia') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
             <div className="flex items-center justify-between">
               <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Economia</span>
               <div className="flex items-center gap-1.5">

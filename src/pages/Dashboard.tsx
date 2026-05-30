@@ -30,6 +30,14 @@ const FAIXAS = [
   { label: 'Crítico',   range: '0 – 39',   cor: '#E24B4A', bg: 'rgba(226,75,74,0.15)'  },
 ]
 
+function pilarClassify(score: number) {
+  if (score >= 80) return { label: 'Excelente', cor: '#639922', bg: 'rgba(99,153,34,0.18)' }
+  if (score >= 60) return { label: 'Saudável',  cor: '#22c9a0', bg: 'rgba(34,201,160,0.18)' }
+  if (score >= 40) return { label: 'Atenção',   cor: '#EF9F27', bg: 'rgba(239,159,39,0.18)' }
+  return               { label: 'Crítico',  cor: '#E24B4A', bg: 'rgba(226,75,74,0.18)'  }
+}
+
+
 function fmtMes(mes: string) {
   const [ano, m] = mes.split('-')
   const nomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
@@ -388,6 +396,27 @@ function PilarHistoricoModal({
   )
 }
 
+function WaterfallTooltip({ active, payload }: any) {
+  if (!active || !payload?.length) return null
+  const d = payload[0].payload
+  const isPos = d.deltaContrib >= 0
+  return (
+    <div className="rounded-xl border border-gray-800 px-3 py-2.5 shadow-2xl text-xs"
+      style={{background:'rgb(var(--bh-surface))'}}>
+      <p className="font-bold mb-1.5" style={{color:'#f9fafb'}}>{d.nome}</p>
+      <div className="space-y-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
+        <p>Score anterior: <span className="font-medium" style={{color:'#f9fafb'}}>{Math.round(d.scoreAnt)}</span></p>
+        <p>Score atual: <span className="font-medium" style={{color:'#f9fafb'}}>{d.score}</span></p>
+        <p>Contribuição no índice:{' '}
+          <span className="font-bold" style={{color: isPos ? '#22c9a0' : '#E24B4A'}}>
+            {isPos && d.deltaContrib > 0 ? '+' : ''}{d.deltaContrib} pts
+          </span>
+        </p>
+      </div>
+    </div>
+  )
+}
+
 function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
   const [modalPilar, setModalPilar] = useState<string | null>(null)
   const [showOperacao, setShowOperacao] = useState(false)
@@ -406,6 +435,53 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
     if (key === 'conversao') setShowOperacao(true)
     else if (key === 'desconto') setShowDesconto(true)
     else setModalPilar(key)
+  }
+
+  // ── Variation diagnostic ─────────────────────────────────────────────────────
+  const deltaTotal   = data.index.delta_periodo_anterior
+  const showBanner   = Math.abs(deltaTotal) >= 2
+  const isQueda      = deltaTotal < 0
+
+  const SHORT_LABEL: Record<string, string> = {
+    conversao: 'Conversão', desconto: 'Desconto', recorrencia: 'Recorrência', cmv: 'CMV',
+  }
+
+  const variacoes = PILARES_DEF.map(pilar => {
+    const p = data.pilares[pilar.key]
+    const score = p.score ?? 0
+    const scoreAnt = score - p.delta
+    const deltaContrib = parseFloat((p.delta * pilar.peso / 100).toFixed(1))
+    return {
+      key: pilar.key,
+      nome: SHORT_LABEL[pilar.key] ?? pilar.label,
+      score, scoreAnt,
+      deltaContrib,
+      cor: deltaContrib > 0 ? '#22c9a0' : deltaContrib < 0 ? '#E24B4A' : '#6b7280',
+    }
+  })
+
+  const principalQueda = [...variacoes].filter(v => v.deltaContrib < 0)
+    .sort((a, b) => a.deltaContrib - b.deltaContrib)[0] ?? null
+  const principalAlta  = [...variacoes].filter(v => v.deltaContrib > 0)
+    .sort((a, b) => b.deltaContrib - a.deltaContrib)[0] ?? null
+
+  const prevScore    = data.index.score - deltaTotal
+  const prevClsLabel = pilarClassify(prevScore).label
+  const currClsLabel = pilarClassify(data.index.score).label
+
+  const bannerCor = isQueda ? '#E24B4A' : '#0F6E56'
+  const bannerBg  = isQueda ? 'rgba(226,75,74,0.08)' : 'rgba(15,110,86,0.08)'
+
+  const waterfallData = [...variacoes].sort((a, b) => a.deltaContrib - b.deltaContrib)
+
+  function cardBadge(deltaContrib: number) {
+    if (deltaContrib === 0) return { text: '— sem variação', cor: '#9ca3af' }
+    const isPos = deltaContrib > 0
+    const absPartic = deltaTotal !== 0 ? Math.abs(deltaContrib / deltaTotal) : 0
+    const cor = isPos
+      ? (absPartic >= 0.5 ? '#0F6E56' : '#22c9a0')
+      : (absPartic >= 0.5 ? '#E24B4A' : '#EF9F27')
+    return { text: `${isPos ? '⬆' : '⬇'} ${isPos ? '+' : ''}${deltaContrib} pts no índice`, cor }
   }
 
   return (
@@ -431,6 +507,72 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
         </p>
         <h2 className="text-bh-text text-base font-bold">Pilares de Desempenho</h2>
       </div>
+
+      {/* Variation diagnostic banner */}
+      {showBanner && (
+        <div className="mb-4 rounded-xl overflow-hidden"
+          style={{border:`1px solid ${bannerCor}30`, borderLeft:`3px solid ${bannerCor}`, background:bannerBg}}>
+
+          {/* Header */}
+          <div className="flex items-center gap-2 px-5 pt-4 pb-3">
+            {isQueda
+              ? <TrendingDown size={15} color={bannerCor}/>
+              : <TrendingUp   size={15} color={bannerCor}/>}
+            <span className="text-sm font-bold" style={{color:bannerCor}}>
+              O índice {isQueda ? 'caiu' : 'subiu'} {Math.abs(deltaTotal).toFixed(1)} pts este período
+            </span>
+            <span className="text-xs ml-1" style={{color:'rgb(var(--bh-subtle))'}}>
+              ({prevClsLabel} → {currClsLabel})
+            </span>
+          </div>
+
+          {/* Waterfall chart */}
+          <div style={{height:106, paddingLeft:8, paddingRight:16, paddingBottom:4}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart layout="vertical" data={waterfallData}
+                margin={{top:0, right:48, bottom:0, left:0}}>
+                <XAxis type="number" domain={['auto','auto']}
+                  tick={{fill:'rgb(var(--bh-subtle))', fontSize:9}} axisLine={false} tickLine={false}
+                  tickFormatter={v => `${v > 0 ? '+' : ''}${v}`}/>
+                <YAxis type="category" dataKey="nome" width={86}
+                  tick={{fill:'rgb(var(--bh-subtle))', fontSize:10}} axisLine={false} tickLine={false}/>
+                <ReferenceLine x={0} stroke="rgba(255,255,255,0.12)" strokeWidth={1}/>
+                <Tooltip content={<WaterfallTooltip/>} cursor={{fill:'rgba(255,255,255,0.03)'}}/>
+                <Bar dataKey="deltaContrib" maxBarSize={13} radius={[0,3,3,0]}
+                  label={{position:'right', fontSize:10, fill:'rgb(var(--bh-subtle))',
+                    formatter:(v: number) => v !== 0 ? `${v > 0 ? '+' : ''}${v}` : ''}}>
+                  {waterfallData.map((entry, i) => (
+                    <Cell key={i} fill={entry.cor}/>
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Summary */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 px-5 pb-4 text-[11px]">
+            {principalQueda && (
+              <span>
+                <span style={{color:'rgb(var(--bh-subtle))'}}>Principal queda: </span>
+                <span className="font-semibold" style={{color:'#E24B4A'}}>
+                  {principalQueda.nome} ({principalQueda.deltaContrib} pts)
+                </span>
+              </span>
+            )}
+            {principalAlta && (
+              <span>
+                <span style={{color:'rgb(var(--bh-subtle))'}}>
+                  {isQueda ? 'Compensou: ' : 'Principal alta: '}
+                </span>
+                <span className="font-semibold" style={{color:'#22c9a0'}}>
+                  {principalAlta.nome} (+{principalAlta.deltaContrib} pts)
+                </span>
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-4 gap-4">
         {PILARES_DEF.map(pilar => {
           const p = data.pilares[pilar.key]
@@ -439,21 +581,32 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
           const deltaPos  = p.delta > 0
           const deltaZero = p.delta === 0
           const deltaColor = deltaZero ? '#6b7280' : deltaPos ? '#4ade80' : '#f87171'
+          const cls = pilarClassify(score)
+          const vari = variacoes.find(v => v.key === pilar.key)!
+          const badge = cardBadge(vari.deltaContrib)
+          const isMainDrag = principalQueda?.key === pilar.key
 
           return (
-            <div key={pilar.key} className="card-bh p-5 flex flex-col gap-4">
+            <div key={pilar.key}
+              className="card-bh p-5 flex flex-col gap-3"
+              style={isMainDrag ? {borderLeft:'3px solid #E24B4A'} : {}}>
+
               {/* Topo: label + ícone */}
               <div className="flex items-start justify-between gap-2">
-                <p className="text-sm font-medium leading-snug" style={{color:'#9ca3af'}}>
-                  {pilar.label}
-                </p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium leading-snug mb-1.5" style={{color:'#9ca3af'}}>
+                    {pilar.label}
+                  </p>
+                  <span className="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded"
+                    style={{background:cls.bg, color:cls.cor}}>{cls.label}</span>
+                </div>
                 <div className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
                   style={{background:`${pilar.cor}22`}}>
                   <Icon size={17} color={pilar.cor}/>
                 </div>
               </div>
 
-              {/* Valor principal */}
+              {/* Score */}
               <div>
                 <span className="text-4xl font-black tabular-nums leading-none" style={{color:'#f9fafb'}}>
                   {score}
@@ -461,11 +614,14 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
                 <span className="text-sm font-normal ml-1.5" style={{color:'rgb(var(--bh-subtle))'}}>/100</span>
               </div>
 
-              {/* Barra de progresso */}
+              {/* Progress bar */}
               <div className="w-full h-1.5 rounded-full overflow-hidden" style={{background:'rgb(var(--bh-surface2))'}}>
                 <div className="h-full rounded-full transition-all duration-700"
                   style={{width:`${score}%`, background:pilar.cor}}/>
               </div>
+
+              {/* Contribution badge + action hint */}
+              <p className="text-[10px] font-semibold" style={{color:badge.cor}}>{badge.text}</p>
 
               {/* Delta + botão histórico */}
               <div className="flex items-center justify-between gap-2">

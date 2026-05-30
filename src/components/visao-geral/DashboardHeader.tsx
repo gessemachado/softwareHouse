@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, Eye, Calendar } from 'lucide-react'
 import { useDashboardFilter, MONTHS_FULL as MONTHS, MONTHS_SHORT, type CompareMode } from '../../contexts/DashboardFilterContext'
 
@@ -65,7 +65,7 @@ function DayPickerCalendar({
     <div
       ref={ref}
       className="absolute z-30 top-full mt-2 left-0 rounded-xl shadow-2xl border border-orange-500/30 p-4 w-72"
-      style={{ background: 'rgb(var(--bh-surface))' }}
+      style={{ background: '#000000' }}
     >
       {/* Date display */}
       <div className="mb-3 px-1 py-1.5 rounded-lg border border-bh-border/30 bg-bh-surface2/50">
@@ -332,7 +332,7 @@ export function DashboardHeader() {
             {/* Dropdown options */}
             {showCompareDropdown && (
               <div className="absolute z-20 top-full mt-1 w-full rounded-xl border border-orange-500/30 overflow-hidden shadow-xl"
-                style={{ background: 'rgb(var(--bh-surface))' }}>
+                style={{ background: '#000000' }}>
                 {COMPARE_OPTIONS.map((opt, i) => (
                   <button key={opt}
                     onClick={() => {

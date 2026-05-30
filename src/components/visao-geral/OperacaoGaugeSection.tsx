@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { TrendingDown, TrendingUp, BarChart2 } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { useDashboardFilter } from '../../contexts/DashboardFilterContext'
@@ -138,7 +138,7 @@ export function OperacaoGaugeSection() {
 
           {/* Metric rows */}
           <div className="flex-1 flex flex-col gap-2">
-            {vis('c_gauge.pedidos') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2">
+            {vis('c_gauge.pedidos') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2">
               <div className="flex items-center gap-1.5 mb-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#6b7280]" />
                 <span className="text-bh-muted text-[10px] font-semibold tracking-widest uppercase">
@@ -265,7 +265,7 @@ export function OperacaoGaugeSection() {
             </div>}
 
             {/* Total */}
-            {vis('c_tributacao.total') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+            {vis('c_tributacao.total') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#2a2a2a]" />
                 <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Total Vendas</span>
@@ -360,7 +360,7 @@ export function OperacaoGaugeSection() {
             </div>}
 
             {/* Economia */}
-            {vis('c_debitos.economia') && <div className="rounded-lg border border-bh-surface2 bg-bh-surface px-3 py-2.5">
+            {vis('c_debitos.economia') && <div className="rounded-lg border border-bh-surface2 bg-black px-3 py-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-bh-muted text-xs font-semibold tracking-widest uppercase">Economia</span>
                 <div className="flex items-center gap-1.5">
