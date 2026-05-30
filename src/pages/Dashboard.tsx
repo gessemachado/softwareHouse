@@ -540,7 +540,7 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
                 <Tooltip content={<WaterfallTooltip/>} cursor={{fill:'rgba(255,255,255,0.03)'}}/>
                 <Bar dataKey="deltaContrib" maxBarSize={13} radius={[0,3,3,0]}
                   label={{position:'right', fontSize:10, fill:'rgb(var(--bh-subtle))',
-                    formatter:(v: number) => v !== 0 ? `${v > 0 ? '+' : ''}${v}` : ''}}>
+                    formatter:(v: unknown) => { const n = Number(v); return n !== 0 ? `${n > 0 ? '+' : ''}${n}` : '' }}}>
                   {waterfallData.map((entry, i) => (
                     <Cell key={i} fill={entry.cor}/>
                   ))}
