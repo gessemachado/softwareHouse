@@ -8,6 +8,7 @@ import { VisaoGeral } from './pages/VisaoGeral'
 import { SHDashboard } from './pages/SHDashboard'
 import { Dashboard } from './pages/Dashboard'
 import { InteligeniciaComercial } from './pages/InteligeniciaComercial'
+import { FingerList } from './pages/FingerList'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/software-house/:id/editar" element={<SoftwareHouseWizard mode="edit" />} />
         <Route path="/software-house/:id/dashboard" element={<SHDashboard />} />
         <Route path="/software-house/relatorio" element={<RelatorioFinanceiro />} />
+        <Route path="/finger" element={<FingerList />} />
         <Route path="*" element={<Navigate to="/visao-geral" replace />} />
       </Routes>
     </BrowserRouter>
