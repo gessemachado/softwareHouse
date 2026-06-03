@@ -7,6 +7,7 @@ import {
   Save, Calendar, Clock, Search, X, Plus, Trash2, Link2, SlidersHorizontal,
 } from 'lucide-react'
 import { Modal } from '../ui/Modal'
+import { WizardStepper } from '../sh/WizardStepper'
 import { mockCredenciadosDisponiveis } from '../../mocks/credenciados'
 import type { FingerForm, Credenciado } from '../../types/sh.types'
 
@@ -54,34 +55,14 @@ function Field({ icon: Icon, label, required, children, error }: {
   )
 }
 
-// ─── Internal tab nav ─────────────────────────────────────────────────────────
+// ─── Steps ────────────────────────────────────────────────────────────────────
 
 type Tab = 'dados' | 'credenciados'
 
-function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void }) {
-  return (
-    <div className="flex items-center gap-1 p-1 rounded-lg self-start"
-      style={{ background: 'rgb(var(--bh-surface2))' }}>
-      {([
-        { key: 'dados',        label: 'Dados do Finger'  },
-        { key: 'credenciados', label: 'Credenciados'     },
-      ] as { key: Tab; label: string }[]).map(t => (
-        <button
-          key={t.key}
-          type="button"
-          onClick={() => onChange(t.key)}
-          className="px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-150"
-          style={active === t.key
-            ? { background: 'rgb(var(--bh-surface))', color: 'rgb(var(--bh-text))', boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }
-            : { background: 'transparent', color: 'rgb(var(--bh-subtle))' }
-          }
-        >
-          {t.label}
-        </button>
-      ))}
-    </div>
-  )
-}
+const FINGER_STEPS = [
+  { label: 'Dados do Finger', sublabel: 'Configurações do Finger'      },
+  { label: 'Credenciados',    sublabel: 'Configurações do Credenciado' },
+]
 
 // ─── Credenciados tab ─────────────────────────────────────────────────────────
 
@@ -274,8 +255,14 @@ export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId }: 
         </>
       }
     >
-      {/* Tab bar */}
-      <TabBar active={activeTab} onChange={setActiveTab} />
+      {/* Stepper */}
+      <WizardStepper
+        currentStep={activeTab === 'dados' ? 1 : 2}
+        completedSteps={activeTab === 'credenciados' ? [1] : []}
+        steps={FINGER_STEPS}
+        onStepClick={step => setActiveTab(step === 1 ? 'dados' : 'credenciados')}
+        className="card-bh p-5"
+      />
 
       {/* Tab: Dados */}
       {activeTab === 'dados' && (

@@ -9,6 +9,8 @@ interface Props {
   currentStep: number
   completedSteps: number[]
   steps?: Step[]
+  onStepClick?: (step: number) => void
+  className?: string
 }
 
 const DEFAULT_STEPS: Step[] = [
@@ -19,9 +21,9 @@ const DEFAULT_STEPS: Step[] = [
   { label: 'Credenciado', sublabel: 'Configurações do Credenciado' },
 ]
 
-export function WizardStepper({ currentStep, completedSteps, steps = DEFAULT_STEPS }: Props) {
+export function WizardStepper({ currentStep, completedSteps, steps = DEFAULT_STEPS, onStepClick, className }: Props) {
   return (
-    <div className="card-bh p-6 mb-6">
+    <div className={className ?? 'card-bh p-6 mb-6'}>
       <div className="flex items-start justify-between">
         {steps.map((step, idx) => {
           const num = idx + 1
@@ -29,7 +31,11 @@ export function WizardStepper({ currentStep, completedSteps, steps = DEFAULT_STE
           const isActive = currentStep === num
 
           return (
-            <div key={num} className="flex items-start flex-1">
+            <div
+              key={num}
+              className={`flex items-start flex-1 ${onStepClick ? 'cursor-pointer' : ''}`}
+              onClick={() => onStepClick?.(num)}
+            >
               {/* Step */}
               <div className="flex flex-col items-center flex-shrink-0">
                 <div
