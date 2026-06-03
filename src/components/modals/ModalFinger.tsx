@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -429,9 +429,16 @@ export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId, sh
     defaultValues: defaultValues ?? {},
   })
 
-  const fingerNome     = watch('nome_completo') || defaultValues?.nome_completo || ''
-  const fingerEmail    = watch('email')         || defaultValues?.email         || ''
-  const fingerTelefone = watch('telefone')      || defaultValues?.telefone      || ''
+  useEffect(() => {
+    if (open) {
+      reset(defaultValues ?? {})
+      setActiveTab('dados')
+    }
+  }, [open])
+
+  const fingerNome     = watch('nome_completo') || ''
+  const fingerEmail    = watch('email')         || ''
+  const fingerTelefone = watch('telefone')      || ''
 
   async function handleNext() {
     const valid = await trigger()
