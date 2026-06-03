@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import { Modal } from '../ui/Modal'
 import { WizardStepper } from '../sh/WizardStepper'
-import { mockCredenciadosDisponiveis } from '../../mocks/credenciados'
+import { mockCredenciadosDisponiveis, mockCredenciadosVinculados } from '../../mocks/credenciados'
 import type { FingerForm, Credenciado } from '../../types/sh.types'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -69,11 +69,9 @@ const FINGER_STEPS = [
 function CredenciadosTab({ fingerId }: { fingerId?: string }) {
   const [search, setSearch]           = useState('')
   const [applied, setApplied]         = useState('')
-  const [linked, setLinked]           = useState<Set<string>>(() => {
-    // Pre-populate from mock if editing an existing finger
-    if (!fingerId) return new Set()
-    const { mockCredenciadosVinculados } = require('../../mocks/credenciados')
-    const ids = (mockCredenciadosVinculados as { finger_id: string; credenciado_id: string }[])
+  const [linked, setLinked] = useState<Set<string>>(() => {
+    if (!fingerId) return new Set<string>()
+    const ids = mockCredenciadosVinculados
       .filter(v => v.finger_id === fingerId)
       .map(v => v.credenciado_id)
     return new Set(ids)
