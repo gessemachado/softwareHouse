@@ -476,7 +476,7 @@ export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId, sh
                 <button type="button" onClick={() => setActiveTab('dados')} className="btn-secondary">
                   <ChevronLeft size={15} /> Voltar
                 </button>
-                <button type="submit" form="form-finger" className="btn-primary">
+                <button type="button" onClick={() => handleSubmit(onSubmit)()} className="btn-primary">
                   <Save size={14} /> {isEdit ? 'Salvar Alterações' : 'Salvar Finger'}
                 </button>
               </>
