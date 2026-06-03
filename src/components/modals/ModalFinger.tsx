@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
   Fingerprint, User, Mail, Phone, CreditCard, Percent, MapPin, Globe,
-  Save, Calendar, Clock, Search, X, Plus, Trash2, Link2, SlidersHorizontal,
+  Save, Calendar, Clock, Search, X, Plus, Trash2, Link2, SlidersHorizontal, ChevronRight, ChevronLeft,
 } from 'lucide-react'
 import { Modal } from '../ui/Modal'
 import { WizardStepper } from '../sh/WizardStepper'
@@ -214,10 +214,15 @@ interface Props {
 export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('dados')
 
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<FingerForm>({
+  const { register, handleSubmit, setValue, reset, trigger, formState: { errors } } = useForm<FingerForm>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues ?? {},
   })
+
+  async function handleNext() {
+    const valid = await trigger()
+    if (valid) setActiveTab('credenciados')
+  }
 
   function onSubmit(data: FingerForm) {
     onSave(data)
@@ -246,10 +251,22 @@ export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId }: 
           <span className="text-xs text-bh-subtle">Campos marcados com * são obrigatórios.</span>
           <div className="flex gap-2">
             <button type="button" onClick={handleClose} className="btn-ghost">Cancelar</button>
+
             {activeTab === 'dados' && (
-              <button type="submit" form="form-finger" className="btn-primary">
-                <Save size={14} /> {isEdit ? 'Salvar Alterações' : 'Salvar Finger'}
+              <button type="button" onClick={handleNext} className="btn-primary">
+                Próximo: Credenciado <ChevronRight size={15} />
               </button>
+            )}
+
+            {activeTab === 'credenciados' && (
+              <>
+                <button type="button" onClick={() => setActiveTab('dados')} className="btn-secondary">
+                  <ChevronLeft size={15} /> Voltar
+                </button>
+                <button type="submit" form="form-finger" className="btn-primary">
+                  <Save size={14} /> {isEdit ? 'Salvar Alterações' : 'Salvar Finger'}
+                </button>
+              </>
             )}
           </div>
         </>
