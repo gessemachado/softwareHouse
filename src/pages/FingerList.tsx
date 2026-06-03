@@ -241,6 +241,7 @@ export function FingerList() {
         onClose={() => { setModalOpen(false); setEditingFinger(null) }}
         onSave={handleSave}
         defaultValues={defaultValues}
+        fingerId={editingFinger?.id}
       />
     </AppLayout>
   )
