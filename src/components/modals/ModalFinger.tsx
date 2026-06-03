@@ -4,14 +4,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
   Fingerprint, User, Mail, Phone, CreditCard, Percent, MapPin, Globe,
-  Save, Calendar, Clock, Search, X, Plus, Trash2, Link2, SlidersHorizontal, ChevronRight, ChevronLeft,
+  Save, Calendar, Clock, Search, X, Plus, Trash2, Link2,
+  SlidersHorizontal, ChevronRight, ChevronLeft, UserRound, Check,
 } from 'lucide-react'
 import { Modal } from '../ui/Modal'
 import { WizardStepper } from '../sh/WizardStepper'
 import { mockCredenciadosDisponiveis, mockCredenciadosVinculados } from '../../mocks/credenciados'
-import type { FingerForm, Credenciado } from '../../types/sh.types'
+import { mockRepresentantes } from '../../mocks/representantes'
+import type { FingerForm, Credenciado, Representante } from '../../types/sh.types'
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Formatters ───────────────────────────────────────────────────────────────
 
 const fmtCPF = (v: string) => v.replace(/\D/g,'').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2').slice(0,14)
 const fmtTel = (v: string) => v.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d{1,4})$/,'$1-$2').slice(0,15)
@@ -35,19 +37,13 @@ const schema = z.object({
 // ─── Field wrapper ────────────────────────────────────────────────────────────
 
 function Field({ icon: Icon, label, required, children, error }: {
-  icon: React.ElementType
-  label: string
-  required?: boolean
-  children: React.ReactNode
-  error?: string
+  icon: React.ElementType; label: string; required?: boolean; children: React.ReactNode; error?: string
 }) {
   return (
     <div>
       <div className="flex items-center gap-1.5 mb-1.5">
         <Icon size={13} className="text-bh-primary" />
-        <span className="text-sm text-bh-muted">
-          {label}{required && <span className="text-bh-primary ml-0.5">*</span>}
-        </span>
+        <span className="text-sm text-bh-muted">{label}{required && <span className="text-bh-primary ml-0.5">*</span>}</span>
       </div>
       {children}
       {error && <p className="error-msg">{error}</p>}
@@ -64,34 +60,204 @@ const FINGER_STEPS = [
   { label: 'Credenciados',    sublabel: 'Configurações do Credenciado' },
 ]
 
+// ─── Vinculo local type ───────────────────────────────────────────────────────
+
+interface VinculoLocal {
+  credenciadoId:   string
+  representanteId: string | null
+}
+
+// ─── Avatar ───────────────────────────────────────────────────────────────────
+
+function Avatar({ nome, color = 'primary' }: { nome: string; color?: 'primary' | 'green' | 'blue' }) {
+  const styles = {
+    primary: 'bg-bh-primary/20 text-bh-primary',
+    green:   'text-green-400',
+    blue:    'text-blue-400',
+  }
+  const bgStyle = color === 'green'
+    ? { background: 'rgba(34,197,94,0.15)' }
+    : color === 'blue'
+    ? { background: 'rgba(59,130,246,0.15)' }
+    : {}
+
+  return (
+    <div
+      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 ${color === 'primary' ? styles.primary : ''}`}
+      style={color !== 'primary' ? bgStyle : {}}
+    >
+      <span style={color !== 'primary' ? { color: color === 'green' ? 'rgb(34,197,94)' : 'rgb(59,130,246)' } : {}}>
+        {nome.slice(0, 2).toUpperCase()}
+      </span>
+    </div>
+  )
+}
+
+// ─── Modal de confirmação de vínculo ─────────────────────────────────────────
+
+interface ModalVinculoProps {
+  open: boolean
+  credenciado: Credenciado | null
+  fingerNome: string
+  fingerEmail: string
+  fingerTelefone: string
+  representantes: Representante[]
+  onClose: () => void
+  onConfirm: (representanteId: string | null) => void
+}
+
+function ModalConfirmarVinculo({ open, credenciado, fingerNome, fingerEmail, fingerTelefone, representantes, onClose, onConfirm }: ModalVinculoProps) {
+  const [selectedRepId, setSelectedRepId] = useState<string | null>(null)
+
+  function handleConfirm() {
+    onConfirm(selectedRepId)
+    setSelectedRepId(null)
+    onClose()
+  }
+
+  if (!credenciado) return null
+
+  return (
+    <Modal
+      open={open}
+      onClose={() => { setSelectedRepId(null); onClose() }}
+      title="Vincular Credenciado"
+      subtitle="Selecione o representante e finger para vincular"
+      icon={<Link2 size={22} />}
+      footer={
+        <>
+          <span className="text-xs text-bh-subtle">Selecione um representante para confirmar.</span>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => { setSelectedRepId(null); onClose() }} className="btn-ghost">
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirm}
+              className="btn-primary"
+            >
+              <Check size={14} /> Confirmar Vínculo
+            </button>
+          </div>
+        </>
+      }
+    >
+      {/* Credenciado selecionado */}
+      <div className="bg-bh-surface2 border border-bh-border rounded-lg p-4">
+        <p className="text-bh-muted text-xs mb-2">Credenciado Selecionado</p>
+        <div className="flex items-center gap-3">
+          <Avatar nome={credenciado.nome} />
+          <div>
+            <p className="text-bh-text text-sm font-semibold">{credenciado.nome}</p>
+            <p className="text-bh-muted text-xs">{credenciado.cidade}, {credenciado.estado} · {credenciado.cnpj}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Selecionar Representante */}
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <UserRound size={14} className="text-bh-primary" />
+          <p className="text-bh-text text-sm font-medium">Selecione o Representante *</p>
+        </div>
+        {representantes.length === 0 ? (
+          <p className="text-bh-muted text-xs bg-bh-surface2 rounded-lg p-3">Nenhum representante encontrado para esta Software House.</p>
+        ) : (
+          <div className="grid grid-cols-2 gap-2">
+            {representantes.map(rep => (
+              <button
+                key={rep.id}
+                type="button"
+                onClick={() => setSelectedRepId(rep.id)}
+                className={`text-left p-3 rounded-lg border transition-colors ${
+                  selectedRepId === rep.id
+                    ? 'border-bh-primary bg-bh-primary/10'
+                    : 'border-bh-border bg-bh-surface2 hover:border-bh-primary/50'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Avatar nome={rep.nome_completo} color="blue" />
+                  <div className="min-w-0">
+                    <p className="text-bh-text text-xs font-medium truncate">{rep.nome_completo}</p>
+                    <p className="text-bh-muted text-xs truncate">{rep.email}</p>
+                    <p className="text-bh-muted text-xs">{rep.telefone}</p>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Finger pré-preenchido */}
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <Fingerprint size={14} className="text-bh-primary" />
+          <p className="text-bh-text text-sm font-medium">Selecione o Finger</p>
+        </div>
+        <div className="p-3 rounded-lg border border-bh-primary bg-bh-primary/10">
+          <div className="flex items-center gap-2">
+            <Avatar nome={fingerNome || 'FI'} color="green" />
+            <div className="min-w-0">
+              <p className="text-bh-text text-xs font-medium truncate">{fingerNome || '—'}</p>
+              <p className="text-bh-muted text-xs truncate">{fingerEmail}</p>
+              <p className="text-bh-muted text-xs">{fingerTelefone}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  )
+}
+
 // ─── Credenciados tab ─────────────────────────────────────────────────────────
 
-function CredenciadosTab({ fingerId }: { fingerId?: string }) {
-  const [search, setSearch]           = useState('')
-  const [applied, setApplied]         = useState('')
-  const [linked, setLinked] = useState<Set<string>>(() => {
-    if (!fingerId) return new Set<string>()
-    const ids = mockCredenciadosVinculados
+interface CredenciadosTabProps {
+  fingerId?:       string
+  fingerNome:      string
+  fingerEmail:     string
+  fingerTelefone:  string
+  shId?:           string
+}
+
+function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone, shId }: CredenciadosTabProps) {
+  const [search, setSearch]                     = useState('')
+  const [applied, setApplied]                   = useState('')
+  const [vinculos, setVinculos]                 = useState<VinculoLocal[]>(() => {
+    if (!fingerId) return []
+    return mockCredenciadosVinculados
       .filter(v => v.finger_id === fingerId)
-      .map(v => v.credenciado_id)
-    return new Set(ids)
+      .map(v => ({ credenciadoId: v.credenciado_id, representanteId: v.representante_id }))
   })
+  const [pendingCred, setPendingCred] = useState<Credenciado | null>(null)
+
+  const linkedIds = useMemo(() => new Set(vinculos.map(v => v.credenciadoId)), [vinculos])
+
+  const representantes = useMemo(
+    () => mockRepresentantes.filter(r => !shId || r.software_house_id === shId),
+    [shId]
+  )
 
   const available = useMemo(() => {
     const q = applied.toLowerCase()
     return mockCredenciadosDisponiveis.filter(c =>
-      !linked.has(c.id) &&
+      !linkedIds.has(c.id) &&
       (!q || c.nome.toLowerCase().includes(q) || c.cnpj.includes(q))
     )
-  }, [linked, applied])
+  }, [linkedIds, applied])
 
-  const linkedList: Credenciado[] = useMemo(
-    () => mockCredenciadosDisponiveis.filter(c => linked.has(c.id)),
-    [linked]
-  )
+  function handleConfirmVinculo(representanteId: string | null) {
+    if (!pendingCred) return
+    setVinculos(prev => [...prev, { credenciadoId: pendingCred.id, representanteId }])
+    setPendingCred(null)
+  }
 
-  function add(id: string)    { setLinked(prev => new Set([...prev, id])) }
-  function remove(id: string) { setLinked(prev => { const s = new Set(prev); s.delete(id); return s }) }
+  function removeVinculo(credenciadoId: string) {
+    setVinculos(prev => prev.filter(v => v.credenciadoId !== credenciadoId))
+  }
+
+  function getCredenciado(id: string) { return mockCredenciadosDisponiveis.find(c => c.id === id) }
+  function getRepresentante(id: string | null) { return id ? representantes.find(r => r.id === id) : null }
 
   return (
     <div className="flex flex-col gap-4">
@@ -125,7 +291,6 @@ function CredenciadosTab({ fingerId }: { fingerId?: string }) {
             <h3 className="text-bh-text font-medium text-sm">Credenciados Disponíveis</h3>
             <p className="text-bh-muted text-xs">Selecione os credenciados para vincular</p>
           </div>
-
           {available.length === 0 ? (
             <p className="text-bh-muted text-sm py-4 text-center">
               {applied ? 'Nenhum credenciado encontrado.' : 'Todos os credenciados já foram vinculados.'}
@@ -135,9 +300,7 @@ function CredenciadosTab({ fingerId }: { fingerId?: string }) {
               {available.map(c => (
                 <div key={c.id} className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-bh-primary/20 flex items-center justify-center text-bh-primary text-xs font-semibold flex-shrink-0">
-                      {c.nome.slice(0, 2).toUpperCase()}
-                    </div>
+                    <Avatar nome={c.nome} />
                     <div>
                       <p className="text-bh-text text-sm font-medium">{c.nome}</p>
                       <p className="text-bh-muted text-xs">{c.cidade}, {c.estado} · {c.cnpj}</p>
@@ -147,7 +310,7 @@ function CredenciadosTab({ fingerId }: { fingerId?: string }) {
                     <span className="text-green-400 text-xs bg-green-900/30 border border-green-700/30 px-2 py-0.5 rounded font-medium">
                       DISPONÍVEL
                     </span>
-                    <button type="button" onClick={() => add(c.id)} className="btn-primary text-xs py-1.5">
+                    <button type="button" onClick={() => setPendingCred(c)} className="btn-primary text-xs py-1.5">
                       <Plus size={13} /> Adicionar
                     </button>
                   </div>
@@ -158,7 +321,7 @@ function CredenciadosTab({ fingerId }: { fingerId?: string }) {
         </div>
       </div>
 
-      {/* Vinculados */}
+      {/* Vinculados — tabela */}
       <div className="card-bh">
         <div className="p-4 border-b border-bh-border flex items-center gap-3">
           <div className="w-7 h-7 bg-bh-primary/20 rounded flex items-center justify-center text-bh-primary">
@@ -166,40 +329,88 @@ function CredenciadosTab({ fingerId }: { fingerId?: string }) {
           </div>
           <div>
             <h3 className="text-bh-text font-medium text-sm">Credenciados Vinculados</h3>
-            <p className="text-bh-muted text-xs">{linkedList.length} credenciado{linkedList.length !== 1 ? 's' : ''} vinculado{linkedList.length !== 1 ? 's' : ''}</p>
+            <p className="text-bh-muted text-xs">Credenciados vinculados a este Finger</p>
           </div>
         </div>
 
-        {linkedList.length === 0 ? (
+        {vinculos.length === 0 ? (
           <p className="py-8 text-center text-bh-muted text-sm">Nenhum credenciado vinculado ainda.</p>
         ) : (
-          <div className="divide-y divide-bh-border px-4">
-            {linkedList.map(c => (
-              <div key={c.id} className="flex items-center justify-between py-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
-                    style={{ background: 'rgba(34,197,94,0.15)', color: 'rgb(var(--bh-success))' }}>
-                    {c.nome.slice(0, 2).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="text-bh-text text-sm font-medium">{c.nome}</p>
-                    <p className="text-bh-muted text-xs">{c.cidade}, {c.estado} · {c.cnpj}</p>
-                  </div>
-                </div>
-                <button type="button" onClick={() => remove(c.id)}
-                  className="text-bh-subtle hover:text-bh-danger transition-colors flex-shrink-0">
-                  <Trash2 size={15} />
-                </button>
-              </div>
-            ))}
-          </div>
+          <table className="table-bh">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Representante</th>
+                <th>Finger</th>
+                <th>E-mail</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vinculos.map((v, i) => {
+                const cred = getCredenciado(v.credenciadoId)
+                const rep  = getRepresentante(v.representanteId)
+                return (
+                  <tr key={i}>
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <Avatar nome={cred?.nome ?? '?'} />
+                        <div>
+                          <p className="font-medium text-bh-text text-sm">{cred?.nome ?? '—'}</p>
+                          <p className="text-bh-muted text-xs">{cred?.cnpj}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      {rep ? (
+                        <div className="flex items-center gap-2">
+                          <Avatar nome={rep.nome_completo} color="blue" />
+                          <span className="text-bh-text text-sm">{rep.nome_completo}</span>
+                        </div>
+                      ) : <span className="text-bh-subtle text-sm">—</span>}
+                    </td>
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <Avatar nome={fingerNome || 'FI'} color="green" />
+                        <span className="text-bh-text text-sm">{fingerNome || '—'}</span>
+                      </div>
+                    </td>
+                    <td className="text-bh-muted text-sm">
+                      {cred ? `contato@${cred.nome.toLowerCase().replace(/\s+/g, '').slice(0,20)}.com.br` : '—'}
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        onClick={() => removeVinculo(v.credenciadoId)}
+                        className="text-bh-subtle hover:text-bh-danger transition-colors"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         )}
       </div>
+
+      {/* Modal de confirmação */}
+      <ModalConfirmarVinculo
+        open={pendingCred !== null}
+        credenciado={pendingCred}
+        fingerNome={fingerNome}
+        fingerEmail={fingerEmail}
+        fingerTelefone={fingerTelefone}
+        representantes={representantes}
+        onClose={() => setPendingCred(null)}
+        onConfirm={handleConfirmVinculo}
+      />
     </div>
   )
 }
 
-// ─── Modal ────────────────────────────────────────────────────────────────────
+// ─── Modal principal ──────────────────────────────────────────────────────────
 
 interface Props {
   open: boolean
@@ -207,15 +418,20 @@ interface Props {
   onSave: (data: FingerForm) => void
   defaultValues?: Partial<FingerForm>
   fingerId?: string
+  shId?: string
 }
 
-export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId }: Props) {
+export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId, shId }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('dados')
 
-  const { register, handleSubmit, setValue, reset, trigger, formState: { errors } } = useForm<FingerForm>({
+  const { register, handleSubmit, setValue, reset, trigger, watch, formState: { errors } } = useForm<FingerForm>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues ?? {},
   })
+
+  const fingerNome     = watch('nome_completo') || defaultValues?.nome_completo || ''
+  const fingerEmail    = watch('email')         || defaultValues?.email         || ''
+  const fingerTelefone = watch('telefone')      || defaultValues?.telefone      || ''
 
   async function handleNext() {
     const valid = await trigger()
@@ -291,32 +507,20 @@ export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId }: 
               <input className="input-bh" type="email" placeholder="exemplo@email.com" {...register('email')} />
             </Field>
             <Field icon={Phone} label="Telefone" required error={errors.telefone?.message}>
-              <input
-                className="input-bh"
-                placeholder="(00) 00000-0000"
-                {...register('telefone')}
-                onChange={e => setValue('telefone', fmtTel(e.target.value))}
-              />
+              <input className="input-bh" placeholder="(00) 00000-0000" {...register('telefone')}
+                onChange={e => setValue('telefone', fmtTel(e.target.value))} />
             </Field>
           </div>
 
           <Field icon={CreditCard} label="CPF" required error={errors.cpf?.message}>
-            <input
-              className="input-bh"
-              placeholder="000.000.000-00"
-              {...register('cpf')}
-              onChange={e => setValue('cpf', fmtCPF(e.target.value))}
-            />
+            <input className="input-bh" placeholder="000.000.000-00" {...register('cpf')}
+              onChange={e => setValue('cpf', fmtCPF(e.target.value))} />
           </Field>
 
           <Field icon={Percent} label="Porcentagem" required error={errors.porcentagem?.message}>
             <div className="relative">
-              <input
-                type="number" step="0.01"
-                className="input-bh pr-8"
-                placeholder="0.00"
-                {...register('porcentagem', { valueAsNumber: true })}
-              />
+              <input type="number" step="0.01" className="input-bh pr-8" placeholder="0.00"
+                {...register('porcentagem', { valueAsNumber: true })} />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-bh-muted text-sm">%</span>
             </div>
           </Field>
@@ -327,12 +531,8 @@ export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId }: 
             </Field>
             <Field icon={Clock} label="Prazo (meses)" error={errors.prazo_meses?.message}>
               <div className="relative">
-                <input
-                  type="number" min={1} max={120}
-                  className="input-bh pr-12"
-                  placeholder="Ex: 12"
-                  {...register('prazo_meses', { valueAsNumber: true })}
-                />
+                <input type="number" min={1} max={120} className="input-bh pr-12" placeholder="Ex: 12"
+                  {...register('prazo_meses', { valueAsNumber: true })} />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-bh-muted text-xs">meses</span>
               </div>
             </Field>
@@ -354,7 +554,13 @@ export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId }: 
 
       {/* Tab: Credenciados */}
       {activeTab === 'credenciados' && (
-        <CredenciadosTab fingerId={fingerId} />
+        <CredenciadosTab
+          fingerId={fingerId}
+          fingerNome={fingerNome}
+          fingerEmail={fingerEmail}
+          fingerTelefone={fingerTelefone}
+          shId={shId}
+        />
       )}
     </Modal>
   )

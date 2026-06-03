@@ -242,6 +242,7 @@ export function FingerList() {
         onSave={handleSave}
         defaultValues={defaultValues}
         fingerId={editingFinger?.id}
+        shId={editingFinger?.software_house_id || shParaNovo}
       />
     </AppLayout>
   )
