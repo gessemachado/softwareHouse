@@ -1,24 +1,22 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { AppLayout } from '../components/layout/AppLayout'
 import { TabNav } from '../components/ui/TabNav'
 import { Modal } from '../components/ui/Modal'
-import { ArrowRight, Target, TrendingUp, TrendingDown, LayoutGrid } from 'lucide-react'
+import { ArrowRight, Target, TrendingUp, TrendingDown, LayoutGrid, BarChart2, Zap, Network, Calendar, RefreshCw } from 'lucide-react'
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
+// ─── Base Mock Data ───────────────────────────────────────────────────────────
 
-const SETORES = [
-  { nome: 'Bebidas',          desconto: 27.25, margem_pct: 20, venda: 3120000, margem: 624000  },
-  { nome: 'Hortifruti',       desconto:  0.00, margem_pct: 27, venda: 1870000, margem: 505000  },
-  { nome: 'Açougue',          desconto:  7.00, margem_pct: 22, venda: 1750000, margem: 384000  },
-  { nome: 'Mercearia',        desconto: 21.25, margem_pct: 13, venda: 2620000, margem: 341000  },
-  { nome: 'Padaria',          desconto:  7.00, margem_pct: 28, venda:  998000, margem: 279000  },
-  { nome: 'Frios & Laticínios', desconto: 12.00, margem_pct: 19, venda: 1250000, margem: 237000 },
-  { nome: 'Limpeza',          desconto: 27.25, margem_pct: 14, venda:  562000, margem:  79000  },
-  { nome: 'Higiene',          desconto: 12.00, margem_pct: 16, venda:  313000, margem:  50000  },
+const SETORES_BASE = [
+  { nome: 'Bebidas',            desconto: 27.25, margem_pct: 20, venda: 3120000, margem: 624000  },
+  { nome: 'Hortifruti',         desconto:  0.00, margem_pct: 27, venda: 1870000, margem: 505000  },
+  { nome: 'Açougue',            desconto:  7.00, margem_pct: 22, venda: 1750000, margem: 384000  },
+  { nome: 'Mercearia',          desconto: 21.25, margem_pct: 13, venda: 2620000, margem: 341000  },
+  { nome: 'Padaria',            desconto:  7.00, margem_pct: 28, venda:  998000, margem: 279000  },
+  { nome: 'Frios & Laticínios', desconto: 12.00, margem_pct: 19, venda: 1250000, margem: 237000  },
+  { nome: 'Limpeza',            desconto: 27.25, margem_pct: 14, venda:  562000, margem:  79000  },
+  { nome: 'Higiene',            desconto: 12.00, margem_pct: 16, venda:  313000, margem:  50000  },
 ]
 
-// Matriz de afinidade de cesta (% de cupons que contêm ambos os setores)
-// Linhas: Bebidas, Mercearia, Hortifruti, Açougue, Frios, Padaria, Limpeza, Higiene
 const SETORES_MATRIX = [
   { label: 'Bebidas',            abrev: 'BEB' },
   { label: 'Mercearia',          abrev: 'MER' },
@@ -30,24 +28,20 @@ const SETORES_MATRIX = [
   { label: 'Higiene',            abrev: 'HIG' },
 ]
 
-//  null = diagonal  |  number = afinidade %
-const MATRIX_DATA: (number | null)[][] = [
-  //BEB  MER  HOR  AÇO  FRI  PAD  LIM  HIG
-  [null,  64,  58,  61,  49,  42,  31,  22],  // Bebidas
-  [  84, null, 67,  55,  52,  48,  44,  33],  // Mercearia
-  [  58,  67, null, 72,  51,  57,  29,  24],  // Hortifruti
-  [  61,  55,  72, null, 46,  38,  27,  19],  // Açougue
-  [  49,  52,  51,  48, null, 53,  25,  21],  // Frios
-  [  42,  48,  57,  38,  53, null, 23,  26],  // Padaria
-  [  31,  44,  29,  27,  25,  23, null, 58],  // Limpeza
-  [  22,  33,  24,  19,  21,  26,  58, null], // Higiene
+const MATRIX_BASE: (number | null)[][] = [
+  [null,  64,  58,  61,  49,  42,  31,  22],
+  [  84, null, 67,  55,  52,  48,  44,  33],
+  [  58,  67, null, 72,  51,  57,  29,  24],
+  [  61,  55,  72, null, 46,  38,  27,  19],
+  [  49,  52,  51,  48, null, 53,  25,  21],
+  [  42,  48,  57,  38,  53, null, 23,  26],
+  [  31,  44,  29,  27,  25,  23, null, 58],
+  [  22,  33,  24,  19,  21,  26,  58, null],
 ]
 
-// Células com oportunidade fiscal (row, col)
 const OPORT_FISCAL = new Set(['0-2','0-3','0-5','1-0','1-2','1-5','2-0','2-3','3-0','4-2','5-1','6-1','6-4'])
 
-// Oportunidades: maior afinidade × maior diferença de carga tributária
-const MIGRACOES = [
+const MIGRACOES_BASE = [
   { de: 'Bebidas',   de_desc: 27.25, para: 'Hortifruti', para_desc:  0.00, afinidade: 58 },
   { de: 'Mercearia', de_desc: 21.25, para: 'Hortifruti', para_desc:  0.00, afinidade: 67 },
   { de: 'Bebidas',   de_desc: 27.25, para: 'Açougue',    para_desc:  7.00, afinidade: 61 },
@@ -55,6 +49,65 @@ const MIGRACOES = [
   { de: 'Limpeza',   de_desc: 27.25, para: 'Hortifruti', para_desc:  0.00, afinidade: 29 },
   { de: 'Mercearia', de_desc: 21.25, para: 'Açougue',    para_desc:  7.00, afinidade: 55 },
 ]
+
+// ─── Data generators (seeded, deterministic) ─────────────────────────────────
+
+function seeded(n: number): number {
+  const x = Math.abs(Math.sin(n * 9301 + 49297) * 233280)
+  return x - Math.floor(x)
+}
+
+type Setores   = typeof SETORES_BASE
+type MatrixData = (number | null)[][]
+type Migracoes  = typeof MIGRACOES_BASE
+
+function generateSetores(mes: string): Setores {
+  const [y, m] = mes.split('-').map(Number)
+  const base = y * 12 + m
+  return SETORES_BASE.map((s, i) => {
+    const f = 0.78 + seeded(base + i) * 0.44
+    return {
+      ...s,
+      venda:      Math.round(s.venda      * f),
+      margem:     Math.round(s.margem     * f),
+      margem_pct: Math.min(40, Math.max(5, Math.round(s.margem_pct * (0.82 + seeded(base + i + 50) * 0.36)))),
+    }
+  })
+}
+
+function generateMatrix(mes: string): MatrixData {
+  const [y, m] = mes.split('-').map(Number)
+  const base = y * 12 + m
+  return MATRIX_BASE.map((row, ri) =>
+    row.map((val, ci) => {
+      if (val === null) return null
+      const delta = Math.round(seeded(base + ri * 9 + ci) * 20) - 10
+      return Math.min(99, Math.max(10, (val as number) + delta))
+    })
+  )
+}
+
+function generateMigracoes(mes: string): Migracoes {
+  const [y, m] = mes.split('-').map(Number)
+  const base = y * 12 + m
+  return MIGRACOES_BASE.map((mg, i) => ({
+    ...mg,
+    afinidade: Math.min(95, Math.max(15, Math.round(mg.afinidade + seeded(base + i * 7) * 20 - 10))),
+  }))
+}
+
+// ─── Month selector data ──────────────────────────────────────────────────────
+
+const MESES = (() => {
+  const nomes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
+  const result: { label: string; value: string }[] = []
+  const now = new Date(2026, 5, 1)
+  for (let i = 1; i <= 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    result.push({ label: `${nomes[d.getMonth()]} ${d.getFullYear()}`, value: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}` })
+  }
+  return result
+})()
 
 // ─── Mock itens por setor ─────────────────────────────────────────────────────
 
@@ -127,44 +180,52 @@ const ITENS_SETOR: Record<string, { subtitulo: string; skus: number; ticket: num
     subtitulo: 'Arroz, feijão, óleo, massas · carga 21,25%',
     skus: 32, ticket: 18.30,
     mais: [
-      { nome: 'Arroz Branco 5kg',       unidades: 24500, receita: 490000 },
-      { nome: 'Feijão Carioca 1kg',     unidades: 19800, receita: 396000 },
-      { nome: 'Óleo de Soja 900ml',     unidades: 16200, receita: 324000 },
-      { nome: 'Macarrão Espaguete 500g',unidades: 14100, receita: 282000 },
-      { nome: 'Açúcar Cristal 1kg',     unidades: 12800, receita: 256000 },
-      { nome: 'Farinha de Trigo 1kg',   unidades: 11500, receita: 230000 },
-      { nome: 'Sal Refinado 1kg',       unidades: 10200, receita: 204000 },
-      { nome: 'Café Torrado 500g',      unidades:  9100, receita: 182000 },
-      { nome: 'Leite UHT 1L',           unidades:  8400, receita: 168000 },
-      { nome: 'Molho de Tomate 340g',   unidades:  7700, receita: 154000 },
+      { nome: 'Arroz Branco 5kg',        unidades: 24500, receita: 490000 },
+      { nome: 'Feijão Carioca 1kg',      unidades: 19800, receita: 396000 },
+      { nome: 'Óleo de Soja 900ml',      unidades: 16200, receita: 324000 },
+      { nome: 'Macarrão Espaguete 500g', unidades: 14100, receita: 282000 },
+      { nome: 'Açúcar Cristal 1kg',      unidades: 12800, receita: 256000 },
+      { nome: 'Farinha de Trigo 1kg',    unidades: 11500, receita: 230000 },
+      { nome: 'Sal Refinado 1kg',        unidades: 10200, receita: 204000 },
+      { nome: 'Café Torrado 500g',       unidades:  9100, receita: 182000 },
+      { nome: 'Leite UHT 1L',            unidades:  8400, receita: 168000 },
+      { nome: 'Molho de Tomate 340g',    unidades:  7700, receita: 154000 },
     ],
     menos: [
-      { nome: 'Quinoa 500g',            unidades:  1100, receita:  38000 },
-      { nome: 'Chia 250g',              unidades:  1400, receita:  42000 },
-      { nome: 'Azeite Extra Virgem 1L', unidades:  1700, receita:  46000 },
-      { nome: 'Granola 500g',           unidades:  2000, receita:  50000 },
-      { nome: 'Linhaça 500g',           unidades:  2300, receita:  54000 },
-      { nome: 'Creme de Leite 200g',    unidades:  2600, receita:  58000 },
-      { nome: 'Farinha de Rosca 500g',  unidades:  2900, receita:  62000 },
-      { nome: 'Fermento Biológico 10g', unidades:  3200, receita:  66000 },
-      { nome: 'Gelatina 15g',           unidades:  3500, receita:  70000 },
-      { nome: 'Achocolatado 400g',      unidades:  3800, receita:  74000 },
+      { nome: 'Quinoa 500g',             unidades:  1100, receita:  38000 },
+      { nome: 'Chia 250g',               unidades:  1400, receita:  42000 },
+      { nome: 'Azeite Extra Virgem 1L',  unidades:  1700, receita:  46000 },
+      { nome: 'Granola 500g',            unidades:  2000, receita:  50000 },
+      { nome: 'Linhaça 500g',            unidades:  2300, receita:  54000 },
+      { nome: 'Creme de Leite 200g',     unidades:  2600, receita:  58000 },
+      { nome: 'Farinha de Rosca 500g',   unidades:  2900, receita:  62000 },
+      { nome: 'Fermento Biológico 10g',  unidades:  3200, receita:  66000 },
+      { nome: 'Gelatina 15g',            unidades:  3500, receita:  70000 },
+      { nome: 'Achocolatado 400g',       unidades:  3800, receita:  74000 },
     ],
   },
 }
 
 function getItensSetor(nome: string) {
   return ITENS_SETOR[nome] ?? {
-    subtitulo: `Produtos do setor · carga ${SETORES.find(s => s.nome === nome)?.desconto.toFixed(2) ?? '0,00'}%`,
+    subtitulo: `Produtos do setor · carga ${SETORES_BASE.find(s => s.nome === nome)?.desconto.toFixed(2) ?? '0,00'}%`,
     skus: 15, ticket: 12.00,
-    mais: Array.from({ length: 10 }, (_, i) => ({ nome: `Produto ${i + 1}`, unidades: (10 - i) * 1200, receita: (10 - i) * 35000 })),
-    menos: Array.from({ length: 10 }, (_, i) => ({ nome: `Item ${i + 1}`, unidades: (i + 1) * 400, receita: (i + 1) * 18000 })),
+    mais:  Array.from({ length: 10 }, (_, i) => ({ nome: `Produto ${i + 1}`,  unidades: (10 - i) * 1200, receita: (10 - i) * 35000 })),
+    menos: Array.from({ length: 10 }, (_, i) => ({ nome: `Item ${i + 1}`,     unidades: (i + 1) * 400,   receita: (i + 1) * 18000 })),
   }
 }
 
-// ─── Modal ────────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function SetorModal({ setor, onClose }: { setor: typeof SETORES[0]; onClose: () => void }) {
+function fmtBRL(v: number) {
+  return v >= 1_000_000
+    ? `R$ ${(v / 1_000_000).toFixed(2)}M`
+    : `R$ ${(v / 1_000).toFixed(0)}K`
+}
+
+// ─── SetorModal ───────────────────────────────────────────────────────────────
+
+function SetorModal({ setor, onClose }: { setor: Setores[0]; onClose: () => void }) {
   const dados = getItensSetor(setor.nome)
 
   return (
@@ -176,7 +237,7 @@ function SetorModal({ setor, onClose }: { setor: typeof SETORES[0]; onClose: () 
       icon={<Target size={22} />}
       footer={
         <>
-          <span className="text-xs text-bh-subtle">Vendas estimadas dos últimos 12 meses · dados de demonstração</span>
+          <span className="text-xs text-bh-subtle">Vendas estimadas · dados de demonstração</span>
           <div className="flex gap-2">
             <button onClick={onClose} className="btn-ghost">Fechar</button>
             <button onClick={onClose} className="btn-primary">
@@ -186,7 +247,6 @@ function SetorModal({ setor, onClose }: { setor: typeof SETORES[0]; onClose: () 
         </>
       }
     >
-      {/* Stats */}
       <div
         className="grid grid-cols-4 gap-6 p-5 rounded-lg"
         style={{ background: 'rgba(255,255,255,0.018)', border: '1px solid rgba(255,255,255,0.06)' }}
@@ -208,204 +268,42 @@ function SetorModal({ setor, onClose }: { setor: typeof SETORES[0]; onClose: () 
         ))}
       </div>
 
-      {/* Two columns */}
       <div className="grid grid-cols-2 gap-4">
-        {/* Mais vendidos */}
-        <div className="rounded-lg overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
-          <div
-            className="flex items-center gap-2 px-4 py-3"
-            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.018)' }}
-          >
-            <TrendingUp size={13} color="#22c9a0" />
-            <span className="text-xs font-bold" style={{ color: '#22c9a0' }}>Top mais vendidos</span>
-          </div>
-          {dados.mais.map((item, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-3 px-4 py-2.5"
-              style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-            >
-              <span className="text-[10px] w-5 flex-shrink-0 tabular-nums font-bold" style={{ color: '#374151' }}>
-                {i + 1}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-white truncate">{item.nome}</p>
-                <p className="text-[10px] tabular-nums mt-0.5" style={{ color: '#4b5563' }}>
-                  {item.unidades.toLocaleString('pt-BR')} un.
-                </p>
-              </div>
-              <span className="text-xs font-bold tabular-nums flex-shrink-0" style={{ color: '#22c9a0' }}>
-                {fmtBRL(item.receita)}
-              </span>
+        {[
+          { items: dados.mais,  icon: <TrendingUp size={13} color="#22c9a0" />,  label: 'Top mais vendidos',  cor: '#22c9a0' },
+          { items: dados.menos, icon: <TrendingDown size={13} color="#f87171" />, label: 'Top menos vendidos', cor: '#f87171' },
+        ].map(col => (
+          <div key={col.label} className="rounded-lg overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="flex items-center gap-2 px-4 py-3"
+              style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.018)' }}>
+              {col.icon}
+              <span className="text-xs font-bold" style={{ color: col.cor }}>{col.label}</span>
             </div>
-          ))}
-        </div>
-
-        {/* Menos vendidos */}
-        <div className="rounded-lg overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
-          <div
-            className="flex items-center gap-2 px-4 py-3"
-            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.018)' }}
-          >
-            <TrendingDown size={13} color="#f87171" />
-            <span className="text-xs font-bold" style={{ color: '#f87171' }}>Top menos vendidos</span>
-          </div>
-          {dados.menos.map((item, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-3 px-4 py-2.5"
-              style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-            >
-              <span className="text-[10px] w-5 flex-shrink-0 tabular-nums font-bold" style={{ color: '#374151' }}>
-                {i + 1}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-white truncate">{item.nome}</p>
-                <p className="text-[10px] tabular-nums mt-0.5" style={{ color: '#4b5563' }}>
-                  {item.unidades.toLocaleString('pt-BR')} un.
-                </p>
+            {col.items.map((item, i) => (
+              <div key={i} className="flex items-center gap-3 px-4 py-2.5"
+                style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                <span className="text-[10px] w-5 flex-shrink-0 tabular-nums font-bold" style={{ color: '#374151' }}>
+                  {i + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-white truncate">{item.nome}</p>
+                  <p className="text-[10px] tabular-nums mt-0.5" style={{ color: '#4b5563' }}>
+                    {item.unidades.toLocaleString('pt-BR')} un.
+                  </p>
+                </div>
+                <span className="text-xs font-bold tabular-nums flex-shrink-0" style={{ color: col.cor }}>
+                  {fmtBRL(item.receita)}
+                </span>
               </div>
-              <span className="text-xs font-bold tabular-nums flex-shrink-0" style={{ color: '#f87171' }}>
-                {fmtBRL(item.receita)}
-              </span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ))}
       </div>
     </Modal>
   )
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function fmtBRL(v: number) {
-  return v >= 1_000_000
-    ? `R$ ${(v / 1_000_000).toFixed(2)}M`
-    : `R$ ${(v / 1_000).toFixed(0)}K`
-}
-
-
-// ─── Section 1 ────────────────────────────────────────────────────────────────
-
-type SortKey = 'venda' | 'margem'
-
-function QuemMaisVende() {
-  const [sort, setSort] = useState<SortKey>('venda')
-  const [selectedSetor, setSelectedSetor] = useState<typeof SETORES[0] | null>(null)
-
-  const maxVenda  = Math.max(...SETORES.map(s => s.venda))
-  const maxMargem = Math.max(...SETORES.map(s => s.margem))
-
-  const sorted = [...SETORES].sort((a, b) =>
-    sort === 'venda' ? b.venda - a.venda : b.margem - a.margem
-  )
-
-  return (
-    <section className="card-bh p-6 flex flex-col gap-4">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-bh-text font-bold text-base leading-tight">
-            Quem mais vende não é quem mais rende
-          </h2>
-          <p className="text-xs mt-1" style={{ color: '#378ADD' }}>
-            Venda vs. margem gerada por setor · clique para ver os itens
-          </p>
-        </div>
-        <div className="flex items-center gap-1 flex-shrink-0">
-          {(['venda', 'margem'] as SortKey[]).map(k => (
-            <button
-              key={k}
-              onClick={() => setSort(k)}
-              className="px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest transition-colors"
-              style={sort === k
-                ? { background: 'rgb(var(--bh-surface2))', color: 'rgb(var(--bh-text))', border: '1px solid rgba(255,255,255,0.12)' }
-                : { background: 'transparent', color: 'rgb(var(--bh-subtle))', border: '1px solid transparent' }
-              }
-            >
-              {k === 'venda' ? 'Venda' : 'Margem'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Rows */}
-      <div className="flex flex-col">
-        {sorted.map((s, i) => {
-          const barVenda  = (s.venda  / maxVenda)  * 100
-          const barMargem = (s.margem / maxMargem) * 100
-          const isLast = i === sorted.length - 1
-
-          return (
-            <div key={s.nome}
-              className="py-3 cursor-pointer hover:bg-white/[0.02] transition-colors rounded-lg"
-              onClick={() => setSelectedSetor(s)}
-              style={{ borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.05)' }}>
-
-              {/* Nome + badges */}
-              <div className="flex items-center gap-3 mb-2.5">
-                <span className="text-sm font-bold text-bh-text w-36 flex-shrink-0">{s.nome}</span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded"
-                  style={{
-                    background: s.desconto === 0 ? 'rgba(156,163,175,0.12)' : 'rgba(239,159,39,0.15)',
-                    color: s.desconto === 0 ? '#9ca3af' : '#EF9F27',
-                  }}>
-                  {s.desconto.toFixed(2)}%
-                </span>
-                <span className="text-xs font-semibold ml-auto" style={{ color: 'rgb(var(--bh-subtle))' }}>
-                  <span className="font-bold" style={{ color: '#22c9a0' }}>{s.margem_pct}%</span>
-                  {' '}margem
-                </span>
-              </div>
-
-              {/* Barra Venda */}
-              <div className="flex items-center gap-3 mb-1.5">
-                <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda</span>
-                <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
-                  <div className="h-full rounded-full transition-all duration-500"
-                    style={{ width: `${barVenda}%`, background: '#6b7280' }} />
-                </div>
-                <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0"
-                  style={{ color: '#9ca3af' }}>
-                  {fmtBRL(s.venda)}
-                </span>
-              </div>
-
-              {/* Barra Margem */}
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Margem</span>
-                <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
-                  <div className="h-full rounded-full transition-all duration-500"
-                    style={{ width: `${barMargem}%`, background: '#22c9a0' }} />
-                </div>
-                <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0"
-                  style={{ color: '#22c9a0' }}>
-                  {fmtBRL(s.margem)}
-                </span>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Legend */}
-      <div className="flex items-center gap-5 pt-1">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-sm" style={{ background: '#6b7280' }} />
-          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-sm" style={{ background: '#22c9a0' }} />
-          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Margem gerada</span>
-        </div>
-      </div>
-
-      {selectedSetor && <SetorModal setor={selectedSetor} onClose={() => setSelectedSetor(null)} />}
-    </section>
-  )
-}
-
-// ─── Correlação Modal ────────────────────────────────────────────────────────
+// ─── CorrelacaoModal ──────────────────────────────────────────────────────────
 
 interface CorrelacaoCell { ri: number; ci: number; val: number }
 interface ParItem { itemA: string; itemB: string; pct: number }
@@ -463,11 +361,11 @@ function CorrelacaoParRow({ par, i, color }: { par: ParItem; i: number; color: s
   )
 }
 
-function CorrelacaoModal({ cell, onClose }: { cell: CorrelacaoCell; onClose: () => void }) {
+function CorrelacaoModal({ cell, setores, onClose }: { cell: CorrelacaoCell; setores: Setores; onClose: () => void }) {
   const setorA = SETORES_MATRIX[cell.ri]
   const setorB = SETORES_MATRIX[cell.ci]
-  const descA  = SETORES.find(s => s.nome === setorA.label)?.desconto ?? 0
-  const descB  = SETORES.find(s => s.nome === setorB.label)?.desconto ?? 0
+  const descA  = setores.find(s => s.nome === setorA.label)?.desconto ?? 0
+  const descB  = setores.find(s => s.nome === setorB.label)?.desconto ?? 0
   const { maiores, menores } = getPares(setorA.label, setorB.label, cell.val)
 
   return (
@@ -483,7 +381,6 @@ function CorrelacaoModal({ cell, onClose }: { cell: CorrelacaoCell; onClose: () 
         </span>
       }
     >
-      {/* Descrição */}
       <p className="text-sm text-bh-muted leading-relaxed">
         Quem leva itens de{' '}
         <strong className="text-bh-text">{setorA.label}</strong>{' '}
@@ -503,40 +400,167 @@ function CorrelacaoModal({ cell, onClose }: { cell: CorrelacaoCell; onClose: () 
         — onde a margem pode migrar.
       </p>
 
-      {/* Duas colunas */}
       <div className="grid grid-cols-2 gap-6">
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp size={13} color="#22c9a0" />
-            <span className="text-xs font-bold" style={{ color: '#22c9a0' }}>Top 20 maior afinidade</span>
+        {[
+          { items: maiores, icon: <TrendingUp size={13} color="#22c9a0" />, label: 'Top 20 maior afinidade', color: '#22c9a0' },
+          { items: menores, icon: <TrendingDown size={13} color="#9ca3af" />, label: 'Top 20 menor afinidade', color: '#9ca3af' },
+        ].map(col => (
+          <div key={col.label}>
+            <div className="flex items-center gap-2 mb-3">
+              {col.icon}
+              <span className="text-xs font-bold" style={{ color: col.color }}>{col.label}</span>
+            </div>
+            <div className="flex flex-col gap-2.5">
+              {col.items.map((par, i) => (
+                <CorrelacaoParRow key={i} par={par} i={i} color={col.color} />
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col gap-2.5">
-            {maiores.map((par, i) => (
-              <CorrelacaoParRow key={i} par={par} i={i} color="#22c9a0" />
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingDown size={13} color="#9ca3af" />
-            <span className="text-xs font-bold" style={{ color: '#9ca3af' }}>Top 20 menor afinidade</span>
-          </div>
-          <div className="flex flex-col gap-2.5">
-            {menores.map((par, i) => (
-              <CorrelacaoParRow key={i} par={par} i={i} color="#9ca3af" />
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
     </Modal>
   )
 }
 
-// ─── Section 2 ────────────────────────────────────────────────────────────────
+// ─── Section 1 — Quem mais vende ─────────────────────────────────────────────
+
+type SortKey = 'venda' | 'margem'
+
+function QuemMaisVende({ setores }: { setores: Setores }) {
+  const [sort, setSort]               = useState<SortKey>('venda')
+  const [selectedSetor, setSelectedSetor] = useState<Setores[0] | null>(null)
+
+  const maxVenda  = Math.max(...setores.map(s => s.venda))
+  const maxMargem = Math.max(...setores.map(s => s.margem))
+
+  const sorted = [...setores].sort((a, b) =>
+    sort === 'venda' ? b.venda - a.venda : b.margem - a.margem
+  )
+
+  return (
+    <section className="card-bh p-6 flex flex-col gap-4">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+            style={{ background: 'rgba(255,102,0,0.12)' }}>
+            <BarChart2 size={16} color="#ff6600" />
+          </div>
+          <div>
+            <h2 className="text-bh-text font-bold text-base leading-tight">
+              Quem mais vende não é quem mais rende
+            </h2>
+            <p className="text-xs mt-1" style={{ color: '#378ADD' }}>
+              Venda vs. margem por setor · clique para ver os itens
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 flex-shrink-0 rounded-lg p-0.5"
+          style={{ background: 'rgb(var(--bh-surface2))' }}>
+          {(['venda', 'margem'] as SortKey[]).map(k => (
+            <button
+              key={k}
+              onClick={() => setSort(k)}
+              className="px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all duration-150"
+              style={sort === k
+                ? { background: 'rgb(var(--bh-surface))', color: 'rgb(var(--bh-text))', boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }
+                : { background: 'transparent', color: 'rgb(var(--bh-subtle))' }
+              }
+            >
+              {k === 'venda' ? 'Venda' : 'Margem'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col">
+        {sorted.map((s, i) => {
+          const barVenda  = (s.venda  / maxVenda)  * 100
+          const barMargem = (s.margem / maxMargem) * 100
+          const isLast    = i === sorted.length - 1
+          const highTax   = s.desconto > 15
+
+          return (
+            <div
+              key={s.nome}
+              className="relative group py-3 pl-3 pr-2 cursor-pointer rounded-lg transition-all duration-150 hover:bg-white/[0.035]"
+              onClick={() => setSelectedSetor(s)}
+              style={{ borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.05)' }}
+            >
+              <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                style={{ background: highTax ? '#ff6600' : '#22c9a0' }} />
+
+              <div className="flex items-center gap-2.5 mb-2.5">
+                <span className="text-sm font-bold text-bh-text truncate" style={{ minWidth: 0, maxWidth: 160 }}>
+                  {s.nome}
+                </span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 tabular-nums"
+                  style={{
+                    background: s.desconto === 0 ? 'rgba(156,163,175,0.12)' : 'rgba(239,159,39,0.15)',
+                    color: s.desconto === 0 ? '#9ca3af' : '#EF9F27',
+                  }}>
+                  {s.desconto.toFixed(2)}%
+                </span>
+                <span className="ml-auto flex-shrink-0">
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums"
+                    style={{ background: 'rgba(34,201,160,0.12)', color: '#22c9a0' }}>
+                    {s.margem_pct}% margem
+                  </span>
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3 mb-1.5">
+                <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda</span>
+                <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
+                  <div className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${barVenda}%`, background: '#6b7280' }} />
+                </div>
+                <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0" style={{ color: '#9ca3af' }}>
+                  {fmtBRL(s.venda)}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Margem</span>
+                <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
+                  <div className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${barMargem}%`, background: '#22c9a0' }} />
+                </div>
+                <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0" style={{ color: '#22c9a0' }}>
+                  {fmtBRL(s.margem)}
+                </span>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="flex items-center gap-5 pt-1 border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-1.5 rounded-full" style={{ background: '#6b7280' }} />
+          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda bruta</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-1.5 rounded-full" style={{ background: '#22c9a0' }} />
+          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Margem gerada</span>
+        </div>
+        <div className="flex items-center gap-1.5 ml-auto">
+          <div className="w-0.5 h-3 rounded-full" style={{ background: '#ff6600' }} />
+          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Alta carga</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-0.5 h-3 rounded-full" style={{ background: '#22c9a0' }} />
+          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Baixa carga</span>
+        </div>
+      </div>
+
+      {selectedSetor && <SetorModal setor={selectedSetor} onClose={() => setSelectedSetor(null)} />}
+    </section>
+  )
+}
+
+// ─── Section 2 — Correlação ───────────────────────────────────────────────────
 
 function heatColor(v: number): { bg: string; text: string } {
-  // 0–20 very light, 80+ darkest teal
   if (v >= 80) return { bg: '#0b5e52', text: '#e2fff9' }
   if (v >= 65) return { bg: '#0d7a6a', text: '#e2fff9' }
   if (v >= 50) return { bg: '#0f9478', text: '#e2fff9' }
@@ -545,28 +569,33 @@ function heatColor(v: number): { bg: string; text: string } {
   return         { bg: '#b2f0e3', text: '#0d2d24' }
 }
 
-function CorrelacaoSetores() {
+function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; setores: Setores }) {
   const [selectedCell, setSelectedCell] = useState<CorrelacaoCell | null>(null)
 
   return (
     <section className="card-bh p-6 flex flex-col gap-5">
-      {/* Header */}
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-bh-text font-bold text-base leading-tight">
-            Correlação entre setores
-          </h2>
-          <p className="text-xs mt-1" style={{ color: '#378ADD' }}>
-            Afinidade de cesta — % de cupons que contêm os dois grupos juntos · clique para ver os itens
-          </p>
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+            style={{ background: 'rgba(34,201,160,0.1)' }}>
+            <LayoutGrid size={16} color="#22c9a0" />
+          </div>
+          <div>
+            <h2 className="text-bh-text font-bold text-base leading-tight">
+              Correlação entre setores
+            </h2>
+            <p className="text-xs mt-1" style={{ color: '#378ADD' }}>
+              % de cupons com os dois grupos juntos · clique para ver os pares
+            </p>
+          </div>
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded flex-shrink-0"
-          style={{ background: 'rgb(var(--bh-surface2))', color: 'rgb(var(--bh-text))', border: '1px solid rgba(255,255,255,0.12)' }}>
-          Matriz
+        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg flex-shrink-0 flex items-center gap-1.5"
+          style={{ background: 'rgba(255,102,0,0.1)', color: '#ff6600', border: '1px solid rgba(255,102,0,0.2)' }}>
+          <Target size={10} />
+          {OPORT_FISCAL.size} oportunidades
         </span>
       </div>
 
-      {/* Matrix */}
       <div className="overflow-x-auto">
         <table className="border-collapse w-full" style={{ tableLayout: 'fixed' }}>
           <thead>
@@ -575,29 +604,29 @@ function CorrelacaoSetores() {
               {SETORES_MATRIX.map(s => (
                 <th key={s.abrev}
                   className="text-center text-[10px] font-bold uppercase tracking-widest pb-2"
-                  style={{ color: 'rgb(var(--bh-subtle))' }}>
+                  style={{ color: 'rgb(var(--bh-muted))' }}>
                   {s.abrev}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {MATRIX_DATA.map((row, ri) => (
+            {matrixData.map((row, ri) => (
               <tr key={ri}>
                 <td className="pr-4 py-1">
-                  <span className="text-sm font-semibold text-bh-text whitespace-nowrap">
+                  <span className="text-xs font-semibold text-bh-text whitespace-nowrap">
                     {SETORES_MATRIX[ri].label}
                   </span>
                 </td>
                 {row.map((val, ci) => {
-                  const key = `${ri}-${ci}`
+                  const key     = `${ri}-${ci}`
                   const isOport = OPORT_FISCAL.has(key)
                   if (val === null) {
                     return (
                       <td key={ci} className="p-1">
-                        <div className="w-full h-12 rounded flex items-center justify-center"
-                          style={{ background: 'rgb(var(--bh-surface2))' }}>
-                          <span className="text-sm font-bold" style={{ color: 'rgb(var(--bh-subtle))' }}>—</span>
+                        <div className="w-full h-10 rounded flex items-center justify-center"
+                          style={{ background: 'rgba(255,255,255,0.03)' }}>
+                          <span className="text-xs" style={{ color: 'rgba(255,255,255,0.12)' }}>—</span>
                         </div>
                       </td>
                     )
@@ -605,18 +634,15 @@ function CorrelacaoSetores() {
                   const { bg, text } = heatColor(val)
                   return (
                     <td key={ci} className="p-1">
-                      <div className="relative w-[72px] h-12 rounded flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity"
+                      <div
+                        className="relative w-full h-10 rounded flex items-center justify-center cursor-pointer transition-all duration-150 hover:scale-105 hover:shadow-lg"
                         onClick={() => setSelectedCell({ ri, ci, val })}
-                        style={{
-                          background: bg,
-                          border: isOport ? '2px solid #ff6600' : '2px solid transparent',
-                        }}>
-                        <span className="text-sm font-bold tabular-nums" style={{ color: text }}>
-                          {val}
-                        </span>
+                        style={{ background: bg, border: isOport ? '2px solid #ff6600' : '2px solid transparent' }}
+                      >
+                        <span className="text-xs font-bold tabular-nums" style={{ color: text }}>{val}</span>
                         {isOport && (
-                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border border-black"
-                            style={{ background: '#ff6600' }} />
+                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2"
+                            style={{ background: '#ff6600', borderColor: 'rgb(var(--bh-bg))' }} />
                         )}
                       </div>
                     </td>
@@ -628,37 +654,32 @@ function CorrelacaoSetores() {
         </table>
       </div>
 
-      {/* Legend */}
-      <div className="flex items-center gap-6 pt-1 flex-wrap">
+      <div className="flex items-center gap-6 pt-1 flex-wrap border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
         <div className="flex items-center gap-2">
           <div className="flex gap-0.5">
             {['#b2f0e3','#6ee7cb','#22c9a0','#0f9478','#0d7a6a','#0b5e52'].map(c => (
-              <div key={c} className="w-5 h-3 rounded-sm" style={{ background: c }} />
+              <div key={c} className="w-4 h-2.5 rounded-sm" style={{ background: c }} />
             ))}
           </div>
-          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>
-            Menor &nbsp;→&nbsp; Maior afinidade
-          </span>
+          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Menor → Maior afinidade</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full border border-black inline-block flex-shrink-0"
-            style={{ background: '#ff6600' }} />
-          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>
-            Oportunidade fiscal — carga alta × carga baixa
-          </span>
+          <span className="w-3 h-3 rounded-full flex-shrink-0"
+            style={{ background: '#ff6600', outline: '2px solid rgba(255,102,0,0.3)', outlineOffset: 1 }} />
+          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Oportunidade fiscal</span>
         </div>
       </div>
 
       {selectedCell && (
-        <CorrelacaoModal cell={selectedCell} onClose={() => setSelectedCell(null)} />
+        <CorrelacaoModal cell={selectedCell} setores={setores} onClose={() => setSelectedCell(null)} />
       )}
     </section>
   )
 }
 
-// ─── Section 3 ────────────────────────────────────────────────────────────────
+// ─── Section 3 — Top Oportunidades ───────────────────────────────────────────
 
-function TopOportunidades() {
+function TopOportunidades({ migracoes, setores }: { migracoes: Migracoes; setores: Setores }) {
   const [selectedCell, setSelectedCell] = useState<CorrelacaoCell | null>(null)
 
   function openModal(de: string, para: string, afinidade: number) {
@@ -669,42 +690,47 @@ function TopOportunidades() {
 
   return (
     <section className="card-bh p-6 flex flex-col gap-4">
-      {/* Header */}
-      <div>
-        <h2 className="text-bh-text font-bold text-base leading-tight">
-          Top oportunidades de migração
-        </h2>
-        <p className="text-xs mt-1" style={{ color: '#378ADD' }}>
-          Maior afinidade × maior diferença de carga · clique para ver os itens
-        </p>
+      <div className="flex items-start gap-3">
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+          style={{ background: 'rgba(255,102,0,0.12)' }}>
+          <Zap size={16} color="#ff6600" />
+        </div>
+        <div>
+          <h2 className="text-bh-text font-bold text-base leading-tight">
+            Top oportunidades de migração
+          </h2>
+          <p className="text-xs mt-1" style={{ color: '#378ADD' }}>
+            Alta afinidade × maior diferença de carga · clique para ver os pares
+          </p>
+        </div>
       </div>
 
-      {/* List */}
       <div className="flex flex-col">
-        {MIGRACOES.map((m, i) => {
-          const isLast = i === MIGRACOES.length - 1
+        {migracoes.map((m, i) => {
+          const isLast = i === migracoes.length - 1
           return (
-            <div key={i}
-              className="flex items-center gap-4 py-2 cursor-pointer hover:bg-white/[0.02] transition-colors rounded-lg px-2 -mx-2"
+            <div
+              key={i}
+              className="relative group flex items-center gap-3 py-2.5 pl-3 pr-2 cursor-pointer rounded-lg transition-all duration-150 hover:bg-white/[0.035]"
               onClick={() => openModal(m.de, m.para, m.afinidade)}
-              style={{ borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.05)' }}>
+              style={{ borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.05)' }}
+            >
+              <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{ background: '#ff6600' }} />
 
-              {/* Rank circle */}
               <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-black"
                 style={{ background: 'rgba(255,102,0,0.15)', color: '#ff6600' }}>
                 {i + 1}
               </div>
 
-              {/* Content */}
               <div className="flex-1 min-w-0">
-                {/* Par de setores */}
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-sm font-bold text-bh-text">{m.de}</span>
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums"
                     style={{ background: 'rgba(239,159,39,0.18)', color: '#EF9F27' }}>
                     {m.de_desc.toFixed(2)}%
                   </span>
-                  <ArrowRight size={13} color="rgb(var(--bh-subtle))" className="flex-shrink-0" />
+                  <ArrowRight size={12} color="rgb(var(--bh-subtle))" className="flex-shrink-0" />
                   <span className="text-sm font-bold text-bh-text">{m.para}</span>
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums"
                     style={{
@@ -715,29 +741,24 @@ function TopOportunidades() {
                   </span>
                 </div>
 
-                {/* Barra de afinidade */}
                 <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-[10px] flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>
-                    afinidade
-                  </span>
-                  <div className="flex-1 h-1.5 rounded-full overflow-hidden"
-                    style={{ background: 'rgb(var(--bh-surface2))' }}>
+                  <span className="text-[10px] flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>afinidade</span>
+                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
                     <div className="h-full rounded-full transition-all duration-500"
                       style={{ width: `${m.afinidade}%`, background: '#22c9a0' }} />
                   </div>
-                  <span className="text-[10px] font-bold tabular-nums" style={{ color: '#22c9a0' }}>
+                  <span className="text-[10px] font-bold tabular-nums flex-shrink-0" style={{ color: '#22c9a0' }}>
                     {m.afinidade}%
                   </span>
                 </div>
               </div>
-
             </div>
           )
         })}
       </div>
 
       {selectedCell && (
-        <CorrelacaoModal cell={selectedCell} onClose={() => setSelectedCell(null)} />
+        <CorrelacaoModal cell={selectedCell} setores={setores} onClose={() => setSelectedCell(null)} />
       )}
     </section>
   )
@@ -746,23 +767,73 @@ function TopOportunidades() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function InteligeniciaComercial() {
+  const [mes, setMes]         = useState(MESES[0].value)
+  const [loading, setLoading] = useState(false)
+  const [setores, setSetores]       = useState<Setores>(SETORES_BASE)
+  const [matrixData, setMatrixData] = useState<MatrixData>(MATRIX_BASE)
+  const [migracoes, setMigracoes]   = useState<Migracoes>(MIGRACOES_BASE)
+
+  const handleAtualizar = useCallback(() => {
+    setLoading(true)
+    setTimeout(() => {
+      setSetores(generateSetores(mes))
+      setMatrixData(generateMatrix(mes))
+      setMigracoes(generateMigracoes(mes))
+      setLoading(false)
+    }, 700)
+  }, [mes])
+
   return (
     <AppLayout title="" subtitle="" breadcrumb="">
       <TabNav />
 
-      <div className="flex flex-col gap-2 mb-6">
-        <p className="text-[10px] font-semibold uppercase tracking-widest"
-          style={{ color: 'rgb(var(--bh-subtle))' }}>
-          Análise Estratégica
-        </p>
-        <h1 className="text-bh-text text-xl font-bold">Inteligência Comercial</h1>
+      {/* Page header */}
+      <div className="flex items-end justify-between gap-4 mb-6">
+        <div className="flex flex-col gap-1">
+          <p className="text-[10px] font-semibold uppercase tracking-widest"
+            style={{ color: 'rgb(var(--bh-subtle))' }}>
+            Análise Estratégica
+          </p>
+          <h1 className="text-bh-text text-xl font-bold">Inteligência Comercial</h1>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="relative flex items-center">
+            <Calendar size={13} className="absolute left-3 pointer-events-none" style={{ color: 'rgb(var(--bh-subtle))' }} />
+            <select
+              value={mes}
+              onChange={e => setMes(e.target.value)}
+              className="appearance-none pl-8 pr-7 py-1.5 rounded-lg text-sm font-medium cursor-pointer focus:outline-none transition-colors"
+              style={{
+                background: 'rgb(var(--bh-surface2))',
+                border: '1px solid rgb(var(--bh-border))',
+                color: 'rgb(var(--bh-text))',
+              }}
+            >
+              {MESES.map(m => (
+                <option key={m.value} value={m.value}>{m.label}</option>
+              ))}
+            </select>
+            <svg className="absolute right-2.5 pointer-events-none" width="10" height="6" viewBox="0 0 10 6" fill="none">
+              <path d="M1 1l4 4 4-4" stroke="rgb(var(--bh-subtle))" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <button
+            onClick={handleAtualizar}
+            disabled={loading}
+            className="btn-primary flex items-center gap-2 px-4 py-1.5 text-sm disabled:opacity-60"
+          >
+            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
+            {loading ? 'Atualizando...' : 'Atualizar'}
+          </button>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-6">
-        <QuemMaisVende />
+      {/* Main content */}
+      <div className={`flex flex-col gap-6 transition-all duration-300 ${loading ? 'opacity-40 blur-[1px] pointer-events-none' : 'opacity-100 blur-0'}`}>
+        <QuemMaisVende setores={setores} />
         <div className="flex gap-6 items-start">
-          <div className="flex-[3] min-w-0"><CorrelacaoSetores /></div>
-          <div className="flex-[2] min-w-0"><TopOportunidades /></div>
+          <div className="flex-[3] min-w-0"><CorrelacaoSetores matrixData={matrixData} setores={setores} /></div>
+          <div className="flex-[2] min-w-0"><TopOportunidades migracoes={migracoes} setores={setores} /></div>
         </div>
       </div>
     </AppLayout>
