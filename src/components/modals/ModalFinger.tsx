@@ -351,7 +351,6 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone, sh
             <tbody>
               {vinculos.map((v, i) => {
                 const cred = getCredenciado(v.credenciadoId)
-                const rep  = getRepresentante(v.representanteId)
                 return (
                   <tr key={i}>
                     <td>
