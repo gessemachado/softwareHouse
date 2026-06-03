@@ -1,33 +1,42 @@
 # State — BuyHelp SH
 
 ## Decisions
+- Dados são mock/estáticos para Visão Geral (não conectados ao Supabase ainda)
+- `mesIdx()` faz o mapeamento período → índice nos arrays de dados mock
+- Cards da Visão Geral usam dois contextos: DashboardFilterContext (período) e DashboardConfigContext (visibilidade/ordem)
+- Configuração de cards persiste em localStorage
+- CardsCarousel: a faixa de navegação ("Cards de Análise · Aproveitado +1.5pp") foi removida; os 3 cards com donut foram mantidos
+- Visão Geral renderiza seções em ordem configurável via DashboardConfigContext
 
-- Stack baseada no padrão BuyHelp: React + Vite + TypeScript + Tailwind (dark navy + laranja)
-- Backend: **Supabase** (PostgreSQL + Auth + API REST)
-- Design extraído do Figma: arquivo "Hub" (W9MVbxO1Du1vP7ERxvyAcc), canvas "Software house"
+## Specs Geradas — Visão Geral
 
-## Open Questions
+### Contexto & Filtros
+- [x] `context.md` — contexto geral da aba, conceitos de negócio, fluxo de interação
+- [x] `filtros.md` — sistema de filtros (Período de Análise + Período de Comparação)
+- [x] `historico-modal.md` — comportamento do botão Histórico e specs de todos os modais históricos
+- [x] `avaliacao-resultado.md` — DRE Antes × Depois com badges de crescimento/queda por linha
+- [x] `spec.md` — spec master com todos os IDs VG-xxx
 
-- [x] Backend definido: **Supabase** (integração adiada para depois do front)
-- [ ] O projeto é standalone (nova SPA) ou uma rota dentro de uma plataforma BuyHelp Desconto existente?
-- [ ] Autenticação: reutiliza sessão existente ou tem login próprio?
-- [ ] Relatório: exportação em CSV, PDF ou ambos?
+### Cards
+- [x] `cards/card-desconto.md` — Desconto Disponibilizado
+- [x] `cards/card-gauge-operacao.md` — Operação | Pedidos / Intermediações
+- [x] `cards/card-debitos.md` — Total de Débitos
+- [x] `cards/card-nao-aproveitado.md` — Não Aproveitado
+- [x] `cards/card-op-produtos.md` — Operação | Produtos
+- [x] `cards/card-tributacao.md` — Tributação de Produtos
 
-## Decisions
+### Seções
+- [x] `sections/section-sales-analysis.md` — Análise de Vendas (13 meses)
+- [x] `sections/section-cadastros.md` — Cadastros (Ativos + Composição)
+- [x] `sections/section-metricas.md` — Métricas de Vendas + Intermediações
+- [x] `sections/section-config-modal.md` — Modal Configurar Dashboard
 
-- **Frontend first**: construir toda a UI com mock data; Supabase integrado em fase posterior
-- Mock data substitui services — hooks retornam dados estáticos simulando API real
+## Deferred
+- Conexão dos cards da Visão Geral ao Supabase real (atualmente mock)
+- Filtro por período por dia (DayPickerCalendar) — UI existe mas não filtra dados mock
+- Export de dados (PDF/Excel) dos modais históricos
+- Reordenação por drag-and-drop no modal de configuração (atualmente apenas ↑↓)
 
-## Blockers
-
-- Nenhum no momento
-
-## Lessons Learned
-
-- (nenhuma ainda)
-
-## Deferred Ideas
-
-- Notificação ao adicionar novo Representante/Finger
-- Validação de CNPJ em tempo real via API Receita Federal
-- Importação em lote de Credenciados
+## Tech Debt
+- `CadastrosSection.tsx` tinha encoding UTF-8 corrompido (corrigido em jun/2026)
+- `CardsCarousel.tsx` ainda contém código de auto-rotation e paginação mesmo com 3 cards que cabem em 1 página — pode ser simplificado
