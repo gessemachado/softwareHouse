@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Search, Plus, Fingerprint, Pencil, Trash2, FileText } from 'lucide-react'
+import { Search, Plus, Fingerprint, Pencil, Trash2, FileText, Store } from 'lucide-react'
 import { AppLayout } from '../components/layout/AppLayout'
 import { TabNav } from '../components/ui/TabNav'
 import { Pagination } from '../components/ui/Pagination'
@@ -139,6 +139,7 @@ export function FingerList() {
                 <th>E-mail</th>
                 <th>Telefone</th>
                 <th className="text-center">Percentual</th>
+                <th className="text-center">Qtd. Lojas Vinculadas</th>
                 <th>Cidade/UF</th>
                 <th className="text-center">Prazo</th>
                 <th>Ativação</th>
@@ -161,6 +162,11 @@ export function FingerList() {
                       style={{ background: 'rgba(255,102,0,0.12)', color: '#ff6600' }}
                     >
                       {finger.porcentagem.toFixed(0)}%
+                    </span>
+                  </td>
+                  <td className="text-center">
+                    <span className="text-bh-text font-semibold text-sm">
+                      {finger.qtd_lojas_vinculadas}
                     </span>
                   </td>
                   <td className="text-bh-muted">

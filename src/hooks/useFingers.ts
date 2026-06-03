@@ -2,14 +2,17 @@ import { useState, useMemo } from 'react'
 import type { Finger, FingerForm } from '../types/sh.types'
 import { mockFingers } from '../mocks/fingers'
 import { mockSoftwareHouses } from '../mocks/softwareHouses'
+import { mockCredenciadosVinculados } from '../mocks/credenciados'
 
 export interface FingerEnriquecido extends Finger {
-  software_house_nome: string
+  software_house_nome:  string
+  qtd_lojas_vinculadas: number
 }
 
 const INITIAL_FINGERS: FingerEnriquecido[] = mockFingers.map(f => ({
   ...f,
-  software_house_nome: mockSoftwareHouses.find(sh => sh.id === f.software_house_id)?.nome_fantasia ?? '—',
+  software_house_nome:  mockSoftwareHouses.find(sh => sh.id === f.software_house_id)?.nome_fantasia ?? '—',
+  qtd_lojas_vinculadas: mockCredenciadosVinculados.filter(v => v.finger_id === f.id).length,
 }))
 
 export function useFingers() {
@@ -45,7 +48,8 @@ export function useFingers() {
       id: `finger-${Date.now()}`,
       software_house_id: shId,
       data_vinculo: new Date().toISOString(),
-      software_house_nome: mockSoftwareHouses.find(sh => sh.id === shId)?.nome_fantasia ?? '—',
+      software_house_nome:  mockSoftwareHouses.find(sh => sh.id === shId)?.nome_fantasia ?? '—',
+      qtd_lojas_vinculadas: 0,
     }, ...prev])
   }
 

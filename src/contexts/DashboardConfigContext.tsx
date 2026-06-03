@@ -7,7 +7,6 @@ export interface SectionConfig {
 }
 
 const DEFAULT_SECTIONS: SectionConfig[] = [
-  { id: 'carousel',  label: 'Carrossel',           visible: true },
   { id: 'cards',     label: 'Cards de Análise',    visible: true },
   { id: 'vendas',    label: 'Análise de Vendas',   visible: true },
   { id: 'cadastros', label: 'Cadastros',            visible: true },
