@@ -181,9 +181,11 @@ interface CredenciadosTabProps {
 }
 
 function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone, shId }: CredenciadosTabProps) {
-  const [search, setSearch]                     = useState('')
-  const [applied, setApplied]                   = useState('')
-  const [vinculos, setVinculos]                 = useState<VinculoLocal[]>(() => {
+  const [search, setSearch]   = useState('')
+  const [applied, setApplied] = useState('')
+  const [page, setPage]       = useState(1)
+  const [pageSize, setPageSize] = useState(5)
+  const [vinculos, setVinculos] = useState<VinculoLocal[]>(() => {
     if (!fingerId) return []
     return mockCredenciadosVinculados
       .filter(v => v.finger_id === fingerId)
@@ -200,6 +202,12 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone, sh
       (!q || c.nome.toLowerCase().includes(q) || c.cnpj.includes(q))
     )
   }, [linkedIds, applied])
+
+  const totalPages  = Math.max(1, Math.ceil(available.length / pageSize))
+  const paginatedAvailable = useMemo(() => {
+    const from = (page - 1) * pageSize
+    return available.slice(from, from + pageSize)
+  }, [available, page, pageSize])
 
   function handleConfirmVinculo() {
     if (!pendingCred) return
@@ -241,36 +249,77 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone, sh
         </div>
 
         <div className="p-4">
-          <div className="mb-3">
-            <h3 className="text-bh-text font-medium text-sm">Credenciados Disponíveis</h3>
-            <p className="text-bh-muted text-xs">Selecione os credenciados para vincular</p>
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h3 className="text-bh-text font-medium text-sm">Credenciados Disponíveis</h3>
+              <p className="text-bh-muted text-xs">Selecione os credenciados para vincular</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-bh-subtle text-xs">Por página:</span>
+              {[5, 10, 15].map(n => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => { setPageSize(n); setPage(1) }}
+                  className="px-2 py-0.5 rounded text-xs font-medium transition-colors"
+                  style={pageSize === n
+                    ? { background: 'rgb(var(--bh-primary))', color: '#fff' }
+                    : { background: 'rgb(var(--bh-surface2))', color: 'rgb(var(--bh-muted))' }
+                  }
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
           </div>
+
           {available.length === 0 ? (
             <p className="text-bh-muted text-sm py-4 text-center">
               {applied ? 'Nenhum credenciado encontrado.' : 'Todos os credenciados já foram vinculados.'}
             </p>
           ) : (
-            <div className="divide-y divide-bh-border">
-              {available.map(c => (
-                <div key={c.id} className="flex items-center justify-between py-3">
-                  <div className="flex items-center gap-3">
-                    <Avatar nome={c.nome} />
-                    <div>
-                      <p className="text-bh-text text-sm font-medium">{c.nome}</p>
-                      <p className="text-bh-muted text-xs">{c.cidade}, {c.estado} · {c.cnpj}</p>
+            <>
+              <div className="divide-y divide-bh-border">
+                {paginatedAvailable.map(c => (
+                  <div key={c.id} className="flex items-center justify-between py-3">
+                    <div className="flex items-center gap-3">
+                      <Avatar nome={c.nome} />
+                      <div>
+                        <p className="text-bh-text text-sm font-medium">{c.nome}</p>
+                        <p className="text-bh-muted text-xs">CNPJ: {c.cnpj} · {c.cidade}, {c.estado}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    <span className="text-green-400 text-xs bg-green-900/30 border border-green-700/30 px-2 py-0.5 rounded font-medium">
-                      DISPONÍVEL
-                    </span>
-                    <button type="button" onClick={() => setPendingCred(c)} className="btn-primary text-xs py-1.5">
-                      <Plus size={13} /> Adicionar
+                    <button type="button" onClick={() => setPendingCred(c)} className="btn-primary text-xs py-1.5 flex-shrink-0">
+                      Adicionar
                     </button>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+
+              {/* Paginação */}
+              <div className="flex items-center justify-end gap-4 pt-3 mt-1 border-t border-bh-border">
+                <button
+                  type="button"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="text-sm text-bh-muted hover:text-bh-text disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  Anterior
+                </button>
+                <span className="text-sm text-bh-muted">
+                  Página <span className="text-bh-text font-semibold">{page}</span> de{' '}
+                  <span className="text-bh-text font-semibold">{totalPages}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="text-sm font-bold text-bh-primary hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
+                >
+                  Próximo
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
