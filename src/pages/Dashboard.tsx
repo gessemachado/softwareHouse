@@ -16,6 +16,7 @@ import { ScoreGaugeSVG } from '../components/buyhelp-index/ScoreGaugeSVG'
 import { useBuyHelpIndex } from '../hooks/useBuyHelpIndex'
 import { PILARES_DEF, fetchGrupoIndex } from '../mocks/buyhelp-index.mock'
 import { useLojaGrupo } from '../contexts/LojaGrupoContext'
+import { useDashboardConfig, DashboardConfigProvider } from '../contexts/DashboardConfigContext'
 import { ConversaoHistoricoModal } from '../components/buyhelp-index/ConversaoHistoricoModal'
 import { DescontoAbsorcaoModal } from '../components/visao-geral/DescontoAbsorcaoModal'
 import { ConfiguracaoIndexView } from '../components/buyhelp-index/ConfiguracaoIndexView'
@@ -578,10 +579,6 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
           const p = data.pilares[pilar.key]
           const score = p.score ?? 0
           const Icon = ICONE_MAP[pilar.icone] ?? TrendingUp
-          const deltaPos  = p.delta > 0
-          const deltaZero = p.delta === 0
-          const deltaColor = deltaZero ? '#6b7280' : deltaPos ? '#4ade80' : '#f87171'
-          const cls = pilarClassify(score)
           const vari = variacoes.find(v => v.key === pilar.key)!
           const badge = cardBadge(vari.deltaContrib)
           const isMainDrag = principalQueda?.key === pilar.key
@@ -594,11 +591,9 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
               {/* Topo: label + ícone */}
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium leading-snug mb-1.5" style={{color:'#9ca3af'}}>
+                  <p className="text-sm font-medium leading-snug" style={{color:'#9ca3af'}}>
                     {pilar.label}
                   </p>
-                  <span className="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded"
-                    style={{background:cls.bg, color:cls.cor}}>{cls.label}</span>
                 </div>
                 <div className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
                   style={{background:`${pilar.cor}22`}}>
@@ -623,16 +618,8 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
               {/* Contribution badge + action hint */}
               <p className="text-[10px] font-semibold" style={{color:badge.cor}}>{badge.text}</p>
 
-              {/* Delta + botão histórico */}
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  {deltaPos  && <TrendingUp   size={13} color={deltaColor}/>}
-                  {!deltaPos && !deltaZero && <TrendingDown size={13} color={deltaColor}/>}
-                  {deltaZero && <Minus        size={13} color={deltaColor}/>}
-                  <span className="text-xs font-semibold" style={{color:deltaColor}}>
-                    {deltaPos?'+':''}{p.delta.toFixed(1)} pts
-                  </span>
-                </div>
+              {/* Botão histórico */}
+              <div className="flex justify-end">
                 <button
                   onClick={() => handleHistorico(pilar.key)}
                   className="flex items-center gap-1 rounded-lg border border-bh-border/40 px-2 py-1 text-[10px] font-semibold transition-colors hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5"
@@ -946,6 +933,7 @@ const COMPOSICAO_PILARES = [
 ]
 
 function ComposicaoView({ onBack }: { onBack: () => void }) {
+  const { pilarPesos } = useDashboardConfig()
   const totalIndicadores = COMPOSICAO_PILARES.reduce((s, p) => s + p.indicadores.length, 0)
 
   return (
@@ -1063,7 +1051,7 @@ function ComposicaoView({ onBack }: { onBack: () => void }) {
                         }}
                       >
                         <span className="text-3xl font-black leading-none" style={{color: pilar.cor}}>
-                          {pilar.peso}%
+                          {pilarPesos[pilar.key] ?? pilar.peso}%
                         </span>
                       </td>
                     )}
@@ -1141,6 +1129,7 @@ export function Dashboard() {
   const isLoading = modo === 'grupo' ? grupoLoading : loading
 
   return (
+    <DashboardConfigProvider>
     <AppLayout title="" subtitle="" breadcrumb="">
       <TabNav />
 
@@ -1204,5 +1193,6 @@ export function Dashboard() {
               </>
       }
     </AppLayout>
+    </DashboardConfigProvider>
   )
 }

@@ -55,6 +55,14 @@ const SECTIONS_KEY        = 'buyhelp-sh-dashboard-config'
 const CARD_VIS_KEY        = 'buyhelp-sh-card-vis'
 const CARD_ORDER_KEY      = 'buyhelp-sh-card-order'
 const CAROUSEL_ORDER_KEY  = 'buyhelp-sh-carousel-order'
+const PILAR_PESOS_KEY     = 'buyhelp-sh-pilar-pesos'
+
+export const DEFAULT_PILAR_PESOS: Record<string, number> = {
+  conversao: 30,
+  desconto: 25,
+  recorrencia: 30,
+  cmv: 15,
+}
 
 interface DashboardConfigCtx {
   sections: SectionConfig[]
@@ -70,6 +78,9 @@ interface DashboardConfigCtx {
   carouselOrder: CarouselOrder
   setCarouselOrder: (o: CarouselOrder) => void
   resetCarouselOrder: () => void
+  pilarPesos: Record<string, number>
+  setPilarPesos: (pesos: Record<string, number>) => void
+  resetPilarPesos: () => void
 }
 
 const Ctx = createContext<DashboardConfigCtx>({
@@ -86,6 +97,9 @@ const Ctx = createContext<DashboardConfigCtx>({
   carouselOrder: 'desc',
   setCarouselOrder: () => {},
   resetCarouselOrder: () => {},
+  pilarPesos: DEFAULT_PILAR_PESOS,
+  setPilarPesos: () => {},
+  resetPilarPesos: () => {},
 })
 
 export function DashboardConfigProvider({ children }: { children: ReactNode }) {
@@ -130,6 +144,14 @@ export function DashboardConfigProvider({ children }: { children: ReactNode }) {
       if (saved === 'asc' || saved === 'desc') return saved
     } catch {}
     return 'desc'
+  })
+
+  const [pilarPesos, setPilarPesosState] = useState<Record<string, number>>(() => {
+    try {
+      const saved = localStorage.getItem(PILAR_PESOS_KEY)
+      if (saved) return { ...DEFAULT_PILAR_PESOS, ...JSON.parse(saved) }
+    } catch {}
+    return { ...DEFAULT_PILAR_PESOS }
   })
 
   function setSections(s: SectionConfig[]) {
@@ -180,6 +202,16 @@ export function DashboardConfigProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(CAROUSEL_ORDER_KEY)
   }
 
+  function setPilarPesos(pesos: Record<string, number>) {
+    setPilarPesosState(pesos)
+    localStorage.setItem(PILAR_PESOS_KEY, JSON.stringify(pesos))
+  }
+
+  function resetPilarPesos() {
+    setPilarPesosState({ ...DEFAULT_PILAR_PESOS })
+    localStorage.removeItem(PILAR_PESOS_KEY)
+  }
+
   useEffect(() => {
     localStorage.setItem(SECTIONS_KEY, JSON.stringify(sections))
   }, [sections])
@@ -190,6 +222,7 @@ export function DashboardConfigProvider({ children }: { children: ReactNode }) {
       cardVis, setCardVis, applyCardVis, resetCardVis,
       cardOrder, setCardOrder, resetCardOrder,
       carouselOrder, setCarouselOrder, resetCarouselOrder,
+      pilarPesos, setPilarPesos, resetPilarPesos,
     }}>
       {children}
     </Ctx.Provider>

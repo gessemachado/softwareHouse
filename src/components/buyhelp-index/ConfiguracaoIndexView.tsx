@@ -7,6 +7,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import type { PilarKey } from '../../types/buyhelp-index.types'
+import { useDashboardConfig } from '../../contexts/DashboardConfigContext'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -127,7 +128,10 @@ interface ConfiguracaoIndexViewProps {
 }
 
 export function ConfiguracaoIndexView({ onBack }: ConfiguracaoIndexViewProps) {
-  const [pilares, setPilares] = useState<PilarConfigState[]>(DEFAULT_PILARES)
+  const { setPilarPesos, pilarPesos } = useDashboardConfig()
+  const [pilares, setPilares] = useState<PilarConfigState[]>(() =>
+    DEFAULT_PILARES.map(p => ({ ...p, peso: pilarPesos[p.key] ?? p.peso }))
+  )
   const [expanded, setExpanded] = useState<PilarKey | null>(null)
   const [simulador, setSimulador] = useState<Record<string, number>>({
     conversao: 60, desconto: 50, recorrencia: 65, cmv: 65,
@@ -179,6 +183,8 @@ export function ConfiguracaoIndexView({ onBack }: ConfiguracaoIndexViewProps) {
 
   function handleSave() {
     if (!somaOk) return
+    const pesos = Object.fromEntries(pilares.map(p => [p.key, p.peso]))
+    setPilarPesos(pesos)
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
   }

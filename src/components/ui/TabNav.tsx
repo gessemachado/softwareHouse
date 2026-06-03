@@ -1,9 +1,10 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, AlignJustify, BarChart2 } from 'lucide-react'
+import { LayoutDashboard, AlignJustify, BarChart2, Lightbulb } from 'lucide-react'
 
 const tabs = [
   { label: 'Visão Geral', path: '/visao-geral', icon: LayoutDashboard },
   { label: 'Dashboard', path: '/dashboard', icon: BarChart2 },
+  { label: 'Inteligência Comercial', path: '/inteligencia-comercial', icon: Lightbulb },
   { label: 'Software House', path: '/software-house', icon: AlignJustify },
 ]
 
