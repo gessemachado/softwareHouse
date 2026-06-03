@@ -9,9 +9,10 @@ interface Props {
   icon?: ReactNode
   footer?: ReactNode
   children: ReactNode
+  bodyClassName?: string
 }
 
-export function Modal({ open, onClose, title, subtitle, icon, footer, children }: Props) {
+export function Modal({ open, onClose, title, subtitle, icon, footer, children, bodyClassName }: Props) {
   const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
@@ -59,8 +60,8 @@ export function Modal({ open, onClose, title, subtitle, icon, footer, children }
           </div>
         </div>
 
-        {/* Body — scrollable */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 flex flex-col gap-4">
+        {/* Body */}
+        <div className={bodyClassName ?? 'flex-1 overflow-y-auto overflow-x-hidden p-6 flex flex-col gap-4'}>
           {children}
         </div>
 

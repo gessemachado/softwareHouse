@@ -235,6 +235,7 @@ function SetorModal({ setor, onClose }: { setor: Setores[0]; onClose: () => void
       title={`${setor.nome} — itens vendidos`}
       subtitle={dados.subtitulo}
       icon={<Target size={22} />}
+      bodyClassName="flex-1 overflow-hidden p-6 flex flex-col gap-4 min-h-0"
       footer={
         <>
           <span className="text-xs text-bh-subtle">Vendas estimadas · dados de demonstração</span>
@@ -268,34 +269,36 @@ function SetorModal({ setor, onClose }: { setor: Setores[0]; onClose: () => void
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 flex-1 min-h-0">
         {[
           { items: dados.mais,  icon: <TrendingUp size={13} color="#22c9a0" />,  label: 'Top mais vendidos',  cor: '#22c9a0' },
           { items: dados.menos, icon: <TrendingDown size={13} color="#f87171" />, label: 'Top menos vendidos', cor: '#f87171' },
         ].map(col => (
-          <div key={col.label} className="rounded-lg overflow-hidden" style={{ border: '1px solid rgb(var(--bh-border))' }}>
-            <div className="flex items-center gap-2 px-4 py-3"
+          <div key={col.label} className="flex flex-col rounded-lg overflow-hidden min-h-0" style={{ border: '1px solid rgb(var(--bh-border))' }}>
+            <div className="flex-shrink-0 flex items-center gap-2 px-4 py-3"
               style={{ borderBottom: '1px solid rgb(var(--bh-border))', background: 'rgb(var(--bh-surface2))' }}>
               {col.icon}
               <span className="text-xs font-bold" style={{ color: col.cor }}>{col.label}</span>
             </div>
-            {col.items.map((item, i) => (
-              <div key={i} className="flex items-center gap-3 px-4 py-2.5"
-                style={{ borderBottom: '1px solid rgb(var(--bh-border))' }}>
-                <span className="text-[10px] w-5 flex-shrink-0 tabular-nums font-bold" style={{ color: 'rgb(var(--bh-subtle))' }}>
-                  {i + 1}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-white truncate">{item.nome}</p>
-                  <p className="text-[10px] tabular-nums mt-0.5" style={{ color: 'rgb(var(--bh-subtle))' }}>
-                    {item.unidades.toLocaleString('pt-BR')} un.
-                  </p>
+            <div className="overflow-y-auto flex-1">
+              {col.items.map((item, i) => (
+                <div key={i} className="flex items-center gap-3 px-4 py-2.5"
+                  style={{ borderBottom: '1px solid rgb(var(--bh-border))' }}>
+                  <span className="text-[10px] w-5 flex-shrink-0 tabular-nums font-bold" style={{ color: 'rgb(var(--bh-subtle))' }}>
+                    {i + 1}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-white truncate">{item.nome}</p>
+                    <p className="text-[10px] tabular-nums mt-0.5" style={{ color: 'rgb(var(--bh-subtle))' }}>
+                      {item.unidades.toLocaleString('pt-BR')} un.
+                    </p>
+                  </div>
+                  <span className="text-xs font-bold tabular-nums flex-shrink-0" style={{ color: col.cor }}>
+                    {fmtBRL(item.receita)}
+                  </span>
                 </div>
-                <span className="text-xs font-bold tabular-nums flex-shrink-0" style={{ color: col.cor }}>
-                  {fmtBRL(item.receita)}
-                </span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ))}
       </div>
