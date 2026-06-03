@@ -77,73 +77,7 @@ export function CardsCarousel() {
 
   return (
     <section className="mb-5">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <span className="text-bh-subtle text-[10px] font-semibold tracking-widest uppercase">
-            Cards de Análise
-          </span>
-          <p className="text-bh-subtle text-[10px] mt-0.5">
-            {carouselOrder === 'desc' ? 'Maior → Menor variação mensal' : 'Menor → Maior variação mensal'}
-          </p>
-        </div>
-        {pages.length > 1 && (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={prev}
-              className="w-7 h-7 flex items-center justify-center rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
-            >
-              <ChevronLeft size={14} />
-            </button>
-            <div className="flex gap-1.5 items-center">
-              {pages.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setPage(i)}
-                  className={`rounded-full transition-all duration-300 ${
-                    i === page
-                      ? 'w-4 h-1.5 bg-orange-500'
-                      : 'w-1.5 h-1.5 bg-[#333] hover:bg-[#555]'
-                  }`}
-                />
-              ))}
-            </div>
-            <button
-              onClick={next}
-              className="w-7 h-7 flex items-center justify-center rounded-lg border border-bh-border/40 text-bh-subtle hover:text-orange-500 hover:border-orange-500/40 hover:bg-orange-500/5 transition-colors"
-            >
-              <ChevronRight size={14} />
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Seletor de cards com delta */}
-      <div className="flex gap-2 mb-3">
-        {slides.map((s, i) => {
-          const cardPage = Math.floor(i / PAGE_SIZE)
-          return (
-            <button
-              key={s.id}
-              onClick={() => setPage(cardPage)}
-              className={`flex-1 flex items-center justify-between px-3 py-2 rounded-lg border transition-all duration-300 ${
-                cardPage === page
-                  ? 'border-orange-500/40 bg-orange-500/5'
-                  : 'border-[#222] bg-transparent hover:border-bh-border'
-              }`}
-            >
-              <span className={`text-[10px] font-semibold truncate ${cardPage === page ? 'text-bh-text' : 'text-bh-subtle'}`}>
-                {s.label}
-              </span>
-              <span className={`text-[10px] font-mono ml-2 shrink-0 ${s.delta >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {fmtDelta(s.delta)}
-              </span>
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Carrossel " desliza páginas de PAGE_SIZE cards */}
+      {/* Carrossel — desliza páginas de PAGE_SIZE cards */}
       {/* Usa margin-left em vez de transform para não quebrar position:fixed dos modais */}
       <div
         className="overflow-hidden"
