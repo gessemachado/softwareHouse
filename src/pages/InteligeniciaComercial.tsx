@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import { AppLayout } from '../components/layout/AppLayout'
 import { TabNav } from '../components/ui/TabNav'
 import { Modal } from '../components/ui/Modal'
-import { ArrowRight, Target, TrendingUp, TrendingDown, LayoutGrid, BarChart2, Zap, Network, Calendar, RefreshCw } from 'lucide-react'
+import { ArrowRight, Target, TrendingUp, TrendingDown, LayoutGrid, BarChart2, Zap, Calendar, RefreshCw } from 'lucide-react'
 
 // ─── Base Mock Data ───────────────────────────────────────────────────────────
 
@@ -249,7 +249,7 @@ function SetorModal({ setor, onClose }: { setor: Setores[0]; onClose: () => void
     >
       <div
         className="grid grid-cols-4 gap-6 p-5 rounded-lg"
-        style={{ background: 'rgba(255,255,255,0.018)', border: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ background: 'rgb(var(--bh-surface2))', border: '1px solid rgb(var(--bh-border))' }}
       >
         {[
           { label: 'FATURAMENTO',      value: fmtBRL(setor.venda),             cor: '#ffffff' },
@@ -258,7 +258,7 @@ function SetorModal({ setor, onClose }: { setor: Setores[0]; onClose: () => void
           { label: 'TICKET MÉDIO/UN.', value: `R$ ${dados.ticket.toFixed(2)}`, cor: '#ffffff' },
         ].map(stat => (
           <div key={stat.label}>
-            <p className="text-[9px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#4b5563' }}>
+            <p className="text-[9px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'rgb(var(--bh-subtle))' }}>
               {stat.label}
             </p>
             <p className="text-xl font-black tabular-nums" style={{ color: stat.cor }}>
@@ -273,21 +273,21 @@ function SetorModal({ setor, onClose }: { setor: Setores[0]; onClose: () => void
           { items: dados.mais,  icon: <TrendingUp size={13} color="#22c9a0" />,  label: 'Top mais vendidos',  cor: '#22c9a0' },
           { items: dados.menos, icon: <TrendingDown size={13} color="#f87171" />, label: 'Top menos vendidos', cor: '#f87171' },
         ].map(col => (
-          <div key={col.label} className="rounded-lg overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div key={col.label} className="rounded-lg overflow-hidden" style={{ border: '1px solid rgb(var(--bh-border))' }}>
             <div className="flex items-center gap-2 px-4 py-3"
-              style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.018)' }}>
+              style={{ borderBottom: '1px solid rgb(var(--bh-border))', background: 'rgb(var(--bh-surface2))' }}>
               {col.icon}
               <span className="text-xs font-bold" style={{ color: col.cor }}>{col.label}</span>
             </div>
             {col.items.map((item, i) => (
               <div key={i} className="flex items-center gap-3 px-4 py-2.5"
-                style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                <span className="text-[10px] w-5 flex-shrink-0 tabular-nums font-bold" style={{ color: '#374151' }}>
+                style={{ borderBottom: '1px solid rgb(var(--bh-border))' }}>
+                <span className="text-[10px] w-5 flex-shrink-0 tabular-nums font-bold" style={{ color: 'rgb(var(--bh-subtle))' }}>
                   {i + 1}
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-white truncate">{item.nome}</p>
-                  <p className="text-[10px] tabular-nums mt-0.5" style={{ color: '#4b5563' }}>
+                  <p className="text-[10px] tabular-nums mt-0.5" style={{ color: 'rgb(var(--bh-subtle))' }}>
                     {item.unidades.toLocaleString('pt-BR')} un.
                   </p>
                 </div>
@@ -403,7 +403,7 @@ function CorrelacaoModal({ cell, setores, onClose }: { cell: CorrelacaoCell; set
       <div className="grid grid-cols-2 gap-6">
         {[
           { items: maiores, icon: <TrendingUp size={13} color="#22c9a0" />, label: 'Top 20 maior afinidade', color: '#22c9a0' },
-          { items: menores, icon: <TrendingDown size={13} color="#9ca3af" />, label: 'Top 20 menor afinidade', color: '#9ca3af' },
+          { items: menores, icon: <TrendingDown size={13} color="#9ca3af" />, label: 'Top 20 menor afinidade', color: 'rgb(var(--bh-muted))' },
         ].map(col => (
           <div key={col.label}>
             <div className="flex items-center gap-2 mb-3">
@@ -449,7 +449,7 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
             <h2 className="text-bh-text font-bold text-base leading-tight">
               Quem mais vende não é quem mais rende
             </h2>
-            <p className="text-xs mt-1" style={{ color: '#378ADD' }}>
+            <p className="text-xs mt-1" style={{ color: 'rgb(var(--bh-muted))' }}>
               Venda vs. margem por setor · clique para ver os itens
             </p>
           </div>
@@ -484,7 +484,7 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
               key={s.nome}
               className="relative group py-3 pl-3 pr-2 cursor-pointer rounded-lg transition-all duration-150 hover:bg-white/[0.035]"
               onClick={() => setSelectedSetor(s)}
-              style={{ borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.05)' }}
+              style={{ borderBottom: isLast ? 'none' : '1px solid rgb(var(--bh-border))' }}
             >
               <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-150"
                 style={{ background: highTax ? '#ff6600' : '#22c9a0' }} />
@@ -512,9 +512,9 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
                 <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda</span>
                 <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
                   <div className="h-full rounded-full transition-all duration-500"
-                    style={{ width: `${barVenda}%`, background: '#6b7280' }} />
+                    style={{ width: `${barVenda}%`, background: 'rgb(var(--bh-subtle))' }} />
                 </div>
-                <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0" style={{ color: '#9ca3af' }}>
+                <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0" style={{ color: 'rgb(var(--bh-muted))' }}>
                   {fmtBRL(s.venda)}
                 </span>
               </div>
@@ -534,9 +534,9 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
         })}
       </div>
 
-      <div className="flex items-center gap-5 pt-1 border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+      <div className="flex items-center gap-5 pt-1 border-t" style={{ borderColor: 'rgb(var(--bh-border))' }}>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-1.5 rounded-full" style={{ background: '#6b7280' }} />
+          <div className="w-3 h-1.5 rounded-full" style={{ background: 'rgb(var(--bh-subtle))' }} />
           <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda bruta</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -584,7 +584,7 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
             <h2 className="text-bh-text font-bold text-base leading-tight">
               Correlação entre setores
             </h2>
-            <p className="text-xs mt-1" style={{ color: '#378ADD' }}>
+            <p className="text-xs mt-1" style={{ color: 'rgb(var(--bh-muted))' }}>
               % de cupons com os dois grupos juntos · clique para ver os pares
             </p>
           </div>
@@ -625,7 +625,7 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
                     return (
                       <td key={ci} className="p-1">
                         <div className="w-full h-10 rounded flex items-center justify-center"
-                          style={{ background: 'rgba(255,255,255,0.03)' }}>
+                          style={{ background: 'rgb(var(--bh-surface2))' }}>
                           <span className="text-xs" style={{ color: 'rgba(255,255,255,0.12)' }}>—</span>
                         </div>
                       </td>
@@ -654,7 +654,7 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
         </table>
       </div>
 
-      <div className="flex items-center gap-6 pt-1 flex-wrap border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+      <div className="flex items-center gap-6 pt-1 flex-wrap border-t" style={{ borderColor: 'rgb(var(--bh-border))' }}>
         <div className="flex items-center gap-2">
           <div className="flex gap-0.5">
             {['#b2f0e3','#6ee7cb','#22c9a0','#0f9478','#0d7a6a','#0b5e52'].map(c => (
@@ -699,7 +699,7 @@ function TopOportunidades({ migracoes, setores }: { migracoes: Migracoes; setore
           <h2 className="text-bh-text font-bold text-base leading-tight">
             Top oportunidades de migração
           </h2>
-          <p className="text-xs mt-1" style={{ color: '#378ADD' }}>
+          <p className="text-xs mt-1" style={{ color: 'rgb(var(--bh-muted))' }}>
             Alta afinidade × maior diferença de carga · clique para ver os pares
           </p>
         </div>
@@ -713,7 +713,7 @@ function TopOportunidades({ migracoes, setores }: { migracoes: Migracoes; setore
               key={i}
               className="relative group flex items-center gap-3 py-2.5 pl-3 pr-2 cursor-pointer rounded-lg transition-all duration-150 hover:bg-white/[0.035]"
               onClick={() => openModal(m.de, m.para, m.afinidade)}
-              style={{ borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.05)' }}
+              style={{ borderBottom: isLast ? 'none' : '1px solid rgb(var(--bh-border))' }}
             >
               <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                 style={{ background: '#ff6600' }} />
