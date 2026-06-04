@@ -1,6 +1,23 @@
 ﻿import { useState, useRef, useEffect } from 'react'
-import { ChevronDown, ChevronLeft, ChevronRight, Eye, Calendar } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, Eye, Calendar, RefreshCw } from 'lucide-react'
 import { useDashboardFilter, MONTHS_FULL as MONTHS, MONTHS_SHORT, type CompareMode } from '../../contexts/DashboardFilterContext'
+
+// Meses disponíveis no mock (Abr/2025 → Abr/2026)
+const MOCK_MONTHS = [
+  { label: 'Abr 2025', month: 3,  year: 2025 },
+  { label: 'Mai 2025', month: 4,  year: 2025 },
+  { label: 'Jun 2025', month: 5,  year: 2025 },
+  { label: 'Jul 2025', month: 6,  year: 2025 },
+  { label: 'Ago 2025', month: 7,  year: 2025 },
+  { label: 'Set 2025', month: 8,  year: 2025 },
+  { label: 'Out 2025', month: 9,  year: 2025 },
+  { label: 'Nov 2025', month: 10, year: 2025 },
+  { label: 'Dez 2025', month: 11, year: 2025 },
+  { label: 'Jan 2026', month: 0,  year: 2026 },
+  { label: 'Fev 2026', month: 1,  year: 2026 },
+  { label: 'Mar 2026', month: 2,  year: 2026 },
+  { label: 'Abr 2026', month: 3,  year: 2026 },
+]
 
 const COMPARE_OPTIONS = ['Mês anterior', 'Mesmo mês ano anterior', 'Customizado']
 const WEEK_DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
@@ -215,20 +232,62 @@ export function DashboardHeader() {
       : `${pad(dayRangeStart)} " ${pad(dayRangeEnd)} ${MONTHS_SHORT[selectedMonth]}`
 
   const [showCompareDropdown, setShowCompareDropdown] = useState(false)
+  const [pendingMonth, setPendingMonth] = useState(`${selectedYear}-${selectedMonth}`)
+  const [loading, setLoading]           = useState(false)
 
   const shortLabel = `${MONTHS_SHORT[compareMonth]} / ${compareYear}`
+
+  function handleAtualizar() {
+    const [y, m] = pendingMonth.split('-').map(Number)
+    setLoading(true)
+    setTimeout(() => {
+      setSelectedYear(y)
+      setSelectedMonth(m)
+      setLoading(false)
+    }, 400)
+  }
 
   return (
     <div className="rounded-lg border border-orange-500/20 bg-bh-bg p-4 sm:p-6 mb-5">
       {/* Title row */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-          style={{ background: 'linear-gradient(135deg, rgba(255,102,0,0.2) 0%, rgba(255,102,0,0.1) 100%)' }}>
-          <Eye size={20} className="text-orange-500" />
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, rgba(255,102,0,0.2) 0%, rgba(255,102,0,0.1) 100%)' }}>
+            <Eye size={20} className="text-orange-500" />
+          </div>
+          <div>
+            <h1 className="text-bh-text text-2xl font-bold leading-tight">Visão Geral</h1>
+            <p className="text-bh-muted text-sm mt-0.5">Acompanhe o desempenho de todas as software house ativas</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-bh-text text-2xl font-bold leading-tight">Visão Geral</h1>
-          <p className="text-bh-muted text-sm mt-0.5">Acompanhe o desempenho de todas as software house ativas</p>
+
+        {/* Seletor de mês + Atualizar */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="relative flex items-center">
+            <Calendar size={13} className="absolute left-3 pointer-events-none text-orange-500" />
+            <select
+              value={pendingMonth}
+              onChange={e => setPendingMonth(e.target.value)}
+              className="appearance-none pl-8 pr-7 py-1.5 rounded-lg text-sm font-medium cursor-pointer focus:outline-none transition-colors"
+              style={{ background: 'rgb(var(--bh-surface2))', border: '1px solid rgb(var(--bh-border))', color: 'rgb(var(--bh-text))' }}
+            >
+              {MOCK_MONTHS.map(m => (
+                <option key={`${m.year}-${m.month}`} value={`${m.year}-${m.month}`}>{m.label}</option>
+              ))}
+            </select>
+            <svg className="absolute right-2.5 pointer-events-none" width="10" height="6" viewBox="0 0 10 6" fill="none">
+              <path d="M1 1l4 4 4-4" stroke="rgb(var(--bh-subtle))" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <button
+            onClick={handleAtualizar}
+            disabled={loading}
+            className="btn-primary flex items-center gap-2 px-4 py-1.5 text-sm disabled:opacity-60"
+          >
+            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
+            {loading ? 'Atualizando...' : 'Atualizar'}
+          </button>
         </div>
       </div>
 
