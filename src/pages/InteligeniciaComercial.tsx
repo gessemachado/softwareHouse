@@ -467,26 +467,27 @@ function CorrelacaoModal({ cell, setores, onClose }: { cell: CorrelacaoCell; set
 
 // ─── Section 1 — Quem mais vende ─────────────────────────────────────────────
 
-type SortKey = 'venda' | 'margem'
+type SortKey  = 'venda' | 'margem'
+type ViewMode = 'setores' | 'credenciados'
 
-function QuemMaisVende({ credenciados }: { credenciados: CredenciadoPerf[] }) {
-  const [sort, setSort] = useState<SortKey>('venda')
+function QuemMaisVende({ setores, credenciados }: { setores: Setores; credenciados: CredenciadoPerf[] }) {
+  const [sort, setSort]   = useState<SortKey>('venda')
+  const [view, setView]   = useState<ViewMode>('setores')
 
-  const maxVenda  = Math.max(...credenciados.map(c => c.venda))
-  const maxMargem = Math.max(...credenciados.map(c => c.margem))
+  // ── Setores
+  const maxVendaS  = Math.max(...setores.map(s => s.venda))
+  const maxMargemS = Math.max(...setores.map(s => s.margem))
+  const sortedS    = [...setores].sort((a, b) => sort === 'venda' ? b.venda - a.venda : b.margem - a.margem)
 
-  // BuyHelp averages
+  // ── Credenciados + BuyHelp averages
+  const maxVenda     = Math.max(...credenciados.map(c => c.venda))
+  const maxMargem    = Math.max(...credenciados.map(c => c.margem))
   const avgVenda     = credenciados.reduce((s, c) => s + c.venda, 0) / credenciados.length
   const avgMargem    = credenciados.reduce((s, c) => s + c.margem, 0) / credenciados.length
   const avgMargemPct = credenciados.reduce((s, c) => s + c.margem_pct, 0) / credenciados.length
-
-  // Bar positions of average (%)
   const avgVendaBar  = (avgVenda  / maxVenda)  * 100
   const avgMargemBar = (avgMargem / maxMargem) * 100
-
-  const sorted = [...credenciados].sort((a, b) =>
-    sort === 'venda' ? b.venda - a.venda : b.margem - a.margem
-  )
+  const sortedC      = [...credenciados].sort((a, b) => sort === 'venda' ? b.venda - a.venda : b.margem - a.margem)
 
   return (
     <section className="card-bh p-6 flex flex-col gap-4">
@@ -502,106 +503,145 @@ function QuemMaisVende({ credenciados }: { credenciados: CredenciadoPerf[] }) {
               Quem mais vende não é quem mais rende
             </h2>
             <p className="text-xs mt-1" style={{ color: 'rgb(var(--bh-muted))' }}>
-              Credenciados vs. média BuyHelp · linha laranja = referência da rede
+              {view === 'setores'
+                ? 'Venda vs. margem por grupo de produto · clique para ver os itens'
+                : 'Credenciados vs. média BuyHelp · linha laranja = referência da rede'}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-1 flex-shrink-0 rounded-lg p-0.5"
-          style={{ background: 'rgb(var(--bh-surface2))' }}>
-          {(['venda', 'margem'] as SortKey[]).map(k => (
-            <button key={k} onClick={() => setSort(k)}
-              className="px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all duration-150"
-              style={sort === k
-                ? { background: 'rgb(var(--bh-surface))', color: 'rgb(var(--bh-text))', boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }
-                : { background: 'transparent', color: 'rgb(var(--bh-subtle))' }
-              }>
-              {k === 'venda' ? 'Venda' : 'Margem'}
-            </button>
-          ))}
+
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {/* View toggle */}
+          <div className="flex items-center gap-1 rounded-lg p-0.5" style={{ background: 'rgb(var(--bh-surface2))' }}>
+            {(['setores', 'credenciados'] as ViewMode[]).map(v => (
+              <button key={v} onClick={() => setView(v)}
+                className="px-3 py-1.5 rounded-md text-[10px] font-bold transition-all duration-150"
+                style={view === v
+                  ? { background: 'rgb(var(--bh-surface))', color: 'rgb(var(--bh-text))', boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }
+                  : { background: 'transparent', color: 'rgb(var(--bh-subtle))' }
+                }>
+                {v === 'setores' ? 'Grupos' : 'Credenciados'}
+              </button>
+            ))}
+          </div>
+          {/* Sort toggle */}
+          <div className="flex items-center gap-1 rounded-lg p-0.5" style={{ background: 'rgb(var(--bh-surface2))' }}>
+            {(['venda', 'margem'] as SortKey[]).map(k => (
+              <button key={k} onClick={() => setSort(k)}
+                className="px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all duration-150"
+                style={sort === k
+                  ? { background: 'rgb(var(--bh-surface))', color: 'rgb(var(--bh-text))', boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }
+                  : { background: 'transparent', color: 'rgb(var(--bh-subtle))' }
+                }>
+                {k === 'venda' ? 'Venda' : 'Margem'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Rows */}
-      <div className="flex flex-col">
-        {sorted.map((c, i) => {
-          const barVenda  = (c.venda  / maxVenda)  * 100
-          const barMargem = (c.margem / maxMargem) * 100
-          const delta     = c.margem_pct - avgMargemPct
-          const isLast    = i === sorted.length - 1
-          const aboveAvg  = delta > 0.5
-          const belowAvg  = delta < -0.5
-
-          return (
-            <div key={c.nome}
-              className="relative group py-3 pl-3 pr-2 rounded-lg transition-all duration-150 hover:bg-white/[0.025]"
-              style={{ borderBottom: isLast ? 'none' : '1px solid rgb(var(--bh-border))' }}>
-
-              {/* Left accent on hover */}
-              <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{ background: aboveAvg ? '#22c9a0' : belowAvg ? 'rgb(var(--bh-danger))' : 'rgb(var(--bh-subtle))' }} />
-
-              {/* Nome + localidade + badges */}
-              <div className="flex items-center gap-2 mb-2.5">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-bh-text truncate">{c.nome}</p>
-                  <p className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>{c.cidade}/{c.estado}</p>
+      {/* ── VIEW: Grupos de Produtos ── */}
+      {view === 'setores' && (
+        <div className="flex flex-col">
+          {sortedS.map((s, i) => {
+            const barVenda  = (s.venda  / maxVendaS)  * 100
+            const barMargem = (s.margem / maxMargemS) * 100
+            const isLast    = i === sortedS.length - 1
+            const highTax   = s.desconto > 15
+            return (
+              <div key={s.nome}
+                className="relative group py-3 pl-3 pr-2 rounded-lg transition-all duration-150 hover:bg-white/[0.035]"
+                style={{ borderBottom: isLast ? 'none' : '1px solid rgb(var(--bh-border))' }}>
+                <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ background: highTax ? '#ff6600' : '#22c9a0' }} />
+                <div className="flex items-center gap-2.5 mb-2.5">
+                  <span className="text-sm font-bold text-bh-text truncate" style={{ minWidth: 0, maxWidth: 160 }}>{s.nome}</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 tabular-nums"
+                    style={{ background: s.desconto === 0 ? 'rgba(156,163,175,0.12)' : 'rgba(239,159,39,0.15)', color: s.desconto === 0 ? 'rgb(var(--bh-muted))' : '#EF9F27' }}>
+                    {s.desconto.toFixed(2)}%
+                  </span>
+                  <span className="ml-auto flex-shrink-0">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums"
+                      style={{ background: 'rgba(34,201,160,0.12)', color: '#22c9a0' }}>
+                      {s.margem_pct}% margem
+                    </span>
+                  </span>
                 </div>
-
-                {/* Delta vs média BuyHelp */}
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums flex-shrink-0"
-                  style={{
-                    background: aboveAvg ? 'rgba(34,201,160,0.12)' : belowAvg ? 'rgba(220,40,40,0.10)' : 'rgba(156,163,175,0.10)',
-                    color: aboveAvg ? '#22c9a0' : belowAvg ? 'rgb(var(--bh-danger))' : 'rgb(var(--bh-muted))',
-                  }}>
-                  {aboveAvg ? `↑ +${delta.toFixed(1)}pp` : belowAvg ? `↓ ${delta.toFixed(1)}pp` : '≈ média'}
-                </span>
-
-                {/* Margem % badge */}
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums flex-shrink-0"
-                  style={{ background: 'rgba(34,201,160,0.12)', color: '#22c9a0' }}>
-                  {c.margem_pct}% margem
-                </span>
-              </div>
-
-              {/* Barra Venda com linha de referência BuyHelp */}
-              <div className="flex items-center gap-3 mb-1.5">
-                <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda</span>
-                <div className="relative flex-1 h-2">
-                  <div className="absolute inset-0 rounded-full" style={{ background: 'rgb(var(--bh-surface2))' }}>
-                    <div className="h-full rounded-full transition-all duration-500"
-                      style={{ width: `${barVenda}%`, background: 'rgb(var(--bh-subtle))' }} />
+                <div className="flex items-center gap-3 mb-1.5">
+                  <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda</span>
+                  <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
+                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${barVenda}%`, background: 'rgb(var(--bh-subtle))' }} />
                   </div>
-                  {/* Média BuyHelp */}
-                  <div className="absolute top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-sm pointer-events-none"
-                    style={{ left: `${avgVendaBar}%`, background: '#ff6600', zIndex: 2 }} />
+                  <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0" style={{ color: 'rgb(var(--bh-muted))' }}>{fmtBRL(s.venda)}</span>
                 </div>
-                <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0"
-                  style={{ color: 'rgb(var(--bh-muted))' }}>
-                  {fmtBRL(c.venda)}
-                </span>
-              </div>
-
-              {/* Barra Margem com linha de referência BuyHelp */}
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Margem</span>
-                <div className="relative flex-1 h-2">
-                  <div className="absolute inset-0 rounded-full" style={{ background: 'rgb(var(--bh-surface2))' }}>
-                    <div className="h-full rounded-full transition-all duration-500"
-                      style={{ width: `${barMargem}%`, background: '#22c9a0' }} />
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Margem</span>
+                  <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
+                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${barMargem}%`, background: '#22c9a0' }} />
                   </div>
-                  {/* Média BuyHelp */}
-                  <div className="absolute top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-sm pointer-events-none"
-                    style={{ left: `${avgMargemBar}%`, background: '#ff6600', zIndex: 2 }} />
+                  <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0" style={{ color: '#22c9a0' }}>{fmtBRL(s.margem)}</span>
                 </div>
-                <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0"
-                  style={{ color: '#22c9a0' }}>
-                  {fmtBRL(c.margem)}
-                </span>
               </div>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* ── VIEW: Credenciados vs Média BuyHelp ── */}
+      {view === 'credenciados' && (
+        <div className="flex flex-col">
+          {sortedC.map((c, i) => {
+            const barVenda  = (c.venda  / maxVenda)  * 100
+            const barMargem = (c.margem / maxMargem) * 100
+            const delta     = c.margem_pct - avgMargemPct
+            const isLast    = i === sortedC.length - 1
+            const aboveAvg  = delta > 0.5
+            const belowAvg  = delta < -0.5
+            return (
+              <div key={c.nome}
+                className="relative group py-3 pl-3 pr-2 rounded-lg transition-all duration-150 hover:bg-white/[0.025]"
+                style={{ borderBottom: isLast ? 'none' : '1px solid rgb(var(--bh-border))' }}>
+                <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ background: aboveAvg ? '#22c9a0' : belowAvg ? 'rgb(var(--bh-danger))' : 'rgb(var(--bh-subtle))' }} />
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-bh-text truncate">{c.nome}</p>
+                    <p className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>{c.cidade}/{c.estado}</p>
+                  </div>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums flex-shrink-0"
+                    style={{ background: aboveAvg ? 'rgba(34,201,160,0.12)' : belowAvg ? 'rgba(220,40,40,0.10)' : 'rgba(156,163,175,0.10)', color: aboveAvg ? '#22c9a0' : belowAvg ? 'rgb(var(--bh-danger))' : 'rgb(var(--bh-muted))' }}>
+                    {aboveAvg ? `↑ +${delta.toFixed(1)}pp` : belowAvg ? `↓ ${delta.toFixed(1)}pp` : '≈ média'}
+                  </span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums flex-shrink-0"
+                    style={{ background: 'rgba(34,201,160,0.12)', color: '#22c9a0' }}>
+                    {c.margem_pct}% margem
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 mb-1.5">
+                  <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda</span>
+                  <div className="relative flex-1 h-2">
+                    <div className="absolute inset-0 rounded-full" style={{ background: 'rgb(var(--bh-surface2))' }}>
+                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${barVenda}%`, background: 'rgb(var(--bh-subtle))' }} />
+                    </div>
+                    <div className="absolute top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-sm pointer-events-none" style={{ left: `${avgVendaBar}%`, background: '#ff6600', zIndex: 2 }} />
+                  </div>
+                  <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0" style={{ color: 'rgb(var(--bh-muted))' }}>{fmtBRL(c.venda)}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Margem</span>
+                  <div className="relative flex-1 h-2">
+                    <div className="absolute inset-0 rounded-full" style={{ background: 'rgb(var(--bh-surface2))' }}>
+                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${barMargem}%`, background: '#22c9a0' }} />
+                    </div>
+                    <div className="absolute top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-sm pointer-events-none" style={{ left: `${avgMargemBar}%`, background: '#ff6600', zIndex: 2 }} />
+                  </div>
+                  <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0" style={{ color: '#22c9a0' }}>{fmtBRL(c.margem)}</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       {/* Legenda */}
       <div className="flex items-center gap-5 pt-1 border-t flex-wrap" style={{ borderColor: 'rgb(var(--bh-border))' }}>
@@ -613,16 +653,28 @@ function QuemMaisVende({ credenciados }: { credenciados: CredenciadoPerf[] }) {
           <div className="w-3 h-1.5 rounded-full" style={{ background: '#22c9a0' }} />
           <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Margem gerada</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-0.5 h-4 rounded-sm" style={{ background: '#ff6600' }} />
-          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>
-            Média BuyHelp ({fmtBRL(avgVenda)} venda · {avgMargemPct.toFixed(1)}% margem)
-          </span>
-        </div>
-        <div className="flex items-center gap-3 ml-auto">
-          <span className="text-[10px] font-bold" style={{ color: '#22c9a0' }}>↑ acima da média</span>
-          <span className="text-[10px] font-bold" style={{ color: 'rgb(var(--bh-danger))' }}>↓ abaixo da média</span>
-        </div>
+        {view === 'setores' && <>
+          <div className="flex items-center gap-1.5">
+            <div className="w-0.5 h-3 rounded-full" style={{ background: '#ff6600' }} />
+            <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Alta carga tributária</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-0.5 h-3 rounded-full" style={{ background: '#22c9a0' }} />
+            <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Baixa carga tributária</span>
+          </div>
+        </>}
+        {view === 'credenciados' && <>
+          <div className="flex items-center gap-1.5">
+            <div className="w-0.5 h-4 rounded-sm" style={{ background: '#ff6600' }} />
+            <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>
+              Média BuyHelp ({fmtBRL(avgVenda)} venda · {avgMargemPct.toFixed(1)}% margem)
+            </span>
+          </div>
+          <div className="flex items-center gap-3 ml-auto">
+            <span className="text-[10px] font-bold" style={{ color: '#22c9a0' }}>↑ acima da média</span>
+            <span className="text-[10px] font-bold" style={{ color: 'rgb(var(--bh-danger))' }}>↓ abaixo da média</span>
+          </div>
+        </>}
       </div>
     </section>
   )
@@ -902,7 +954,7 @@ export function InteligeniciaComercial() {
 
       {/* Main content */}
       <div className={`flex flex-col gap-6 transition-all duration-300 ${loading ? 'opacity-40 blur-[1px] pointer-events-none' : 'opacity-100 blur-0'}`}>
-        <QuemMaisVende credenciados={credenciados} />
+        <QuemMaisVende setores={setores} credenciados={credenciados} />
         <div className="flex gap-6 items-start">
           <div className="flex-[3] min-w-0"><CorrelacaoSetores matrixData={matrixData} setores={setores} /></div>
           <div className="flex-[2] min-w-0"><TopOportunidades migracoes={migracoes} setores={setores} /></div>
