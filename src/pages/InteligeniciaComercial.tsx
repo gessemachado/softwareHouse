@@ -370,27 +370,28 @@ function getPares(setorA: string, setorB: string, afinidade: number): { maiores:
 
 function CorrelacaoParRow({ par, i, color }: { par: ParItem; i: number; color: string }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-black"
-        style={{ background: 'rgba(255,102,0,0.15)', color: '#ff6600' }}>
+    <div className="flex items-center gap-3 px-4 py-2.5"
+      style={{ borderBottom: '1px solid rgb(var(--bh-border))' }}>
+      <span className="text-[10px] w-5 flex-shrink-0 tabular-nums font-bold"
+        style={{ color: 'rgb(var(--bh-subtle))' }}>
         {i + 1}
-      </div>
+      </span>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-sm flex-shrink-0" style={{ background: '#ff6600' }} />
-          <span className="text-[11px] font-semibold text-bh-text truncate">{par.itemA}</span>
+          <p className="text-xs font-semibold text-white truncate">{par.itemA}</p>
         </div>
         <div className="flex items-center gap-1.5 mt-0.5">
-          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>+</span>
           <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#22c9a0' }} />
-          <span className="text-[11px] text-bh-muted truncate">{par.itemB}</span>
+          <p className="text-[10px] truncate" style={{ color: 'rgb(var(--bh-subtle))' }}>{par.itemB}</p>
         </div>
       </div>
-      <div className="flex items-center gap-1.5 flex-shrink-0" style={{ width: 76 }}>
+      <div className="flex items-center gap-2 flex-shrink-0" style={{ width: 72 }}>
         <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
-          <div className="h-full rounded-full" style={{ width: `${par.pct}%`, background: color }} />
+          <div className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${par.pct}%`, background: color }} />
         </div>
-        <span className="text-[10px] font-bold tabular-nums" style={{ color, width: 28, textAlign: 'right' }}>
+        <span className="text-xs font-bold tabular-nums flex-shrink-0" style={{ color }}>
           {par.pct}%
         </span>
       </div>
@@ -412,13 +413,15 @@ function CorrelacaoModal({ cell, setores, onClose }: { cell: CorrelacaoCell; set
       title={`${setorA.label} → ${setorB.label}`}
       subtitle={`Itens correlacionados · afinidade de cesta ${cell.val}%`}
       icon={<LayoutGrid size={22} />}
+      bodyClassName="flex-1 overflow-hidden p-6 flex flex-col gap-4 min-h-0"
       footer={
         <span className="text-xs text-bh-subtle">
           % = frequência com que os dois itens aparecem no mesmo cupom · dados de demonstração
         </span>
       }
     >
-      <p className="text-sm text-bh-muted leading-relaxed">
+      {/* Descrição */}
+      <p className="flex-shrink-0 text-sm text-bh-muted leading-relaxed">
         Quem leva itens de{' '}
         <strong className="text-bh-text">{setorA.label}</strong>{' '}
         <span className="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded"
@@ -430,24 +433,27 @@ function CorrelacaoModal({ cell, setores, onClose }: { cell: CorrelacaoCell; set
         <span className="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded"
           style={{
             background: descB === 0 ? 'rgba(156,163,175,0.12)' : 'rgba(34,201,160,0.12)',
-            color: descB === 0 ? '#9ca3af' : '#22c9a0',
+            color: descB === 0 ? 'rgb(var(--bh-muted))' : '#22c9a0',
           }}>
           {descB.toFixed(2)}%
         </span>{' '}
         — onde a margem pode migrar.
       </p>
 
-      <div className="grid grid-cols-2 gap-6">
+      {/* Colunas em card bordado — mesmo padrão do SetorModal */}
+      <div className="grid grid-cols-2 gap-4 flex-1 min-h-0">
         {[
           { items: maiores, icon: <TrendingUp size={13} color="#22c9a0" />, label: 'Top 20 maior afinidade', color: '#22c9a0' },
-          { items: menores, icon: <TrendingDown size={13} color="#9ca3af" />, label: 'Top 20 menor afinidade', color: 'rgb(var(--bh-muted))' },
+          { items: menores, icon: <TrendingDown size={13} color="rgb(var(--bh-muted))" />, label: 'Top 20 menor afinidade', color: 'rgb(var(--bh-muted))' },
         ].map(col => (
-          <div key={col.label}>
-            <div className="flex items-center gap-2 mb-3">
+          <div key={col.label} className="flex flex-col rounded-lg overflow-hidden min-h-0"
+            style={{ border: '1px solid rgb(var(--bh-border))' }}>
+            <div className="flex-shrink-0 flex items-center gap-2 px-4 py-3"
+              style={{ borderBottom: '1px solid rgb(var(--bh-border))', background: 'rgb(var(--bh-surface2))' }}>
               {col.icon}
               <span className="text-xs font-bold" style={{ color: col.color }}>{col.label}</span>
             </div>
-            <div className="flex flex-col gap-2.5">
+            <div className="overflow-y-auto flex-1">
               {col.items.map((par, i) => (
                 <CorrelacaoParRow key={i} par={par} i={i} color={col.color} />
               ))}
