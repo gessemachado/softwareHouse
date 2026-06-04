@@ -470,7 +470,8 @@ function CorrelacaoModal({ cell, setores, onClose }: { cell: CorrelacaoCell; set
 type SortKey = 'venda' | 'margem'
 
 function QuemMaisVende({ setores }: { setores: Setores }) {
-  const [sort, setSort] = useState<SortKey>('venda')
+  const [sort, setSort]               = useState<SortKey>('venda')
+  const [selectedSetor, setSelectedSetor] = useState<Setores[0] | null>(null)
 
   const maxVenda  = Math.max(...setores.map(s => s.venda))
   const maxMargem = Math.max(...setores.map(s => s.margem))
@@ -518,7 +519,8 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
           const highTax   = s.desconto > 15
           return (
             <div key={s.nome}
-              className="relative group py-3 pl-3 pr-2 rounded-lg transition-all duration-150 hover:bg-white/[0.035]"
+              className="relative group py-3 pl-3 pr-2 rounded-lg transition-all duration-150 hover:bg-white/[0.035] cursor-pointer"
+              onClick={() => setSelectedSetor(s)}
               style={{ borderBottom: isLast ? 'none' : '1px solid rgb(var(--bh-border))' }}>
               <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                 style={{ background: highTax ? '#ff6600' : '#22c9a0' }} />
@@ -573,6 +575,8 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
           <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Baixa carga tributária</span>
         </div>
       </div>
+
+      {selectedSetor && <SetorModal setor={selectedSetor} onClose={() => setSelectedSetor(null)} />}
     </section>
   )
 }
