@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
   Fingerprint, User, Mail, Phone, CreditCard, Percent, MapPin, Globe,
-  Save, Calendar, Clock, Search, X, Plus, Trash2, Link2,
+  Save, Calendar, Clock, Search, X, Trash2, Link2,
   SlidersHorizontal, ChevronRight, ChevronLeft, Check,
 } from 'lucide-react'
 import { Modal } from '../ui/Modal'
@@ -115,7 +115,7 @@ function ModalConfirmarVinculo({ open, credenciado, fingerNome, fingerEmail, fin
   return (
     <Modal
       open={open}
-      onClose={() => { setSelectedRepId(null); onClose() }}
+      onClose={() => { onClose() }}
       title="Vincular Credenciado"
       subtitle="Confirme o finger para vincular ao credenciado"
       icon={<Link2 size={22} />}
@@ -123,7 +123,7 @@ function ModalConfirmarVinculo({ open, credenciado, fingerNome, fingerEmail, fin
         <>
           <span className="text-xs text-bh-subtle">Confirme o vínculo do credenciado com este finger.</span>
           <div className="flex gap-2">
-            <button type="button" onClick={() => { setSelectedRepId(null); onClose() }} className="btn-ghost">
+            <button type="button" onClick={() => { onClose() }} className="btn-ghost">
               Cancelar
             </button>
             <button
@@ -180,7 +180,7 @@ interface CredenciadosTabProps {
   shId?:           string
 }
 
-function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone, shId }: CredenciadosTabProps) {
+function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: CredenciadosTabProps) {
   const [search, setSearch]   = useState('')
   const [applied, setApplied] = useState('')
   const [page, setPage]       = useState(1)

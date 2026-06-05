@@ -30,7 +30,7 @@ export function Modal({ open, onClose, title, subtitle, icon, footer, children, 
       <div className="absolute inset-0 bg-black/65 backdrop-blur-md" onClick={onClose} />
 
       {/* Dialog */}
-      <div className={`absolute bg-bh-surface border border-bh-border shadow-2xl flex flex-col overflow-hidden transition-[inset,border-radius] duration-250 ease-[cubic-bezier(.16,1,.3,1)] ${
+      <div className={`absolute bg-bh-bg border border-bh-border shadow-2xl flex flex-col overflow-hidden transition-[inset,border-radius] duration-250 ease-[cubic-bezier(.16,1,.3,1)] ${
         expanded ? 'inset-0 rounded-none' : 'inset-16 rounded-lg'
       }`}>
 
@@ -67,7 +67,7 @@ export function Modal({ open, onClose, title, subtitle, icon, footer, children, 
 
         {/* Footer */}
         {footer && (
-          <div className="flex-shrink-0 border-t border-bh-border px-6 py-3.5 flex items-center justify-between bg-bh-surface">
+          <div className="flex-shrink-0 border-t border-bh-border px-6 py-3.5 flex items-center justify-between bg-bh-bg">
             {footer}
           </div>
         )}

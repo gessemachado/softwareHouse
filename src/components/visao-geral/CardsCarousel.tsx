@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useDashboardFilter } from '../../contexts/DashboardFilterContext'
 import { useDashboardConfig } from '../../contexts/DashboardConfigContext'
 import { DESCONTO, METRICAS, AVALIACAO, mesIdx } from '../../mocks/dashboardData'
@@ -61,7 +60,6 @@ export function CardsCarousel() {
   const [paused, setPaused] = useState(false)
 
   const next = useCallback(() => setPage(p => (p + 1) % pages.length), [pages.length])
-  const prev = useCallback(() => setPage(p => (p - 1 + pages.length) % pages.length), [pages.length])
 
   useEffect(() => { setPage(0) }, [curIdx, prevIdx])
 
@@ -72,8 +70,6 @@ export function CardsCarousel() {
   }, [paused, pages.length, next])
 
   if (slides.length === 0) return null
-
-  const fmtDelta = (d: number) => `${d >= 0 ? '+' : ''}${d.toFixed(1)} pp`
 
   return (
     <section className="mb-5">

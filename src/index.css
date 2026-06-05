@@ -75,7 +75,7 @@ html.light {
   }
 
   .input-bh {
-    @apply w-full bg-bh-surface border border-bh-border text-bh-text placeholder-bh-subtle rounded px-3 py-2 text-sm focus:outline-none focus:border-bh-primary transition-colors;
+    @apply w-full bg-bh-bg border border-bh-border text-bh-text placeholder-bh-subtle rounded px-3 py-2 text-sm focus:outline-none focus:border-bh-primary transition-colors;
   }
 
   .card-bh {

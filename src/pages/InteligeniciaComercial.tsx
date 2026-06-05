@@ -1,8 +1,11 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { AppLayout } from '../components/layout/AppLayout'
 import { TabNav } from '../components/ui/TabNav'
 import { Modal } from '../components/ui/Modal'
-import { ArrowRight, Target, TrendingUp, TrendingDown, LayoutGrid, BarChart2, Zap, Calendar, RefreshCw } from 'lucide-react'
+import {
+  ArrowRight, Target, TrendingUp, TrendingDown, LayoutGrid,
+  BarChart2, Zap, Calendar, RefreshCw, MapPin, Award,
+} from 'lucide-react'
 
 // ─── Base Mock Data ───────────────────────────────────────────────────────────
 
@@ -50,7 +53,7 @@ const MIGRACOES_BASE = [
   { de: 'Mercearia', de_desc: 21.25, para: 'Açougue',    para_desc:  7.00, afinidade: 55 },
 ]
 
-// ─── Credenciados performance data ───────────────────────────────────────────
+// ─── Credenciados ─────────────────────────────────────────────────────────────
 
 interface CredenciadoPerf {
   nome: string; cidade: string; estado: string
@@ -70,14 +73,14 @@ const CREDENCIADOS_PERF_BASE: CredenciadoPerf[] = [
   { nome: 'Academia FitMax SA',              cidade: 'Curitiba',       estado: 'PR', venda:  430000, margem:  90300, margem_pct: 21 },
 ]
 
-// ─── Data generators (seeded, deterministic) ─────────────────────────────────
+// ─── Generators ───────────────────────────────────────────────────────────────
 
 function seeded(n: number): number {
   const x = Math.abs(Math.sin(n * 9301 + 49297) * 233280)
   return x - Math.floor(x)
 }
 
-type Setores   = typeof SETORES_BASE
+type Setores    = typeof SETORES_BASE
 type MatrixData = (number | null)[][]
 type Migracoes  = typeof MIGRACOES_BASE
 
@@ -130,8 +133,6 @@ function generateMigracoes(mes: string): Migracoes {
   }))
 }
 
-// ─── Month selector data ──────────────────────────────────────────────────────
-
 const MESES = (() => {
   const nomes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
   const result: { label: string; value: string }[] = []
@@ -143,7 +144,7 @@ const MESES = (() => {
   return result
 })()
 
-// ─── Mock itens por setor ─────────────────────────────────────────────────────
+// ─── Item catalog ─────────────────────────────────────────────────────────────
 
 interface ItemSetor { nome: string; unidades: number; receita: number }
 
@@ -249,8 +250,6 @@ function getItensSetor(nome: string) {
   }
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 function fmtBRL(v: number) {
   return v >= 1_000_000
     ? `R$ ${(v / 1_000_000).toFixed(2)}M`
@@ -283,7 +282,7 @@ function SetorModal({ setor, onClose }: { setor: Setores[0]; onClose: () => void
       }
     >
       <div
-        className="grid grid-cols-4 gap-6 p-5 rounded-lg"
+        className="grid grid-cols-4 gap-6 p-5 rounded-xl"
         style={{ background: 'rgb(var(--bh-surface2))', border: '1px solid rgb(var(--bh-border))' }}
       >
         {[
@@ -308,7 +307,7 @@ function SetorModal({ setor, onClose }: { setor: Setores[0]; onClose: () => void
           { items: dados.mais,  icon: <TrendingUp size={13} color="#22c9a0" />,  label: 'Top mais vendidos',  cor: '#22c9a0' },
           { items: dados.menos, icon: <TrendingDown size={13} color="#f87171" />, label: 'Top menos vendidos', cor: '#f87171' },
         ].map(col => (
-          <div key={col.label} className="flex flex-col rounded-lg overflow-hidden min-h-0" style={{ border: '1px solid rgb(var(--bh-border))' }}>
+          <div key={col.label} className="flex flex-col rounded-xl overflow-hidden min-h-0" style={{ border: '1px solid rgb(var(--bh-border))' }}>
             <div className="flex-shrink-0 flex items-center gap-2 px-4 py-3"
               style={{ borderBottom: '1px solid rgb(var(--bh-border))', background: 'rgb(var(--bh-surface2))' }}>
               {col.icon}
@@ -420,7 +419,6 @@ function CorrelacaoModal({ cell, setores, onClose }: { cell: CorrelacaoCell; set
         </span>
       }
     >
-      {/* Descrição */}
       <p className="flex-shrink-0 text-sm text-bh-muted leading-relaxed">
         Quem leva itens de{' '}
         <strong className="text-bh-text">{setorA.label}</strong>{' '}
@@ -440,13 +438,12 @@ function CorrelacaoModal({ cell, setores, onClose }: { cell: CorrelacaoCell; set
         — onde a margem pode migrar.
       </p>
 
-      {/* Colunas em card bordado — mesmo padrão do SetorModal */}
       <div className="grid grid-cols-2 gap-4 flex-1 min-h-0">
         {[
           { items: maiores, icon: <TrendingUp size={13} color="#22c9a0" />, label: 'Top 20 maior afinidade', color: '#22c9a0' },
           { items: menores, icon: <TrendingDown size={13} color="rgb(var(--bh-muted))" />, label: 'Top 20 menor afinidade', color: 'rgb(var(--bh-muted))' },
         ].map(col => (
-          <div key={col.label} className="flex flex-col rounded-lg overflow-hidden min-h-0"
+          <div key={col.label} className="flex flex-col rounded-xl overflow-hidden min-h-0"
             style={{ border: '1px solid rgb(var(--bh-border))' }}>
             <div className="flex-shrink-0 flex items-center gap-2 px-4 py-3"
               style={{ borderBottom: '1px solid rgb(var(--bh-border))', background: 'rgb(var(--bh-surface2))' }}>
@@ -465,7 +462,85 @@ function CorrelacaoModal({ cell, setores, onClose }: { cell: CorrelacaoCell; set
   )
 }
 
-// ─── Section 1 — Quem mais vende ─────────────────────────────────────────────
+// ─── KPI Strip ────────────────────────────────────────────────────────────────
+
+function KPIStrip({ setores }: { setores: Setores }) {
+  const totalVenda  = useMemo(() => setores.reduce((a, s) => a + s.venda, 0), [setores])
+  const totalMargem = useMemo(() => setores.reduce((a, s) => a + s.margem, 0), [setores])
+  const altaTrib    = setores.filter(s => s.desconto > 15).length
+  const margemPct   = totalVenda > 0 ? ((totalMargem / totalVenda) * 100).toFixed(1) : '0.0'
+
+  const kpis = [
+    {
+      label: 'Volume Total',
+      value: fmtBRL(totalVenda),
+      sub: `${setores.length} setores ativos`,
+      Icon: BarChart2,
+      accent: '#22c9a0',
+      bg: 'rgba(34,201,160,0.08)',
+    },
+    {
+      label: 'Margem Gerada',
+      value: fmtBRL(totalMargem),
+      sub: `${margemPct}% sobre a venda`,
+      Icon: TrendingUp,
+      accent: '#22c9a0',
+      bg: 'rgba(34,201,160,0.08)',
+    },
+    {
+      label: 'Alta Tributação',
+      value: `${altaTrib} setores`,
+      sub: 'ICMS ST acima de 15%',
+      Icon: Target,
+      accent: '#ff6600',
+      bg: 'rgba(255,102,0,0.08)',
+    },
+    {
+      label: 'Oportunidades',
+      value: `${OPORT_FISCAL.size}`,
+      sub: 'pares fiscais mapeados',
+      Icon: Zap,
+      accent: '#EF9F27',
+      bg: 'rgba(239,159,39,0.08)',
+    },
+  ]
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      {kpis.map(k => (
+        <div
+          key={k.label}
+          className="rounded-xl p-4 flex items-start gap-3 transition-all duration-200"
+          style={{
+            background: 'rgb(var(--bh-surface))',
+            border: '1px solid rgb(var(--bh-border))',
+          }}
+        >
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: k.bg }}
+          >
+            <k.Icon size={17} color={k.accent} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5"
+              style={{ color: 'rgb(var(--bh-subtle))' }}>
+              {k.label}
+            </p>
+            <p className="text-lg font-black tabular-nums leading-tight text-bh-text truncate">
+              {k.value}
+            </p>
+            <p className="text-[10px] mt-0.5" style={{ color: 'rgb(var(--bh-muted))' }}>
+              {k.sub}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ─── Quem Mais Vende ──────────────────────────────────────────────────────────
 
 type SortKey = 'venda' | 'margem'
 
@@ -478,32 +553,43 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
   const sorted    = [...setores].sort((a, b) => sort === 'venda' ? b.venda - a.venda : b.margem - a.margem)
 
   return (
-    <section className="card-bh p-6 flex flex-col gap-4">
+    <section
+      className="flex flex-col gap-5 rounded-xl p-5"
+      style={{ background: 'rgb(var(--bh-surface))', border: '1px solid rgb(var(--bh-border))' }}
+    >
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-            style={{ background: 'rgba(255,102,0,0.12)' }}>
-            <BarChart2 size={16} color="#ff6600" />
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+            style={{ background: 'rgba(255,102,0,0.12)' }}
+          >
+            <BarChart2 size={15} color="#ff6600" />
           </div>
           <div>
-            <h2 className="text-bh-text font-bold text-base leading-tight">
+            <h2 className="text-bh-text font-bold text-sm leading-tight">
               Quem mais vende não é quem mais rende
             </h2>
-            <p className="text-xs mt-1" style={{ color: 'rgb(var(--bh-muted))' }}>
-              Venda vs. margem por grupo de produto · clique para ver os itens
+            <p className="text-[11px] mt-0.5" style={{ color: 'rgb(var(--bh-muted))' }}>
+              Venda vs. margem por setor · clique para ver os produtos
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-1 flex-shrink-0 rounded-lg p-0.5"
-          style={{ background: 'rgb(var(--bh-surface2))' }}>
+        {/* Toggle */}
+        <div
+          className="flex rounded-lg overflow-hidden flex-shrink-0"
+          style={{ border: '1px solid rgb(var(--bh-border))' }}
+        >
           {(['venda', 'margem'] as SortKey[]).map(k => (
-            <button key={k} onClick={() => setSort(k)}
-              className="px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all duration-150"
+            <button
+              key={k}
+              onClick={() => setSort(k)}
+              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-all duration-150"
               style={sort === k
-                ? { background: 'rgb(var(--bh-surface))', color: 'rgb(var(--bh-text))', boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }
+                ? { background: '#ff6600', color: '#fff' }
                 : { background: 'transparent', color: 'rgb(var(--bh-subtle))' }
-              }>
+              }
+            >
               {k === 'venda' ? 'Venda' : 'Margem'}
             </button>
           ))}
@@ -515,64 +601,102 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
         {sorted.map((s, i) => {
           const barVenda  = (s.venda  / maxVenda)  * 100
           const barMargem = (s.margem / maxMargem) * 100
-          const isLast    = i === sorted.length - 1
           const highTax   = s.desconto > 15
+
           return (
-            <div key={s.nome}
-              className="relative group py-3 pl-3 pr-2 rounded-lg transition-all duration-150 hover:bg-white/[0.035] cursor-pointer"
+            <div
+              key={s.nome}
+              className="group relative rounded-xl p-3 cursor-pointer transition-colors duration-150 hover:bg-white/[0.03]"
               onClick={() => setSelectedSetor(s)}
-              style={{ borderBottom: isLast ? 'none' : '1px solid rgb(var(--bh-border))' }}>
-              <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{ background: highTax ? '#ff6600' : '#22c9a0' }} />
-              <div className="flex items-center gap-2.5 mb-2.5">
-                <span className="text-sm font-bold text-bh-text truncate" style={{ minWidth: 0, maxWidth: 160 }}>{s.nome}</span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 tabular-nums"
-                  style={{ background: s.desconto === 0 ? 'rgba(156,163,175,0.12)' : 'rgba(239,159,39,0.15)', color: s.desconto === 0 ? 'rgb(var(--bh-muted))' : '#EF9F27' }}>
-                  {s.desconto.toFixed(2)}%
+            >
+              {/* Accent bar */}
+              <div
+                className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{ background: highTax ? '#ff6600' : '#22c9a0' }}
+              />
+
+              <div className="flex items-center gap-2.5 mb-2.5 pl-2">
+                {/* Rank badge */}
+                <span
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0"
+                  style={{
+                    background: i < 3 ? 'rgba(255,102,0,0.15)' : 'rgb(var(--bh-surface2))',
+                    color: i < 3 ? '#ff6600' : 'rgb(var(--bh-muted))',
+                  }}
+                >
+                  {i + 1}
                 </span>
-                <span className="ml-auto flex-shrink-0">
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums"
-                    style={{ background: 'rgba(34,201,160,0.12)', color: '#22c9a0' }}>
-                    {s.margem_pct}% margem
+                <span className="font-semibold text-sm text-bh-text flex-1 truncate">{s.nome}</span>
+                <span
+                  className="text-[10px] font-bold px-2 py-0.5 rounded-full tabular-nums flex-shrink-0"
+                  style={{
+                    background: s.desconto === 0 ? 'rgba(156,163,175,0.1)' : 'rgba(239,159,39,0.15)',
+                    color: s.desconto === 0 ? 'rgb(var(--bh-muted))' : '#EF9F27',
+                  }}
+                >
+                  {s.desconto.toFixed(2)}% ST
+                </span>
+                <span
+                  className="text-[10px] font-bold px-2 py-0.5 rounded-full tabular-nums flex-shrink-0"
+                  style={{ background: 'rgba(34,201,160,0.1)', color: '#22c9a0' }}
+                >
+                  {s.margem_pct}% mg
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1.5 pl-10">
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] w-10 flex-shrink-0 font-medium" style={{ color: 'rgb(var(--bh-subtle))' }}>
+                    Venda
                   </span>
-                </span>
-              </div>
-              <div className="flex items-center gap-3 mb-1.5">
-                <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda</span>
-                <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
-                  <div className="h-full rounded-full transition-all duration-500" style={{ width: `${barVenda}%`, background: 'rgb(var(--bh-subtle))' }} />
+                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{ width: `${barVenda}%`, background: 'rgb(var(--bh-muted))' }}
+                    />
+                  </div>
+                  <span className="text-[11px] font-bold tabular-nums w-16 text-right flex-shrink-0"
+                    style={{ color: 'rgb(var(--bh-muted))' }}>
+                    {fmtBRL(s.venda)}
+                  </span>
                 </div>
-                <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0" style={{ color: 'rgb(var(--bh-muted))' }}>{fmtBRL(s.venda)}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] w-12 flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>Margem</span>
-                <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
-                  <div className="h-full rounded-full transition-all duration-500" style={{ width: `${barMargem}%`, background: '#22c9a0' }} />
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] w-10 flex-shrink-0 font-medium" style={{ color: 'rgb(var(--bh-subtle))' }}>
+                    Margem
+                  </span>
+                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{ width: `${barMargem}%`, background: 'linear-gradient(90deg, #22c9a0, #0f9478)' }}
+                    />
+                  </div>
+                  <span className="text-[11px] font-bold tabular-nums w-16 text-right flex-shrink-0"
+                    style={{ color: '#22c9a0' }}>
+                    {fmtBRL(s.margem)}
+                  </span>
                 </div>
-                <span className="text-xs font-semibold tabular-nums w-20 text-right flex-shrink-0" style={{ color: '#22c9a0' }}>{fmtBRL(s.margem)}</span>
               </div>
             </div>
           )
         })}
       </div>
 
-      {/* Legenda */}
-      <div className="flex items-center gap-5 pt-1 border-t flex-wrap" style={{ borderColor: 'rgb(var(--bh-border))' }}>
+      {/* Legend */}
+      <div
+        className="flex items-center gap-5 pt-3 border-t flex-wrap"
+        style={{ borderColor: 'rgb(var(--bh-border))' }}
+      >
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-1.5 rounded-full" style={{ background: 'rgb(var(--bh-subtle))' }} />
+          <div className="w-4 h-1.5 rounded-full" style={{ background: 'rgb(var(--bh-muted))' }} />
           <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Venda bruta</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-1.5 rounded-full" style={{ background: '#22c9a0' }} />
+          <div className="w-4 h-1.5 rounded-full" style={{ background: '#22c9a0' }} />
           <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Margem gerada</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-0.5 h-3 rounded-full" style={{ background: '#ff6600' }} />
-          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Alta carga tributária</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-0.5 h-3 rounded-full" style={{ background: '#22c9a0' }} />
-          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Baixa carga tributária</span>
+          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Alta tributação</span>
         </div>
       </div>
 
@@ -581,7 +705,7 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
   )
 }
 
-// ─── Section 2 — Correlação ───────────────────────────────────────────────────
+// ─── Correlação entre setores ─────────────────────────────────────────────────
 
 function heatColor(v: number): { bg: string; text: string } {
   if (v >= 80) return { bg: '#0b5e52', text: '#e2fff9' }
@@ -596,24 +720,31 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
   const [selectedCell, setSelectedCell] = useState<CorrelacaoCell | null>(null)
 
   return (
-    <section className="card-bh p-6 flex flex-col gap-5">
+    <section
+      className="flex flex-col gap-5 rounded-xl p-5"
+      style={{ background: 'rgb(var(--bh-surface))', border: '1px solid rgb(var(--bh-border))' }}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-            style={{ background: 'rgba(34,201,160,0.1)' }}>
-            <LayoutGrid size={16} color="#22c9a0" />
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+            style={{ background: 'rgba(34,201,160,0.1)' }}
+          >
+            <LayoutGrid size={15} color="#22c9a0" />
           </div>
           <div>
-            <h2 className="text-bh-text font-bold text-base leading-tight">
+            <h2 className="text-bh-text font-bold text-sm leading-tight">
               Correlação entre setores
             </h2>
-            <p className="text-xs mt-1" style={{ color: 'rgb(var(--bh-muted))' }}>
+            <p className="text-[11px] mt-0.5" style={{ color: 'rgb(var(--bh-muted))' }}>
               % de cupons com os dois grupos juntos · clique para ver os pares
             </p>
           </div>
         </div>
-        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg flex-shrink-0 flex items-center gap-1.5"
-          style={{ background: 'rgba(255,102,0,0.1)', color: '#ff6600', border: '1px solid rgba(255,102,0,0.2)' }}>
+        <span
+          className="text-[10px] font-bold px-2.5 py-1 rounded-lg flex-shrink-0 flex items-center gap-1.5"
+          style={{ background: 'rgba(255,102,0,0.1)', color: '#ff6600', border: '1px solid rgba(255,102,0,0.2)' }}
+        >
           <Target size={10} />
           {OPORT_FISCAL.size} oportunidades
         </span>
@@ -625,9 +756,11 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
             <tr>
               <th style={{ width: '22%' }} />
               {SETORES_MATRIX.map(s => (
-                <th key={s.abrev}
+                <th
+                  key={s.abrev}
                   className="text-center text-[10px] font-bold uppercase tracking-widest pb-2"
-                  style={{ color: 'rgb(var(--bh-muted))' }}>
+                  style={{ color: 'rgb(var(--bh-muted))' }}
+                >
                   {s.abrev}
                 </th>
               ))}
@@ -637,7 +770,7 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
             {matrixData.map((row, ri) => (
               <tr key={ri}>
                 <td className="pr-4 py-1">
-                  <span className="text-xs font-semibold text-bh-text whitespace-nowrap">
+                  <span className="text-[11px] font-semibold text-bh-text whitespace-nowrap">
                     {SETORES_MATRIX[ri].label}
                   </span>
                 </td>
@@ -647,9 +780,11 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
                   if (val === null) {
                     return (
                       <td key={ci} className="p-1">
-                        <div className="w-full h-10 rounded flex items-center justify-center"
-                          style={{ background: 'rgb(var(--bh-surface2))' }}>
-                          <span className="text-xs" style={{ color: 'rgba(255,255,255,0.12)' }}>—</span>
+                        <div
+                          className="w-full h-10 rounded-lg flex items-center justify-center"
+                          style={{ background: 'rgb(var(--bh-surface2))' }}
+                        >
+                          <span className="text-xs" style={{ color: 'rgba(255,255,255,0.1)' }}>—</span>
                         </div>
                       </td>
                     )
@@ -658,14 +793,21 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
                   return (
                     <td key={ci} className="p-1">
                       <div
-                        className="relative w-full h-10 rounded flex items-center justify-center cursor-pointer transition-all duration-150 hover:scale-105 hover:shadow-lg"
+                        className="relative w-full h-10 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-150 hover:scale-105 hover:shadow-lg"
                         onClick={() => setSelectedCell({ ri, ci, val })}
-                        style={{ background: bg, border: isOport ? '2px solid #ff6600' : '2px solid transparent' }}
+                        style={{
+                          background: bg,
+                          border: isOport ? '2px solid #ff6600' : '2px solid transparent',
+                        }}
                       >
-                        <span className="text-xs font-bold tabular-nums" style={{ color: text }}>{val}</span>
+                        <span className="text-[11px] font-bold tabular-nums" style={{ color: text }}>
+                          {val}
+                        </span>
                         {isOport && (
-                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2"
-                            style={{ background: '#ff6600', borderColor: 'rgb(var(--bh-bg))' }} />
+                          <span
+                            className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2"
+                            style={{ background: '#ff6600', borderColor: 'rgb(var(--bh-bg))' }}
+                          />
                         )}
                       </div>
                     </td>
@@ -677,19 +819,28 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
         </table>
       </div>
 
-      <div className="flex items-center gap-6 pt-1 flex-wrap border-t" style={{ borderColor: 'rgb(var(--bh-border))' }}>
+      <div
+        className="flex items-center gap-6 pt-3 border-t flex-wrap"
+        style={{ borderColor: 'rgb(var(--bh-border))' }}
+      >
         <div className="flex items-center gap-2">
           <div className="flex gap-0.5">
             {['#b2f0e3','#6ee7cb','#22c9a0','#0f9478','#0d7a6a','#0b5e52'].map(c => (
               <div key={c} className="w-4 h-2.5 rounded-sm" style={{ background: c }} />
             ))}
           </div>
-          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Menor → Maior afinidade</span>
+          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>
+            Menor → Maior afinidade
+          </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full flex-shrink-0"
-            style={{ background: '#ff6600', outline: '2px solid rgba(255,102,0,0.3)', outlineOffset: 1 }} />
-          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>Oportunidade fiscal</span>
+          <span
+            className="w-3 h-3 rounded-full flex-shrink-0"
+            style={{ background: '#ff6600', outline: '2px solid rgba(255,102,0,0.3)', outlineOffset: 1 }}
+          />
+          <span className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>
+            Oportunidade fiscal
+          </span>
         </div>
       </div>
 
@@ -700,7 +851,7 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
   )
 }
 
-// ─── Section 3 — Top Oportunidades ───────────────────────────────────────────
+// ─── Top Oportunidades ────────────────────────────────────────────────────────
 
 function TopOportunidades({ migracoes, setores }: { migracoes: Migracoes; setores: Setores }) {
   const [selectedCell, setSelectedCell] = useState<CorrelacaoCell | null>(null)
@@ -712,68 +863,86 @@ function TopOportunidades({ migracoes, setores }: { migracoes: Migracoes; setore
   }
 
   return (
-    <section className="card-bh p-6 flex flex-col gap-4">
+    <section
+      className="flex flex-col gap-4 rounded-xl p-5"
+      style={{ background: 'rgb(var(--bh-surface))', border: '1px solid rgb(var(--bh-border))' }}
+    >
       <div className="flex items-start gap-3">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-          style={{ background: 'rgba(255,102,0,0.12)' }}>
-          <Zap size={16} color="#ff6600" />
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+          style={{ background: 'rgba(255,102,0,0.12)' }}
+        >
+          <Zap size={15} color="#ff6600" />
         </div>
         <div>
-          <h2 className="text-bh-text font-bold text-base leading-tight">
-            Top oportunidades de migração
-          </h2>
-          <p className="text-xs mt-1" style={{ color: 'rgb(var(--bh-muted))' }}>
-            Alta afinidade × maior diferença de carga · clique para ver os pares
+          <h2 className="text-bh-text font-bold text-sm leading-tight">Top oportunidades</h2>
+          <p className="text-[11px] mt-0.5" style={{ color: 'rgb(var(--bh-muted))' }}>
+            Migração fiscal × afinidade de cesta · clique para explorar
           </p>
         </div>
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-2">
         {migracoes.map((m, i) => {
-          const isLast = i === migracoes.length - 1
+          const delta = m.de_desc - m.para_desc
           return (
             <div
               key={i}
-              className="relative group flex items-center gap-3 py-2.5 pl-3 pr-2 cursor-pointer rounded-lg transition-all duration-150 hover:bg-white/[0.035]"
+              className="rounded-xl p-3 cursor-pointer transition-all duration-150 hover:scale-[1.01] hover:shadow-md"
               onClick={() => openModal(m.de, m.para, m.afinidade)}
-              style={{ borderBottom: isLast ? 'none' : '1px solid rgb(var(--bh-border))' }}
+              style={{
+                background: 'rgb(var(--bh-surface2))',
+                border: '1px solid rgb(var(--bh-border))',
+              }}
             >
-              <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{ background: '#ff6600' }} />
-
-              <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-black"
-                style={{ background: 'rgba(255,102,0,0.15)', color: '#ff6600' }}>
-                {i + 1}
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-sm font-bold text-bh-text">{m.de}</span>
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums"
-                    style={{ background: 'rgba(239,159,39,0.18)', color: '#EF9F27' }}>
+              <div className="flex items-center gap-2 mb-2.5">
+                <span
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0"
+                  style={{ background: 'rgba(255,102,0,0.2)', color: '#ff6600' }}
+                >
+                  {i + 1}
+                </span>
+                <div className="flex items-center gap-1.5 flex-1 min-w-0 flex-wrap">
+                  <span className="text-xs font-bold text-bh-text">{m.de}</span>
+                  <span
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-full tabular-nums"
+                    style={{ background: 'rgba(239,159,39,0.18)', color: '#EF9F27' }}
+                  >
                     {m.de_desc.toFixed(2)}%
                   </span>
-                  <ArrowRight size={12} color="rgb(var(--bh-subtle))" className="flex-shrink-0" />
-                  <span className="text-sm font-bold text-bh-text">{m.para}</span>
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-nums"
+                  <ArrowRight size={10} color="rgb(var(--bh-subtle))" className="flex-shrink-0" />
+                  <span className="text-xs font-bold text-bh-text">{m.para}</span>
+                  <span
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-full tabular-nums"
                     style={{
-                      background: m.para_desc === 0 ? 'rgba(156,163,175,0.12)' : 'rgba(34,201,160,0.12)',
+                      background: m.para_desc === 0 ? 'rgba(156,163,175,0.1)' : 'rgba(34,201,160,0.12)',
                       color: m.para_desc === 0 ? '#9ca3af' : '#22c9a0',
-                    }}>
+                    }}
+                  >
                     {m.para_desc.toFixed(2)}%
                   </span>
                 </div>
+                <span
+                  className="flex-shrink-0 text-xs font-black tabular-nums px-2 py-0.5 rounded-full"
+                  style={{ background: 'rgba(34,201,160,0.12)', color: '#22c9a0' }}
+                >
+                  -{delta.toFixed(0)}pp
+                </span>
+              </div>
 
-                <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-[10px] flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>afinidade</span>
-                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
-                    <div className="h-full rounded-full transition-all duration-500"
-                      style={{ width: `${m.afinidade}%`, background: '#22c9a0' }} />
-                  </div>
-                  <span className="text-[10px] font-bold tabular-nums flex-shrink-0" style={{ color: '#22c9a0' }}>
-                    {m.afinidade}%
-                  </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>
+                  afinidade
+                </span>
+                <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface))' }}>
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${m.afinidade}%`, background: 'linear-gradient(90deg, #22c9a0, #0f9478)' }}
+                  />
                 </div>
+                <span className="text-[10px] font-bold tabular-nums flex-shrink-0" style={{ color: '#22c9a0' }}>
+                  {m.afinidade}%
+                </span>
               </div>
             </div>
           )
@@ -787,14 +956,127 @@ function TopOportunidades({ migracoes, setores }: { migracoes: Migracoes; setore
   )
 }
 
+// ─── Top Credenciados ─────────────────────────────────────────────────────────
+
+function TopCredenciados({ credenciados }: { credenciados: CredenciadoPerf[] }) {
+  const sorted    = useMemo(() => [...credenciados].sort((a, b) => b.margem - a.margem).slice(0, 5), [credenciados])
+  const maxMargem = Math.max(...sorted.map(c => c.margem))
+
+  return (
+    <section
+      className="flex flex-col gap-4 rounded-xl p-5"
+      style={{ background: 'rgb(var(--bh-surface))', border: '1px solid rgb(var(--bh-border))' }}
+    >
+      <div className="flex items-start gap-3">
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+          style={{ background: 'rgba(34,201,160,0.1)' }}
+        >
+          <Award size={15} color="#22c9a0" />
+        </div>
+        <div>
+          <h2 className="text-bh-text font-bold text-sm leading-tight">Top credenciados por margem</h2>
+          <p className="text-[11px] mt-0.5" style={{ color: 'rgb(var(--bh-muted))' }}>
+            5 melhores performers do período selecionado
+          </p>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr>
+              {['#', 'Credenciado', 'Localização', 'Venda', 'Margem', 'Margem %'].map(h => (
+                <th
+                  key={h}
+                  className="text-left pb-2.5 pr-4 text-[10px] font-bold uppercase tracking-wider"
+                  style={{ color: 'rgb(var(--bh-subtle))', borderBottom: '1px solid rgb(var(--bh-border))' }}
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((c, i) => (
+              <tr
+                key={c.nome}
+                className="group transition-colors duration-100"
+                style={{ borderBottom: '1px solid rgb(var(--bh-border))' }}
+              >
+                <td className="py-3 pr-4">
+                  <span
+                    className="w-6 h-6 rounded-full inline-flex items-center justify-center text-[10px] font-black"
+                    style={{
+                      background: i < 3 ? 'rgba(255,102,0,0.15)' : 'rgb(var(--bh-surface2))',
+                      color: i < 3 ? '#ff6600' : 'rgb(var(--bh-muted))',
+                    }}
+                  >
+                    {i + 1}
+                  </span>
+                </td>
+                <td className="py-3 pr-4">
+                  <p
+                    className="text-xs font-semibold text-bh-text truncate"
+                    style={{ maxWidth: 200 }}
+                  >
+                    {c.nome}
+                  </p>
+                </td>
+                <td className="py-3 pr-4">
+                  <div className="flex items-center gap-1">
+                    <MapPin size={10} color="rgb(var(--bh-subtle))" />
+                    <span className="text-[11px]" style={{ color: 'rgb(var(--bh-muted))' }}>
+                      {c.cidade}, {c.estado}
+                    </span>
+                  </div>
+                </td>
+                <td className="py-3 pr-4">
+                  <span className="text-xs tabular-nums font-medium" style={{ color: 'rgb(var(--bh-muted))' }}>
+                    {fmtBRL(c.venda)}
+                  </span>
+                </td>
+                <td className="py-3 pr-4">
+                  <div className="flex items-center gap-2" style={{ minWidth: 120 }}>
+                    <div
+                      className="flex-1 h-1.5 rounded-full overflow-hidden"
+                      style={{ background: 'rgb(var(--bh-surface2))' }}
+                    >
+                      <div
+                        className="h-full rounded-full transition-all duration-700"
+                        style={{ width: `${(c.margem / maxMargem) * 100}%`, background: 'linear-gradient(90deg, #22c9a0, #0f9478)' }}
+                      />
+                    </div>
+                    <span className="text-xs font-bold tabular-nums flex-shrink-0" style={{ color: '#22c9a0' }}>
+                      {fmtBRL(c.margem)}
+                    </span>
+                  </div>
+                </td>
+                <td className="py-3">
+                  <span
+                    className="text-[11px] font-bold px-2.5 py-0.5 rounded-full tabular-nums"
+                    style={{ background: 'rgba(34,201,160,0.1)', color: '#22c9a0' }}
+                  >
+                    {c.margem_pct}%
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function InteligeniciaComercial() {
-  const [mes, setMes]         = useState(MESES[0].value)
-  const [loading, setLoading] = useState(false)
-  const [setores, setSetores]           = useState<Setores>(SETORES_BASE)
-  const [matrixData, setMatrixData]     = useState<MatrixData>(MATRIX_BASE)
-  const [migracoes, setMigracoes]       = useState<Migracoes>(MIGRACOES_BASE)
+  const [mes, setMes]               = useState(MESES[0].value)
+  const [loading, setLoading]       = useState(false)
+  const [setores, setSetores]       = useState<Setores>(SETORES_BASE)
+  const [matrixData, setMatrixData] = useState<MatrixData>(MATRIX_BASE)
+  const [migracoes, setMigracoes]   = useState<Migracoes>(MIGRACOES_BASE)
   const [credenciados, setCredenciados] = useState<CredenciadoPerf[]>(CREDENCIADOS_PERF_BASE)
 
   const handleAtualizar = useCallback(() => {
@@ -815,11 +1097,16 @@ export function InteligeniciaComercial() {
       {/* Page header */}
       <div className="flex items-end justify-between gap-4 mb-6">
         <div className="flex flex-col gap-1">
-          <p className="text-[10px] font-semibold uppercase tracking-widest"
-            style={{ color: 'rgb(var(--bh-subtle))' }}>
+          <p
+            className="text-[10px] font-semibold uppercase tracking-widest"
+            style={{ color: 'rgb(var(--bh-subtle))' }}
+          >
             Análise Estratégica
           </p>
           <h1 className="text-bh-text text-xl font-bold">Inteligência Comercial</h1>
+          <p className="text-[12px]" style={{ color: 'rgb(var(--bh-muted))' }}>
+            Identifique oportunidades de margem e migração fiscal por setor e credenciado
+          </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <div className="relative flex items-center">
@@ -829,7 +1116,7 @@ export function InteligeniciaComercial() {
               onChange={e => setMes(e.target.value)}
               className="appearance-none pl-8 pr-7 py-1.5 rounded-lg text-sm font-medium cursor-pointer focus:outline-none transition-colors"
               style={{
-                background: 'rgb(var(--bh-surface2))',
+                background: 'rgb(var(--bh-surface))',
                 border: '1px solid rgb(var(--bh-border))',
                 color: 'rgb(var(--bh-text))',
               }}
@@ -853,13 +1140,30 @@ export function InteligeniciaComercial() {
         </div>
       </div>
 
-      {/* Main content */}
-      <div className={`flex flex-col gap-6 transition-all duration-300 ${loading ? 'opacity-40 blur-[1px] pointer-events-none' : 'opacity-100 blur-0'}`}>
-        <QuemMaisVende setores={setores} />
-        <div className="flex gap-6 items-start">
-          <div className="flex-[3] min-w-0"><CorrelacaoSetores matrixData={matrixData} setores={setores} /></div>
-          <div className="flex-[2] min-w-0"><TopOportunidades migracoes={migracoes} setores={setores} /></div>
+      {/* Content */}
+      <div
+        className={`flex flex-col gap-5 transition-all duration-300 ${
+          loading ? 'opacity-40 blur-[1px] pointer-events-none' : 'opacity-100 blur-0'
+        }`}
+      >
+        {/* KPI strip */}
+        <KPIStrip setores={setores} />
+
+        {/* Setores + Oportunidades */}
+        <div className="flex gap-5 items-start">
+          <div className="flex-[3] min-w-0">
+            <QuemMaisVende setores={setores} />
+          </div>
+          <div className="flex-[2] min-w-0">
+            <TopOportunidades migracoes={migracoes} setores={setores} />
+          </div>
         </div>
+
+        {/* Correlação (full width for heatmap readability) */}
+        <CorrelacaoSetores matrixData={matrixData} setores={setores} />
+
+        {/* Credenciados */}
+        <TopCredenciados credenciados={credenciados} />
       </div>
     </AppLayout>
   )
