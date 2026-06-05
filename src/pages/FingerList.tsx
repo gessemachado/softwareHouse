@@ -79,9 +79,6 @@ function FingerTable({
                   <div className="font-bold text-bh-text uppercase text-xs tracking-wide leading-tight">
                     {finger.nome_completo}
                   </div>
-                  <div className="text-[11px] mt-1" style={{ color: 'rgb(var(--bh-muted))' }}>
-                    {finger.software_house_nome}
-                  </div>
                 </td>
                 <td className="py-5 px-5 tabular-nums text-xs" style={{ color: 'rgb(var(--bh-muted))' }}>
                   {finger.cpf}
@@ -218,8 +215,7 @@ export function FingerList() {
         </div>
         <button
           onClick={handleNovo}
-          disabled={!shParaNovo && !editingFinger}
-          className="btn-primary flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="btn-primary flex-shrink-0"
         >
           <Plus size={15} /> Novo Finger
         </button>
