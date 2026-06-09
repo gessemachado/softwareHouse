@@ -174,24 +174,35 @@ export function Header() {
     : (CREDENCIADOS_MOCK.find(c => c.uuid === credenciadoUuid)?.nome ?? 'Selecione lojas/grupos')
 
   return (
-    <header className="bg-bh-nav border-b border-bh-border">
-      <div className="flex items-center justify-between px-6 h-12">
+    <header className="bg-bh-nav border-b border-bh-border/80 sticky top-0 z-40">
+      <div className="flex items-center justify-between px-6 h-13" style={{ height: '52px' }}>
         {/* Logo + Nav */}
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-bh-primary rounded flex items-center justify-center font-bold text-sm" style={{ color: '#fff' }}>
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm shadow-lg"
+              style={{
+                background: 'linear-gradient(135deg, #ff6600 0%, #e55a00 100%)',
+                color: '#fff',
+                boxShadow: '0 0 14px rgba(255,102,0,0.4)',
+              }}
+            >
               B
             </div>
-            <span className="text-bh-primary font-semibold text-sm">BuyHelp</span>
+            <div className="flex flex-col leading-none">
+              <span className="text-bh-text font-bold text-sm tracking-tight">BuyHelp</span>
+              <span className="text-bh-muted text-[9px] font-medium tracking-widest uppercase">Desconto</span>
+            </div>
           </div>
-          <nav className="flex items-center gap-1">
-            <a href="#" className="text-bh-primary text-sm font-medium px-3 py-1.5 rounded bg-bh-primary/10 flex items-center gap-1.5">
+          <div className="w-px h-5 bg-bh-border/60" />
+          <nav className="flex items-center gap-0.5">
+            <a href="#" className="text-bh-primary text-sm font-semibold px-3 py-1.5 rounded-md bg-bh-primary/10 flex items-center gap-1.5 border border-bh-primary/20">
               Desconto
             </a>
-            <a href="#" className="text-bh-muted text-sm px-3 py-1.5 rounded hover:text-bh-text transition-colors flex items-center gap-1.5">
+            <a href="#" className="text-bh-muted text-sm px-3 py-1.5 rounded-md hover:text-bh-text hover:bg-bh-surface/60 transition-colors flex items-center gap-1.5">
               <LayoutGrid size={13} /> Produtos
             </a>
-            <a href="#" className="text-bh-muted text-sm px-3 py-1.5 rounded hover:text-bh-text transition-colors flex items-center gap-1.5 border border-bh-border">
+            <a href="#" className="text-bh-muted text-sm px-3 py-1.5 rounded-md hover:text-bh-text transition-colors flex items-center gap-1.5 border border-bh-border/60 hover:border-bh-primary/30">
               Bhia · New <Sparkles size={12} className="text-bh-primary" />
             </a>
           </nav>

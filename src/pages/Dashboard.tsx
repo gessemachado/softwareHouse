@@ -171,19 +171,19 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
     { key: 'CMV',          cor: PILARES_DEF[3].cor },
   ]
 
+  const CARD = {
+    background: 'rgba(255,255,255,0.025)',
+    border:     '1px solid rgba(255,255,255,0.07)',
+    borderRadius: 12,
+  }
+
   return (
-    <div className="grid grid-cols-5 gap-5 mb-5">
+    <div className="mb-5">
+    <div className="grid grid-cols-5 gap-4">
 
       {/* Gauge + faixas */}
-      <div className="col-span-2 card-bh p-6 flex flex-col">
-        <div className="mb-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
-            Índice de Saúde Comercial
-          </p>
-          <h2 className="text-bh-text text-lg font-bold">BuyHelp Index</h2>
-        </div>
-
-        <div className="flex-1 flex items-center justify-center py-2">
+      <div className="col-span-2 p-6 flex flex-col" style={CARD}>
+        <div className="flex-1 flex items-center justify-center">
           <ScoreGaugeSVG
             score={data.index.score}
             classificacao={data.index.classificacao}
@@ -191,22 +191,27 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
           />
         </div>
 
-
-        <div className="mt-4 space-y-2">
+        <div className="mt-5 space-y-1.5">
           <p className="text-[9px] font-semibold uppercase tracking-widest mb-2" style={{color:'rgb(var(--bh-subtle))'}}>
             Faixas de Classificação
           </p>
-          {FAIXAS.map(f => (
-            <div key={f.label}
-              className="flex items-center justify-between px-2.5 py-1.5 rounded-lg"
-              style={{background:`${f.cor}12`, border:`1px solid ${f.cor}25`}}>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{background:f.cor}}/>
-                <span className="text-xs font-semibold" style={{color:f.cor}}>{f.label}</span>
+          {FAIXAS.map(f => {
+            const isActive = f.label === cls.label
+            return (
+              <div key={f.label}
+                className="flex items-center justify-between px-3 py-2 rounded-lg transition-all"
+                style={{
+                  background: isActive ? `${f.cor}18` : 'rgba(255,255,255,0.02)',
+                  border: isActive ? `1px solid ${f.cor}30` : '1px solid transparent',
+                }}>
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{background: isActive ? f.cor : 'rgba(255,255,255,0.15)'}}/>
+                  <span className="text-xs font-medium" style={{color: isActive ? f.cor : 'rgb(var(--bh-subtle))'}}>{f.label}</span>
+                </div>
+                <span className="text-[10px] font-mono" style={{color: isActive ? f.cor + 'cc' : 'rgb(var(--bh-subtle))'}}>{f.range}</span>
               </div>
-              <span className="text-xs font-mono" style={{color:'rgb(var(--bh-subtle))'}}>{f.range}</span>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
@@ -214,11 +219,11 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
       <div className="col-span-3 flex flex-col gap-4">
 
         {/* Evolução mensal */}
-        <div className="card-bh p-5 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
-            Evolução Mensal do BuyHelp Index
+        <div className="p-5 flex-1" style={CARD}>
+          <p className="text-[9px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
+            Evolução Mensal
           </p>
-          <p className="text-xs font-medium text-bh-text mb-3">Score ao longo do tempo</p>
+          <p className="text-sm font-bold text-bh-text mb-4">Score ao longo do tempo</p>
           <div style={{height:130}}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={evoData} margin={{top:4,right:8,left:-16,bottom:0}}>
@@ -238,8 +243,8 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
         </div>
 
         {/* Evolução por pilar */}
-        <div className="card-bh p-5 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
+        <div className="p-5 flex-1" style={CARD}>
+          <p className="text-[9px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
             Evolução por Pilar
           </p>
           <div className="flex flex-wrap gap-3 mb-3 mt-1">
@@ -268,6 +273,7 @@ function OverviewSection({ data }: { data: BuyHelpIndexResponse }) {
         </div>
 
       </div>
+    </div>
     </div>
   )
 }
@@ -502,11 +508,13 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
         <DescontoAbsorcaoModal onClose={() => setShowDesconto(false)} />
       )}
 
-      <div className="mb-3">
-        <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
-          Composição do Índice
-        </p>
-        <h2 className="text-bh-text text-base font-bold">Pilares de Desempenho</h2>
+      <div className="flex items-center justify-between mb-4 pb-3"
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div>
+          <p className="text-[9px] font-semibold uppercase tracking-widest mb-0.5" style={{ color: 'rgb(var(--bh-subtle))' }}>Composição do Índice</p>
+          <h2 className="text-bh-text text-base font-bold">Pilares de Desempenho</h2>
+        </div>
+        <p className="text-[10px]" style={{ color: 'rgb(var(--bh-subtle))' }}>4 pilares com pesos distintos</p>
       </div>
 
       {/* Variation diagnostic banner */}
@@ -585,38 +593,51 @@ function PilaresSection({ data }: { data: BuyHelpIndexResponse }) {
 
           return (
             <div key={pilar.key}
-              className="card-bh p-5 flex flex-col gap-3"
-              style={isMainDrag ? {borderLeft:'3px solid #E24B4A'} : {}}>
+              className="p-5 flex flex-col gap-4 rounded-xl relative overflow-hidden group"
+              style={{
+                background: 'rgba(255,255,255,0.025)',
+                border: isMainDrag ? `1px solid rgba(226,75,74,0.3)` : '1px solid rgba(255,255,255,0.07)',
+              }}>
+
+              {/* Subtle top bar colored by pilar */}
+              <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-xl"
+                style={{ background: pilar.cor }} />
 
               {/* Topo: label + ícone */}
               <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium leading-snug" style={{color:'#9ca3af'}}>
-                    {pilar.label}
+                <div>
+                  <p className="text-[9px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
+                    Pilar {PILARES_DEF.findIndex(p => p.key === pilar.key) + 1} · {pilar.peso}%
                   </p>
+                  <p className="text-sm font-semibold" style={{color:'rgb(var(--bh-text))'}}>{pilar.label}</p>
                 </div>
-                <div className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
-                  style={{background:`${pilar.cor}22`}}>
-                  <Icon size={17} color={pilar.cor}/>
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{background:`rgba(255,255,255,0.05)`}}>
+                  <Icon size={15} color={pilar.cor}/>
                 </div>
               </div>
 
-              {/* Score */}
+              {/* Score — número grande */}
               <div>
-                <span className="text-4xl font-black tabular-nums leading-none" style={{color:'#f9fafb'}}>
-                  {score}
-                </span>
-                <span className="text-sm font-normal ml-1.5" style={{color:'rgb(var(--bh-subtle))'}}>/100</span>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-5xl font-black tabular-nums leading-none" style={{color: pilarClassify(score).cor}}>
+                    {score}
+                  </span>
+                  <span className="text-sm" style={{color:'rgba(255,255,255,0.2)'}}>/100</span>
+                </div>
+                <p className="text-[10px] mt-1 font-medium" style={{color: pilarClassify(score).cor}}>
+                  {pilarClassify(score).label}
+                </p>
               </div>
 
-              {/* Progress bar */}
-              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{background:'rgb(var(--bh-surface2))'}}>
+              {/* Progress bar — fino e elegante */}
+              <div className="w-full h-1 rounded-full overflow-hidden" style={{background:'rgba(255,255,255,0.07)'}}>
                 <div className="h-full rounded-full transition-all duration-700"
-                  style={{width:`${score}%`, background:pilar.cor}}/>
+                  style={{ width:`${score}%`, background: pilar.cor }}/>
               </div>
 
-              {/* Contribution badge + action hint */}
-              <p className="text-[10px] font-semibold" style={{color:badge.cor}}>{badge.text}</p>
+              {/* Contribution */}
+              <p className="text-[10px] font-medium" style={{color: badge.cor + 'cc'}}>{badge.text}</p>
 
               {/* Botão histórico */}
               <div className="flex justify-end">
@@ -1093,6 +1114,62 @@ function ComposicaoView({ onBack }: { onBack: () => void }) {
   )
 }
 
+// ─── KPI Strip ────────────────────────────────────────────────────────────────
+
+function KpiStrip({ data }: { data: BuyHelpIndexResponse }) {
+  const score    = data.index.score
+  const delta    = data.index.delta_periodo_anterior
+  const deltaPos = delta >= 0
+
+  const cls = FAIXAS.find(f => {
+    if (f.label === 'Excelente') return score >= 80
+    if (f.label === 'Saudável')  return score >= 60 && score < 80
+    if (f.label === 'Atenção')   return score >= 40 && score < 60
+    return score < 40
+  })!
+
+  const bestPilar  = PILARES_DEF.reduce((b, p) => (data.pilares[p.key].score ?? 0) > (data.pilares[b.key].score ?? 0) ? p : b, PILARES_DEF[0])
+  const worstPilar = PILARES_DEF.reduce((w, p) => (data.pilares[p.key].score ?? 0) < (data.pilares[w.key].score ?? 0) ? p : w, PILARES_DEF[0])
+  const SHORT: Record<string, string> = { conversao: 'Conversão', desconto: 'Desconto', recorrencia: 'Recorrência', cmv: 'CMV' }
+
+  const kpis = [
+    { label: 'Score',             value: `${score}`,                              suffix: '/100', note: cls.label,                                        color: cls.cor },
+    { label: 'Variação',          value: `${deltaPos ? '+' : ''}${delta.toFixed(1)}`, suffix: ' pts', note: deltaPos ? 'vs anterior ↑' : 'vs anterior ↓', color: deltaPos ? '#4ade80' : '#f87171' },
+    { label: 'Melhor Pilar',      value: `${data.pilares[bestPilar.key].score ?? 0}`,  suffix: '/100', note: SHORT[bestPilar.key],                          color: bestPilar.cor },
+    { label: 'Pilar em Atenção',  value: `${data.pilares[worstPilar.key].score ?? 0}`, suffix: '/100', note: SHORT[worstPilar.key],                         color: (data.pilares[worstPilar.key].score ?? 0) < 50 ? '#f87171' : worstPilar.cor },
+  ]
+
+  return (
+    <div
+      className="rounded-xl mb-5 grid grid-cols-2 lg:grid-cols-4 divide-x overflow-hidden"
+      style={{
+        background: 'rgba(255,255,255,0.025)',
+        border: '1px solid rgba(255,255,255,0.07)',
+        divideColor: 'rgba(255,255,255,0.07)',
+      }}
+    >
+      {kpis.map((k, i) => (
+        <div
+          key={i}
+          className="px-5 py-4"
+          style={{ borderRight: i < 3 ? '1px solid rgba(255,255,255,0.06)' : undefined }}
+        >
+          <p className="text-[9px] font-semibold uppercase tracking-widest mb-2.5" style={{ color: 'rgb(var(--bh-subtle))' }}>
+            {k.label}
+          </p>
+          <div className="flex items-baseline gap-0.5 mb-1">
+            <span className="text-3xl font-black leading-none tabular-nums" style={{ color: k.color }}>
+              {k.value}
+            </span>
+            <span className="text-xs font-medium ml-0.5" style={{ color: 'rgb(var(--bh-subtle))' }}>{k.suffix}</span>
+          </div>
+          <p className="text-[10px]" style={{ color: 'rgb(var(--bh-muted))' }}>{k.note}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function Dashboard() {
@@ -1133,44 +1210,53 @@ export function Dashboard() {
     <AppLayout title="" subtitle="" breadcrumb="">
       <TabNav />
 
-      {/* ── Filter bar ─────────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-        <div className="flex items-center gap-3">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{color:'rgb(var(--bh-subtle))'}}>
-              Saúde Comercial
-            </p>
-            <h1 className="text-bh-text text-xl font-bold">BuyHelp Index</h1>
+      {/* ── Page header (flat, sem card) ────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4"
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'rgb(var(--bh-subtle))' }}>
+            Saúde Comercial
+          </p>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-black tracking-tight text-bh-text">BuyHelp Index</h1>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setView('composicao')}
+                className="flex items-center gap-1 px-2 py-1 rounded text-[11px] transition-colors hover:text-orange-400"
+                style={{ color: 'rgb(var(--bh-subtle))' }}
+              >
+                <BookOpen size={11}/> Metodologia
+              </button>
+              <span style={{ color: 'rgba(255,255,255,0.1)' }}>·</span>
+              <button
+                onClick={() => setView('config')}
+                className="flex items-center gap-1 px-2 py-1 rounded text-[11px] transition-colors hover:text-orange-400"
+                style={{ color: 'rgb(var(--bh-subtle))' }}
+              >
+                <Settings2 size={11}/> Configuração
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => setView('composicao')}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-bh-border text-xs font-medium transition-colors hover:border-orange-500/40 hover:text-orange-400 mt-1"
-            style={{color:'rgb(var(--bh-subtle))'}}
-          >
-            <BookOpen size={12}/> Metodologia
-          </button>
-          <button
-            onClick={() => setView('config')}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-bh-border text-xs font-medium transition-colors hover:border-orange-500/40 hover:text-orange-400 mt-1"
-            style={{color:'rgb(var(--bh-subtle))'}}
-          >
-            <Settings2 size={12}/> Configuração
-          </button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
           <MonthPicker
             dataInicio={dataInicio}
             onChange={(inicio, fim) => { setDataInicio(inicio); setDataFim(fim) }}
           />
-
           <button
             onClick={modo === 'grupo' ? () => loadGrupo(grupoUuid, dataInicio, dataFim) : refetch}
             disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            style={{background:'#ff6600',color:'#fff',opacity:isLoading?0.6:1,cursor:isLoading?'not-allowed':'pointer'}}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            style={{
+              background: 'rgba(255,102,0,0.12)',
+              color: '#ff6600',
+              border: '1px solid rgba(255,102,0,0.25)',
+              opacity: isLoading ? 0.6 : 1,
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+            }}
           >
-            <RefreshCw size={14} className={isLoading?'animate-spin':''}/>
+            <RefreshCw size={13} className={isLoading ? 'animate-spin' : ''}/>
             Atualizar
           </button>
         </div>
@@ -1188,6 +1274,7 @@ export function Dashboard() {
           : loading || !data
             ? <SkeletonLayout />
             : <>
+                <KpiStrip data={data} />
                 <OverviewSection data={data} />
                 <PilaresSection data={data} />
               </>

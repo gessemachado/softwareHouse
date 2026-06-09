@@ -73,8 +73,32 @@ export function CardsCarousel() {
 
   return (
     <section className="mb-5">
-      {/* Carrossel — desliza páginas de PAGE_SIZE cards */}
-      {/* Usa margin-left em vez de transform para não quebrar position:fixed dos modais */}
+      {/* Section header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-1 h-4 rounded-full bg-orange-500" />
+          <span className="text-bh-text text-xs font-bold tracking-widest uppercase">Análise de Desempenho</span>
+          <span className="text-bh-subtle text-[10px] font-medium">{slides.length} indicador{slides.length > 1 ? 'es' : ''}</span>
+        </div>
+        {pages.length > 1 && (
+          <div className="flex items-center gap-1.5">
+            {pages.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i)}
+                className="transition-all rounded-full"
+                style={{
+                  width: i === page ? 20 : 6,
+                  height: 6,
+                  background: i === page ? '#ff6600' : 'rgb(var(--bh-border))',
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Carrossel — usa margin-left para não quebrar position:fixed dos modais */}
       <div
         className="overflow-hidden"
         onMouseEnter={() => setPaused(true)}

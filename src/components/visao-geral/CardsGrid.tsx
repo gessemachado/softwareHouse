@@ -24,9 +24,10 @@ export function CardsGrid() {
 
   return (
     <div className="mb-5">
-      <span className="block text-bh-subtle text-[10px] font-semibold tracking-widest uppercase mb-3">
-        Indicadores Complementares
-      </span>
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-1 h-4 rounded-full" style={{ background: '#008080' }} />
+        <span className="text-bh-text text-xs font-bold tracking-widest uppercase">Indicadores Complementares</span>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5" style={{ gridAutoRows: '1fr' }}>
         {visibleCards.map(id => (
           <div key={id} className="h-full">{CARD_MAP[id]}</div>
