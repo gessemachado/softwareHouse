@@ -1145,7 +1145,6 @@ function KpiStrip({ data }: { data: BuyHelpIndexResponse }) {
       style={{
         background: 'rgba(255,255,255,0.025)',
         border: '1px solid rgba(255,255,255,0.07)',
-        divideColor: 'rgba(255,255,255,0.07)',
       }}
     >
       {kpis.map((k, i) => (
