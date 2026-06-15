@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BarChart2 } from 'lucide-react'
+import { BarChart2, Receipt } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Cell, ResponsiveContainer, LabelList } from 'recharts'
 import { TributacaoHistoricoModal } from '../TributacaoHistoricoModal'
 import { useDashboardFilter } from '../../../contexts/DashboardFilterContext'
@@ -21,23 +21,23 @@ export function CardTributacao() {
   const tribPct   = tribTotal > 0 ? (trib.tributado / tribTotal) * 100 : 0
 
   const barData = [
-    { name: 'Tributado', value: trib.tributado, pct: tribPct,             fill: '#f97316' },
-    { name: 'Isento/ST',    value: trib.isento,    pct: 100 - tribPct,       fill: '#22c55e' },
+    { name: 'Tributado', value: trib.tributado, pct: tribPct,         fill: '#f97316' },
+    { name: 'Isento/ST', value: trib.isento,    pct: 100 - tribPct,   fill: '#22c55e' },
   ]
 
   return (
     <div className="rounded-xl border border-bh-border/50 bg-bh-bg overflow-hidden h-full flex flex-col">
       {showTribHistorico && <TributacaoHistoricoModal onClose={() => setShowTribHistorico(false)} />}
-      <div className="border-b border-bh-border px-6 py-5"
->
+
+      <div className="border-b border-bh-border px-5 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
-              <span className="text-orange-400 text-base font-bold">T</span>
+            <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
+              <Receipt size={16} className="text-orange-400" />
             </div>
             <div>
-              <h3 className="text-bh-text text-lg">Tributação de Produtos</h3>
-              <p className="text-bh-muted text-xs">Volume de vendas por regime tributário</p>
+              <h3 className="text-bh-text text-sm font-semibold leading-tight">Tributação de Produtos</h3>
+              <p className="text-bh-muted text-[11px] mt-0.5">Volume de vendas por regime tributário</p>
             </div>
           </div>
           <button onClick={() => setShowTribHistorico(true)}
@@ -46,9 +46,10 @@ export function CardTributacao() {
           </button>
         </div>
       </div>
-      <div className="p-5 flex flex-col sm:flex-row gap-4 flex-1">
+
+      <div className="p-4 flex flex-col sm:flex-row gap-4 flex-1">
         {/* Bar chart */}
-        <div className="w-full sm:w-52 h-52 sm:shrink-0">
+        <div className="w-full sm:w-44 h-44 sm:shrink-0 self-center">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={barData} margin={{ top: 24, right: 8, bottom: 8, left: 8 }}
               barCategoryGap="30%">
@@ -75,35 +76,40 @@ export function CardTributacao() {
           </ResponsiveContainer>
         </div>
 
-        <div className="flex-1 flex flex-col gap-2">
-          {vis('c_tributacao.tributado') && <div className="rounded-lg border border-orange-500/20 bg-orange-500/5 px-3 py-2.5">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <span className="w-2 h-2 rounded-full bg-orange-500" />
-              <span className="text-orange-500 text-xs font-semibold tracking-widest uppercase">Tributado</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-bh-text text-sm font-bold">{fmtK(trib.tributado)}</span>
-              <div className="flex items-center gap-1.5">
-                <TrendBadge cur={trib.tributado} prev={tribPrev.tributado} />
-                <span className="text-bh-subtle text-xs">vs {fmtK(tribPrev.tributado)}</span>
+        {/* Subitens */}
+        <div className="flex-1 flex flex-col gap-2 justify-center">
+          {vis('c_tributacao.tributado') && (
+            <div className="rounded-lg border border-orange-500/25 bg-orange-500/8 px-3 py-2.5">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
+                <span className="text-orange-400 text-[10px] font-semibold tracking-widest uppercase flex-1">Tributado</span>
+                <span className="text-bh-subtle text-[10px]">{tribPct.toFixed(1)}% do total</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-bh-text text-sm font-bold">{fmtK(trib.tributado)}</span>
+                <div className="flex items-center gap-1.5">
+                  <TrendBadge cur={trib.tributado} prev={tribPrev.tributado} />
+                  <span className="text-bh-subtle text-[10px]">vs {fmtK(tribPrev.tributado)}</span>
+                </div>
               </div>
             </div>
-            <p className="text-bh-subtle text-[10px] mt-1">{tribPct.toFixed(1)}% do total</p>
-          </div>}
-          {vis('c_tributacao.isento') && <div className="rounded-lg border border-green-500/20 bg-green-500/5 px-3 py-2.5">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <span className="w-2 h-2 rounded-full bg-green-500" />
-              <span className="text-green-400 text-xs font-semibold tracking-widest uppercase">Isento/ST</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-bh-text text-sm font-bold">{fmtK(trib.isento)}</span>
-              <div className="flex items-center gap-1.5">
-                <TrendBadge cur={trib.isento} prev={tribPrev.isento} />
-                <span className="text-bh-subtle text-xs">vs {fmtK(tribPrev.isento)}</span>
+          )}
+          {vis('c_tributacao.isento') && (
+            <div className="rounded-lg border border-green-500/25 bg-green-500/8 px-3 py-2.5">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+                <span className="text-green-400 text-[10px] font-semibold tracking-widest uppercase flex-1">Isento/ST</span>
+                <span className="text-bh-subtle text-[10px]">{(100 - tribPct).toFixed(1)}% do total</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-bh-text text-sm font-bold">{fmtK(trib.isento)}</span>
+                <div className="flex items-center gap-1.5">
+                  <TrendBadge cur={trib.isento} prev={tribPrev.isento} />
+                  <span className="text-bh-subtle text-[10px]">vs {fmtK(tribPrev.isento)}</span>
+                </div>
               </div>
             </div>
-            <p className="text-bh-subtle text-[10px] mt-1">{(100 - tribPct).toFixed(1)}% do total</p>
-          </div>}
+          )}
         </div>
       </div>
     </div>

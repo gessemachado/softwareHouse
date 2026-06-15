@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Fingerprint, Pencil, Trash2, FileText, X } from 'lucide-react'
 import { AppLayout } from '../components/layout/AppLayout'
 import { TabNav } from '../components/ui/TabNav'
@@ -145,6 +146,7 @@ function FingerTable({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function FingerList() {
+  const navigate = useNavigate()
   const {
     data, total, search, setSearch,
     applySearch, clearSearch,
@@ -265,7 +267,7 @@ export function FingerList() {
             <button onClick={clearSearch} className="btn-ghost">
               <X size={14} /> Limpar
             </button>
-            <button className="btn-ghost">
+            <button onClick={() => navigate('/finger/relatorio')} className="btn-ghost">
               <FileText size={14} /> Relatórios
             </button>
           </div>

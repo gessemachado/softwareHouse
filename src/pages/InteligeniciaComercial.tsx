@@ -283,7 +283,7 @@ function SetorModal({ setor, onClose }: { setor: Setores[0]; onClose: () => void
     >
       <div
         className="grid grid-cols-4 gap-6 p-5 rounded-xl"
-        style={{ background: 'rgb(var(--bh-surface2))', border: '1px solid rgb(var(--bh-border))' }}
+        style={{ background: '#000000', border: '1px solid rgb(var(--bh-border))' }}
       >
         {[
           { label: 'FATURAMENTO',      value: fmtBRL(setor.venda),             cor: '#ffffff' },
@@ -309,7 +309,7 @@ function SetorModal({ setor, onClose }: { setor: Setores[0]; onClose: () => void
         ].map(col => (
           <div key={col.label} className="flex flex-col rounded-xl overflow-hidden min-h-0" style={{ border: '1px solid rgb(var(--bh-border))' }}>
             <div className="flex-shrink-0 flex items-center gap-2 px-4 py-3"
-              style={{ borderBottom: '1px solid rgb(var(--bh-border))', background: 'rgb(var(--bh-surface2))' }}>
+              style={{ borderBottom: '1px solid rgb(var(--bh-border))', background: '#000000' }}>
               {col.icon}
               <span className="text-xs font-bold" style={{ color: col.cor }}>{col.label}</span>
             </div>
@@ -386,7 +386,7 @@ function CorrelacaoParRow({ par, i, color }: { par: ParItem; i: number; color: s
         </div>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0" style={{ width: 72 }}>
-        <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
+        <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: '#000000' }}>
           <div className="h-full rounded-full transition-all duration-500"
             style={{ width: `${par.pct}%`, background: color }} />
         </div>
@@ -446,7 +446,7 @@ function CorrelacaoModal({ cell, setores, onClose }: { cell: CorrelacaoCell; set
           <div key={col.label} className="flex flex-col rounded-xl overflow-hidden min-h-0"
             style={{ border: '1px solid rgb(var(--bh-border))' }}>
             <div className="flex-shrink-0 flex items-center gap-2 px-4 py-3"
-              style={{ borderBottom: '1px solid rgb(var(--bh-border))', background: 'rgb(var(--bh-surface2))' }}>
+              style={{ borderBottom: '1px solid rgb(var(--bh-border))', background: '#000000' }}>
               {col.icon}
               <span className="text-xs font-bold" style={{ color: col.color }}>{col.label}</span>
             </div>
@@ -510,30 +510,22 @@ function KPIStrip({ setores }: { setores: Setores }) {
       {kpis.map(k => (
         <div
           key={k.label}
-          className="rounded-xl p-4 flex items-start gap-3 transition-all duration-200"
-          style={{
-            background: 'rgb(var(--bh-surface))',
-            border: '1px solid rgb(var(--bh-border))',
-          }}
+          className="rounded-xl p-5 flex flex-col gap-3"
+          style={{ background: '#000000', border: '1px solid rgb(var(--bh-border))' }}
         >
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: k.bg }}
-          >
-            <k.Icon size={17} color={k.accent} />
+          {/* Título + ícone */}
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm font-bold text-bh-text leading-tight">{k.label}</span>
+            <k.Icon size={15} color="rgb(var(--bh-subtle))" className="flex-shrink-0" />
           </div>
-          <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5"
-              style={{ color: 'rgb(var(--bh-subtle))' }}>
-              {k.label}
-            </p>
-            <p className="text-lg font-black tabular-nums leading-tight text-bh-text truncate">
-              {k.value}
-            </p>
-            <p className="text-[10px] mt-0.5" style={{ color: 'rgb(var(--bh-muted))' }}>
-              {k.sub}
-            </p>
-          </div>
+          {/* Valor principal */}
+          <p className="text-3xl font-black tabular-nums text-bh-text leading-none">
+            {k.value}
+          </p>
+          {/* Subtexto */}
+          <p className="text-xs" style={{ color: 'rgb(var(--bh-muted))' }}>
+            {k.sub}
+          </p>
         </div>
       ))}
     </div>
@@ -555,7 +547,7 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
   return (
     <section
       className="flex flex-col gap-5 rounded-xl p-5"
-      style={{ background: 'rgb(var(--bh-surface))', border: '1px solid rgb(var(--bh-border))' }}
+      style={{ background: '#000000', border: '1px solid rgb(var(--bh-border))' }}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
@@ -649,7 +641,7 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
                   <span className="text-[10px] w-10 flex-shrink-0 font-medium" style={{ color: 'rgb(var(--bh-subtle))' }}>
                     Venda
                   </span>
-                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
+                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: '#000000' }}>
                     <div
                       className="h-full rounded-full transition-all duration-700"
                       style={{ width: `${barVenda}%`, background: 'rgb(var(--bh-muted))' }}
@@ -664,7 +656,7 @@ function QuemMaisVende({ setores }: { setores: Setores }) {
                   <span className="text-[10px] w-10 flex-shrink-0 font-medium" style={{ color: 'rgb(var(--bh-subtle))' }}>
                     Margem
                   </span>
-                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface2))' }}>
+                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: '#000000' }}>
                     <div
                       className="h-full rounded-full transition-all duration-700"
                       style={{ width: `${barMargem}%`, background: 'linear-gradient(90deg, #22c9a0, #0f9478)' }}
@@ -722,7 +714,7 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
   return (
     <section
       className="flex flex-col gap-5 rounded-xl p-5"
-      style={{ background: 'rgb(var(--bh-surface))', border: '1px solid rgb(var(--bh-border))' }}
+      style={{ background: '#000000', border: '1px solid rgb(var(--bh-border))' }}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
@@ -782,7 +774,7 @@ function CorrelacaoSetores({ matrixData, setores }: { matrixData: MatrixData; se
                       <td key={ci} className="p-1">
                         <div
                           className="w-full h-10 rounded-lg flex items-center justify-center"
-                          style={{ background: 'rgb(var(--bh-surface2))' }}
+                          style={{ background: '#000000' }}
                         >
                           <span className="text-xs" style={{ color: 'rgba(255,255,255,0.1)' }}>—</span>
                         </div>
@@ -865,7 +857,7 @@ function TopOportunidades({ migracoes, setores }: { migracoes: Migracoes; setore
   return (
     <section
       className="flex flex-col gap-4 rounded-xl p-5"
-      style={{ background: 'rgb(var(--bh-surface))', border: '1px solid rgb(var(--bh-border))' }}
+      style={{ background: '#000000', border: '1px solid rgb(var(--bh-border))' }}
     >
       <div className="flex items-start gap-3">
         <div
@@ -891,7 +883,7 @@ function TopOportunidades({ migracoes, setores }: { migracoes: Migracoes; setore
               className="rounded-xl p-3 cursor-pointer transition-all duration-150 hover:scale-[1.01] hover:shadow-md"
               onClick={() => openModal(m.de, m.para, m.afinidade)}
               style={{
-                background: 'rgb(var(--bh-surface2))',
+                background: '#000000',
                 border: '1px solid rgb(var(--bh-border))',
               }}
             >
@@ -934,7 +926,7 @@ function TopOportunidades({ migracoes, setores }: { migracoes: Migracoes; setore
                 <span className="text-[10px] flex-shrink-0" style={{ color: 'rgb(var(--bh-subtle))' }}>
                   afinidade
                 </span>
-                <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgb(var(--bh-surface))' }}>
+                <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: '#000000' }}>
                   <div
                     className="h-full rounded-full"
                     style={{ width: `${m.afinidade}%`, background: 'linear-gradient(90deg, #22c9a0, #0f9478)' }}
@@ -965,7 +957,7 @@ function TopCredenciados({ credenciados }: { credenciados: CredenciadoPerf[] }) 
   return (
     <section
       className="flex flex-col gap-4 rounded-xl p-5"
-      style={{ background: 'rgb(var(--bh-surface))', border: '1px solid rgb(var(--bh-border))' }}
+      style={{ background: '#000000', border: '1px solid rgb(var(--bh-border))' }}
     >
       <div className="flex items-start gap-3">
         <div
@@ -1040,7 +1032,7 @@ function TopCredenciados({ credenciados }: { credenciados: CredenciadoPerf[] }) 
                   <div className="flex items-center gap-2" style={{ minWidth: 120 }}>
                     <div
                       className="flex-1 h-1.5 rounded-full overflow-hidden"
-                      style={{ background: 'rgb(var(--bh-surface2))' }}
+                      style={{ background: '#000000' }}
                     >
                       <div
                         className="h-full rounded-full transition-all duration-700"
@@ -1116,7 +1108,7 @@ export function InteligeniciaComercial() {
               onChange={e => setMes(e.target.value)}
               className="appearance-none pl-8 pr-7 py-1.5 rounded-lg text-sm font-medium cursor-pointer focus:outline-none transition-colors"
               style={{
-                background: 'rgb(var(--bh-surface))',
+                background: '#000000',
                 border: '1px solid rgb(var(--bh-border))',
                 color: 'rgb(var(--bh-text))',
               }}

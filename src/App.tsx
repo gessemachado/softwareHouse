@@ -24,8 +24,9 @@ function App() {
         <Route path="/software-house/nova" element={<SoftwareHouseWizard mode="create" />} />
         <Route path="/software-house/:id/editar" element={<SoftwareHouseWizard mode="edit" />} />
         <Route path="/software-house/:id/dashboard" element={<SHDashboard />} />
-        <Route path="/software-house/relatorio" element={<RelatorioFinanceiro />} />
+        <Route path="/software-house/relatorio" element={<RelatorioFinanceiro scope="sh" />} />
         <Route path="/finger" element={<FingerList />} />
+        <Route path="/finger/relatorio" element={<RelatorioFinanceiro scope="finger" />} />
         <Route path="*" element={<Navigate to="/visao-geral" replace />} />
       </Routes>
     </BrowserRouter>

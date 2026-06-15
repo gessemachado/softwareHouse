@@ -207,23 +207,26 @@ export function DashboardHeader() {
 
   return (
     <div
-      className="rounded-xl border border-orange-500/20 mb-5 overflow-hidden relative"
+      className="rounded-xl border border-orange-500/20 mb-5 relative"
       style={{
         background: 'rgb(var(--bh-surface))',
         boxShadow: '0 0 0 1px rgba(255,102,0,0.08), 0 4px 24px rgba(0,0,0,0.4)',
       }}
     >
-      {/* Top accent line */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,102,0,0.6) 30%, rgba(255,102,0,0.3) 70%, transparent 100%)' }}
-      />
+      {/* Background effects layer, clipped to rounded corners */}
+      <div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
+        {/* Top accent line */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px"
+          style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,102,0,0.6) 30%, rgba(255,102,0,0.3) 70%, transparent 100%)' }}
+        />
 
-      {/* Ambient glow */}
-      <div
-        className="absolute top-0 left-0 w-80 h-full pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse at -10% 50%, rgba(255,102,0,0.07) 0%, transparent 65%)' }}
-      />
+        {/* Ambient glow */}
+        <div
+          className="absolute top-0 left-0 w-80 h-full"
+          style={{ background: 'radial-gradient(ellipse at -10% 50%, rgba(255,102,0,0.07) 0%, transparent 65%)' }}
+        />
+      </div>
 
       {/* Hero section */}
       <div className="relative px-5 sm:px-6 pt-5 pb-4">
