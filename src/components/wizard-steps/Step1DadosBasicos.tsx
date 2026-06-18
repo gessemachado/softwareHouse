@@ -2,8 +2,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useState } from 'react'
-import { Briefcase, CreditCard, Tag, FileText, Mail, Phone, MapPin, Hash, Home, Globe, Building2, Info, ChevronRight, X } from 'lucide-react'
-import type { DadosBasicosForm } from '../../types/sh.types'
+import {
+  Briefcase, CreditCard, Tag, FileText, Mail, Phone,
+  MapPin, Hash, Home, Globe, Building2, Info, ChevronRight,
+  X, Users, UserPlus, CreditCard as IDCard,
+} from 'lucide-react'
+import type { DadosBasicosForm, SocioRepresentante } from '../../types/sh.types'
 import { buscarEnderecoPorCEP } from '../../services/viacep'
 
 function formatCNPJ(v: string) {
@@ -25,6 +29,23 @@ function formatTelefone(v: string) {
 function formatCEP(v: string) {
   return v.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2').slice(0, 9)
 }
+
+function formatCPF(v: string) {
+  return v.replace(/\D/g, '')
+    .replace(/^(\d{3})(\d)/, '$1.$2')
+    .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1-$2')
+    .slice(0, 14)
+}
+
+const TIPOS_SOCIO = [
+  'Sócio Administrador',
+  'Sócio',
+  'CEO',
+  'Diretor',
+  'Representante Legal',
+  'Procurador',
+]
 
 const schema = z.object({
   cnpj: z.string().min(18, 'CNPJ inválido').max(18),
@@ -54,8 +75,26 @@ function FieldIcon({ icon: Icon }: { icon: React.ElementType }) {
 
 export function Step1DadosBasicos({ defaultValues, onNext, onCancel }: Props) {
   const [cepLoading, setCepLoading] = useState(false)
-  const [cepError, setCepError] = useState('')
+  const [cepError, setCepError]     = useState('')
 
+  // ── Sócios staging ────────────────────────────────────────────────────────
+  const [socios, setSocios]         = useState<SocioRepresentante[]>(defaultValues?.socios ?? [])
+  const [sNome, setSNome]           = useState('')
+  const [sCPF, setSCPF]             = useState('')
+  const [sEmail, setSEmail]         = useState('')
+  const [sTipo, setSTipo]           = useState('')
+
+  function adicionarSocio() {
+    if (!sNome.trim() || !sCPF.trim() || !sTipo) return
+    setSocios(prev => [...prev, { nome: sNome.trim(), cpf: sCPF, email: sEmail.trim(), tipo: sTipo }])
+    setSNome(''); setSCPF(''); setSEmail(''); setSTipo('')
+  }
+
+  function removerSocio(idx: number) {
+    setSocios(prev => prev.filter((_, i) => i !== idx))
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<DadosBasicosForm>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DadosBasicosForm ?? {},
@@ -77,8 +116,12 @@ export function Step1DadosBasicos({ defaultValues, onNext, onCancel }: Props) {
     }
   }
 
+  function handleNext(data: DadosBasicosForm) {
+    onNext({ ...data, socios })
+  }
+
   return (
-    <form onSubmit={handleSubmit(onNext)} className="space-y-6">
+    <form onSubmit={handleSubmit(handleNext)} className="space-y-6">
       {/* Dados Básicos */}
       <div className="card-bh p-5">
         <div className="flex items-center gap-3 mb-5">
@@ -92,7 +135,6 @@ export function Step1DadosBasicos({ defaultValues, onNext, onCancel }: Props) {
         </div>
 
         <div className="space-y-4">
-          {/* CNPJ */}
           <div>
             <label className="label-bh flex items-center gap-1.5">
               <FieldIcon icon={CreditCard} /> CNPJ <span className="text-bh-primary">*</span>
@@ -106,7 +148,6 @@ export function Step1DadosBasicos({ defaultValues, onNext, onCancel }: Props) {
             {errors.cnpj && <p className="error-msg">{errors.cnpj.message}</p>}
           </div>
 
-          {/* Nome + Razão */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="label-bh flex items-center gap-1.5">
@@ -124,7 +165,6 @@ export function Step1DadosBasicos({ defaultValues, onNext, onCancel }: Props) {
             </div>
           </div>
 
-          {/* Email + Telefone */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="label-bh flex items-center gap-1.5">
@@ -231,6 +271,137 @@ export function Step1DadosBasicos({ defaultValues, onNext, onCancel }: Props) {
             <span className="text-bh-text font-medium">Campos obrigatórios</span><br />
             Todos os campos marcados com * são obrigatórios para o cadastro da Software House.
           </p>
+        </div>
+      </div>
+
+      {/* Representantes da Empresa */}
+      <div className="card-bh p-5">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-8 h-8 bg-bh-primary/20 rounded flex items-center justify-center text-bh-primary">
+            <Users size={16} />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="text-bh-text font-semibold text-sm">Representantes da Empresa</h3>
+              {socios.length > 0 && (
+                <span className="text-xs px-1.5 py-0.5 rounded font-semibold"
+                  style={{ background: 'rgba(255,102,0,0.12)', color: '#ff6600' }}>
+                  {socios.length}
+                </span>
+              )}
+            </div>
+            <p className="text-bh-muted text-xs">Sócios e representantes legais para o contrato</p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {/* Staging */}
+          <div className="rounded-lg border border-bh-border p-4"
+            style={{ background: 'rgb(var(--bh-surface2))' }}>
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="label-bh flex items-center gap-1.5 mb-1">
+                  <UserPlus size={11} className="text-bh-primary" /> Nome completo
+                </label>
+                <input
+                  className="input-bh text-sm"
+                  placeholder="Nome do representante"
+                  value={sNome}
+                  onChange={e => setSNome(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
+                />
+              </div>
+              <div>
+                <label className="label-bh flex items-center gap-1.5 mb-1">
+                  <IDCard size={11} className="text-bh-primary" /> CPF
+                </label>
+                <input
+                  className="input-bh text-sm"
+                  placeholder="000.000.000-00"
+                  value={sCPF}
+                  onChange={e => setSCPF(formatCPF(e.target.value))}
+                  onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
+                />
+              </div>
+              <div>
+                <label className="label-bh flex items-center gap-1.5 mb-1">
+                  <Mail size={11} className="text-bh-primary" /> E-mail
+                </label>
+                <input
+                  className="input-bh text-sm"
+                  type="email"
+                  placeholder="email@empresa.com.br"
+                  value={sEmail}
+                  onChange={e => setSEmail(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
+                />
+              </div>
+              <div>
+                <label className="label-bh flex items-center gap-1.5 mb-1">
+                  <FileText size={11} className="text-bh-primary" /> Tipo
+                </label>
+                <select
+                  className="input-bh text-sm"
+                  value={sTipo}
+                  onChange={e => setSTipo(e.target.value)}
+                >
+                  <option value="">Selecione o tipo</option>
+                  {TIPOS_SOCIO.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+            </div>
+            <button
+              type="button"
+              disabled={!sNome.trim() || !sCPF.trim() || !sTipo}
+              onClick={e => { e.preventDefault(); e.stopPropagation(); adicionarSocio() }}
+              className="btn-primary text-xs py-1.5 w-full justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <UserPlus size={13} /> Adicionar Representante
+            </button>
+          </div>
+
+          {/* Lista */}
+          {socios.length === 0 ? (
+            <p className="text-bh-subtle text-xs py-3 text-center border border-dashed border-bh-border rounded-lg">
+              Nenhum representante adicionado
+            </p>
+          ) : (
+            <table className="w-full text-xs border border-bh-border rounded-lg overflow-hidden">
+              <thead>
+                <tr style={{ background: 'rgb(var(--bh-surface2))' }}>
+                  <th className="text-left px-3 py-2 text-bh-muted font-medium">Nome</th>
+                  <th className="text-left px-3 py-2 text-bh-muted font-medium">CPF</th>
+                  <th className="text-left px-3 py-2 text-bh-muted font-medium">E-mail</th>
+                  <th className="text-left px-3 py-2 text-bh-muted font-medium">Tipo</th>
+                  <th className="px-3 py-2" />
+                </tr>
+              </thead>
+              <tbody>
+                {socios.map((s, i) => (
+                  <tr key={i} className="border-t border-bh-border">
+                    <td className="px-3 py-2 text-bh-text font-medium">{s.nome}</td>
+                    <td className="px-3 py-2 text-bh-muted tabular-nums">{s.cpf}</td>
+                    <td className="px-3 py-2 text-bh-muted">{s.email || '—'}</td>
+                    <td className="px-3 py-2">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold"
+                        style={{ background: 'rgba(255,102,0,0.10)', color: '#ff6600' }}>
+                        {s.tipo}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      <button
+                        type="button"
+                        onClick={() => removerSocio(i)}
+                        className="text-bh-subtle hover:text-bh-danger transition-colors"
+                      >
+                        <X size={13} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
 

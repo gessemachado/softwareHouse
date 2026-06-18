@@ -27,10 +27,10 @@ export function Modal({ open, onClose, title, subtitle, icon, footer, children, 
   return (
     <div className="fixed inset-0 z-50">
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/65 backdrop-blur-md" onClick={onClose} />
+      <div className="absolute inset-0 z-0 bg-black/65 backdrop-blur-md" onClick={onClose} />
 
       {/* Dialog */}
-      <div className={`absolute bg-bh-bg border border-bh-border shadow-2xl flex flex-col overflow-hidden transition-[inset,border-radius] duration-250 ease-[cubic-bezier(.16,1,.3,1)] ${
+      <div className={`absolute z-10 bg-bh-bg border border-bh-border shadow-2xl flex flex-col overflow-hidden transition-[inset,border-radius] duration-250 ease-[cubic-bezier(.16,1,.3,1)] ${
         expanded ? 'inset-0 rounded-none' : 'inset-16 rounded-lg'
       }`}>
 

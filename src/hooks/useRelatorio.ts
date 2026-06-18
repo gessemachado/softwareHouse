@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import type { RelatorioFilters, RelatorioRegistro, RelatorioTotais, RelatorioFingerRegistro, RelatorioFingerTotais } from '../types/sh.types'
 import { mockRelatorioRegistros, mockRelatorioTotais, mockRelatorioFingerRegistros, mockRelatorioFingerTotais } from '../mocks/relatorio'
 
-const emptyFilters: RelatorioFilters = { search: '', grupo_economico: '', mes_ano: '' }
+const emptyFilters: RelatorioFilters = { search: '', grupo_economico: '', meses: [] }
 
 function applyRelatorioFilter(list: RelatorioRegistro[], f: RelatorioFilters) {
   let r = [...list]
@@ -15,7 +15,7 @@ function applyRelatorioFilter(list: RelatorioRegistro[], f: RelatorioFilters) {
       x.representante.toLowerCase().includes(q)
     )
   }
-  if (f.mes_ano) r = r.filter(x => x.periodo.includes(f.mes_ano!))
+  if (f.meses && f.meses.length > 0) r = r.filter(x => f.meses!.includes(x.periodo))
   return r
 }
 
@@ -30,7 +30,7 @@ function applyFingerFilter(list: RelatorioFingerRegistro[], f: RelatorioFilters)
       x.cpf_finger.includes(q)
     )
   }
-  if (f.mes_ano) r = r.filter(x => x.periodo.includes(f.mes_ano!))
+  if (f.meses && f.meses.length > 0) r = r.filter(x => f.meses!.includes(x.periodo))
   return r
 }
 
@@ -62,14 +62,39 @@ export function useRelatorio() {
     let headers: string[]
     let rows: string[][]
     if (tab === 'sh') {
-      headers = ['Software House','CNPJ SH','Credenciado','CNPJ Credenciado','Representante','Período','Data Vínculo','Prazo','Valor R$','Imposto (20%) R$','Valor SH R$']
-      rows = registros.map(r => [r.software_house,r.cnpj_sh,r.credenciado,r.cnpj_credenciado,r.representante,r.periodo,r.data_vinculo,r.prazo,String(r.valor_taxa),String(r.imposto),String(r.valor_sh)])
+      headers = ['Período','Software House','CNPJ SH','Credenciado','CNPJ Credenciado','Representante','Valor R$','Imposto (20%) R$','Valor Líquido R$','Valor SH R$','Valor Rep. R$']
+      rows = registros.map(r => [
+        r.periodo,
+        r.software_house,
+        r.cnpj_sh,
+        r.credenciado,
+        r.cnpj_credenciado,
+        r.representante,
+        r.valor_taxa.toFixed(2),
+        r.imposto.toFixed(2),
+        (r.valor_taxa - r.imposto).toFixed(2),
+        r.valor_sh.toFixed(2),
+        r.valor_representante.toFixed(2),
+      ])
     } else {
-      headers = ['Finger','CPF','Software House','CNPJ SH','Credenciado','CNPJ Credenciado','Porcentagem','Valor Finger','Período','Data']
-      rows = fingerRegistros.map(r => [r.finger,r.cpf_finger,r.software_house,r.cnpj_sh,r.credenciado,r.cnpj_credenciado,`${r.porcentagem}%`,String(r.valor_finger),r.periodo,r.data])
+      headers = ['Período','Finger','CPF Finger','Software House','CNPJ SH','Credenciado','CNPJ Credenciado','Porcentagem','Valor R$','Imposto (20%) R$','Valor Líquido R$','Valor Finger R$']
+      rows = fingerRegistros.map(r => [
+        r.periodo,
+        r.finger,
+        r.cpf_finger,
+        r.software_house,
+        r.cnpj_sh,
+        r.credenciado,
+        r.cnpj_credenciado,
+        `${r.porcentagem}%`,
+        r.valor_finger.toFixed(2),
+        (r.valor_finger * 0.2).toFixed(2),
+        (r.valor_finger * 0.8).toFixed(2),
+        (r.valor_finger * 0.8 * (r.porcentagem / 100)).toFixed(2),
+      ])
     }
     const csv = [headers, ...rows].map(row => row.join(';')).join('\n')
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url

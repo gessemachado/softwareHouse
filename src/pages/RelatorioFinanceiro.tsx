@@ -1,15 +1,52 @@
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Search, X, Download, TrendingDown, DollarSign, BarChart3 } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { ArrowLeft, Search, X, Download, TrendingDown, DollarSign, BarChart3, Paperclip, CheckCircle2, Eye } from 'lucide-react'
 import { AppLayout } from '../components/layout/AppLayout'
 import { Pagination } from '../components/ui/Pagination'
+import { MonthPicker } from '../components/ui/MonthPicker'
 import { useRelatorio } from '../hooks/useRelatorio'
 
 function formatBRL(v: number) {
   return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
+function StatCard({ label, value, subtitle, icon: Icon }: {
+  label: string
+  value: string
+  subtitle: string
+  icon: React.ElementType
+}) {
+  return (
+    <div className="card-bh p-5 flex flex-col gap-3">
+      <div className="flex items-start justify-between">
+        <span className="text-bh-muted text-sm font-medium">{label}</span>
+        <Icon size={16} className="text-bh-muted mt-0.5" />
+      </div>
+      <p className="text-bh-text text-2xl font-bold leading-none">{value}</p>
+      <p className="text-bh-muted text-xs">{subtitle}</p>
+    </div>
+  )
+}
+
 export function RelatorioFinanceiro({ scope = 'sh' }: { scope?: 'sh' | 'finger' }) {
   const navigate = useNavigate()
+  const [notasFiscais, setNotasFiscais] = useState<Record<string, File>>({})
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
+
+  function handleAnexar(key: string) {
+    fileInputRefs.current[key]?.click()
+  }
+
+  function handleFileChange(key: string, e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) setNotasFiscais(prev => ({ ...prev, [key]: file }))
+    e.target.value = ''
+  }
+
+  function handleVisualizar(file: File) {
+    const url = URL.createObjectURL(file)
+    window.open(url, '_blank')
+  }
   const {
     totais, registros, loadingSH, filters, setFilters, applyFilters, clearFilters,
     pagination, setPage,
@@ -43,33 +80,24 @@ export function RelatorioFinanceiro({ scope = 'sh' }: { scope?: 'sh' | 'finger' 
       {scope === 'sh' && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div className="card-bh p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
-                <DollarSign size={20} className="text-orange-500" />
-              </div>
-              <div>
-                <p className="text-bh-muted text-xs uppercase tracking-wider font-medium mb-1">Valor Taxa</p>
-                <p className="text-bh-text text-2xl font-bold">{formatBRL(totais.valor_taxa)}</p>
-              </div>
-            </div>
-            <div className="card-bh p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
-                <TrendingDown size={20} className="text-red-400" />
-              </div>
-              <div>
-                <p className="text-bh-muted text-xs uppercase tracking-wider font-medium mb-1">Imposto (20%)</p>
-                <p className="text-bh-text text-2xl font-bold">{formatBRL(totais.imposto)}</p>
-              </div>
-            </div>
-            <div className="card-bh p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0">
-                <BarChart3 size={20} className="text-green-400" />
-              </div>
-              <div>
-                <p className="text-bh-muted text-xs uppercase tracking-wider font-medium mb-1">Valor Software House</p>
-                <p className="text-bh-text text-2xl font-bold">{formatBRL(totais.valor_sh)}</p>
-              </div>
-            </div>
+            <StatCard
+              label="Valor Taxa"
+              value={formatBRL(totais.valor_taxa)}
+              subtitle="Valor bruto cobrado"
+              icon={DollarSign}
+            />
+            <StatCard
+              label="Imposto (20%)"
+              value={formatBRL(totais.imposto)}
+              subtitle="Deduzido do valor bruto"
+              icon={TrendingDown}
+            />
+            <StatCard
+              label="Valor Software House"
+              value={formatBRL(totais.valor_sh)}
+              subtitle="Após impostos"
+              icon={BarChart3}
+            />
           </div>
 
           <div className="card-bh p-4 mb-6">
@@ -83,12 +111,12 @@ export function RelatorioFinanceiro({ scope = 'sh' }: { scope?: 'sh' | 'finger' 
                   onChange={e => setFilters({ ...filters, search: e.target.value })}
                 />
               </div>
-              <input
-                className="input-bh sm:w-52"
-                placeholder="Mês/Ano (ex: 04/2026)"
-                value={filters.mes_ano}
-                onChange={e => setFilters({ ...filters, mes_ano: e.target.value })}
-              />
+              <div className="sm:w-56">
+                <MonthPicker
+                  value={filters.meses ?? []}
+                  onChange={v => setFilters({ ...filters, meses: v })}
+                />
+              </div>
               <div className="flex gap-2">
                 <button onClick={applyFilters} className="btn-primary"><Search size={13} /> Pesquisar</button>
                 <button onClick={clearFilters} className="btn-ghost"><X size={13} /> Limpar</button>
@@ -179,33 +207,24 @@ export function RelatorioFinanceiro({ scope = 'sh' }: { scope?: 'sh' | 'finger' 
       {scope === 'finger' && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div className="card-bh p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
-                <DollarSign size={20} className="text-orange-500" />
-              </div>
-              <div>
-                <p className="text-bh-muted text-xs uppercase tracking-wider font-medium mb-1">Valor Taxa</p>
-                <p className="text-bh-text text-2xl font-bold">{formatBRL(totais.valor_taxa)}</p>
-              </div>
-            </div>
-            <div className="card-bh p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
-                <TrendingDown size={20} className="text-red-400" />
-              </div>
-              <div>
-                <p className="text-bh-muted text-xs uppercase tracking-wider font-medium mb-1">Imposto (20%)</p>
-                <p className="text-bh-text text-2xl font-bold">{formatBRL(totais.imposto)}</p>
-              </div>
-            </div>
-            <div className="card-bh p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0">
-                <BarChart3 size={20} className="text-green-400" />
-              </div>
-              <div>
-                <p className="text-bh-muted text-xs uppercase tracking-wider font-medium mb-1">Total Fingers R$</p>
-                <p className="text-bh-text text-2xl font-bold">{formatBRL(fingerTotais.valor_total_fingers)}</p>
-              </div>
-            </div>
+            <StatCard
+              label="Valor Taxa"
+              value={formatBRL(totais.valor_taxa)}
+              subtitle="Valor bruto cobrado"
+              icon={DollarSign}
+            />
+            <StatCard
+              label="Imposto (20%)"
+              value={formatBRL(totais.imposto)}
+              subtitle="Deduzido do valor bruto"
+              icon={TrendingDown}
+            />
+            <StatCard
+              label="Total Fingers"
+              value={formatBRL(fingerTotais.valor_total_fingers)}
+              subtitle="Participação acumulada"
+              icon={BarChart3}
+            />
           </div>
 
           <div className="card-bh p-4 mb-6">
@@ -219,12 +238,12 @@ export function RelatorioFinanceiro({ scope = 'sh' }: { scope?: 'sh' | 'finger' 
                   onChange={e => setFingerFilters({ ...fingerFilters, search: e.target.value })}
                 />
               </div>
-              <input
-                className="input-bh sm:w-52"
-                placeholder="Mês/Ano (ex: 01/2025)"
-                value={fingerFilters.mes_ano}
-                onChange={e => setFingerFilters({ ...fingerFilters, mes_ano: e.target.value })}
-              />
+              <div className="sm:w-56">
+                <MonthPicker
+                  value={fingerFilters.meses ?? []}
+                  onChange={v => setFingerFilters({ ...fingerFilters, meses: v })}
+                />
+              </div>
               <div className="flex gap-2">
                 <button onClick={applyFingerFilters} className="btn-primary"><Search size={13} /> Pesquisar</button>
                 <button onClick={clearFingerFilters} className="btn-ghost"><X size={13} /> Limpar</button>
@@ -250,46 +269,91 @@ export function RelatorioFinanceiro({ scope = 'sh' }: { scope?: 'sh' | 'finger' 
                   <th>Imposto (20%) R$</th>
                   <th>Valor Líquido R$</th>
                   <th>Valor Finger R$</th>
+                  <th>Ação</th>
                 </tr>
               </thead>
               <tbody>
-                {fingerRegistros.map(r => (
-                  <tr key={`${r.id}-${r.periodo}-${r.finger}`}>
-                    <td>
-                      <span className="bg-bh-surface2 border border-bh-border text-bh-text text-xs font-mono px-2 py-0.5 rounded">
-                        {r.periodo}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-bh-primary/20 flex items-center justify-center text-bh-primary text-xs font-semibold flex-shrink-0">
-                          {r.finger.slice(0, 2).toUpperCase()}
+                {fingerRegistros.map(r => {
+                  const key = `${r.id}-${r.periodo}`
+                  const nf  = notasFiscais[key]
+                  return (
+                    <tr key={key}>
+                      <td>
+                        <span className="bg-bh-surface2 border border-bh-border text-bh-text text-xs font-mono px-2 py-0.5 rounded">
+                          {r.periodo}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-bh-primary/20 flex items-center justify-center text-bh-primary text-xs font-semibold flex-shrink-0">
+                            {r.finger.slice(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-medium">{r.finger}</p>
+                            <p className="text-bh-muted text-xs">{r.cpf_finger}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium">{r.finger}</p>
-                          <p className="text-bh-muted text-xs">{r.cpf_finger}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <p>{r.software_house}</p>
-                      <p className="text-bh-muted text-xs">{r.cnpj_sh}</p>
-                    </td>
-                    <td>
-                      <p>{r.credenciado}</p>
-                      <p className="text-bh-muted text-xs">{r.cnpj_credenciado}</p>
-                    </td>
-                    <td>
-                      <span className="bg-orange-500/15 text-orange-400 text-xs px-2 py-0.5 rounded font-medium">
-                        {r.porcentagem}%
-                      </span>
-                    </td>
-                    <td className="font-medium">{formatBRL(r.valor_finger)}</td>
-                    <td className="text-red-400">{formatBRL(r.valor_finger * 0.2)}</td>
-                    <td className="text-green-400 font-medium">{formatBRL(r.valor_finger * 0.8)}</td>
-                    <td className="text-orange-400 font-medium">{formatBRL(r.valor_finger * 0.8 * (r.porcentagem / 100))}</td>
-                  </tr>
-                ))}
+                      </td>
+                      <td>
+                        <p>{r.software_house}</p>
+                        <p className="text-bh-muted text-xs">{r.cnpj_sh}</p>
+                      </td>
+                      <td>
+                        <p>{r.credenciado}</p>
+                        <p className="text-bh-muted text-xs">{r.cnpj_credenciado}</p>
+                      </td>
+                      <td>
+                        <span className="bg-orange-500/15 text-orange-400 text-xs px-2 py-0.5 rounded font-medium">
+                          {r.porcentagem}%
+                        </span>
+                      </td>
+                      <td className="font-medium">{formatBRL(r.valor_finger)}</td>
+                      <td className="text-red-400">{formatBRL(r.valor_finger * 0.2)}</td>
+                      <td className="text-green-400 font-medium">{formatBRL(r.valor_finger * 0.8)}</td>
+                      <td className="text-orange-400 font-medium">{formatBRL(r.valor_finger * 0.8 * (r.porcentagem / 100))}</td>
+                      <td>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          className="hidden"
+                          ref={el => { fileInputRefs.current[key] = el }}
+                          onChange={e => handleFileChange(key, e)}
+                        />
+                        {nf ? (
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 size={14} className="text-green-400 flex-shrink-0" />
+                            <span className="text-xs text-bh-muted truncate max-w-[100px]" title={nf.name}>
+                              {nf.name}
+                            </span>
+                            <button
+                              title="Visualizar"
+                              onClick={() => handleVisualizar(nf)}
+                              className="text-bh-muted hover:text-bh-primary transition-colors flex-shrink-0"
+                            >
+                              <Eye size={13} />
+                            </button>
+                            <button
+                              title="Substituir"
+                              onClick={() => handleAnexar(key)}
+                              className="text-bh-muted hover:text-bh-text transition-colors flex-shrink-0"
+                            >
+                              <Paperclip size={13} />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            title="Anexar Nota Fiscal"
+                            onClick={() => handleAnexar(key)}
+                            className="flex items-center gap-1.5 text-xs text-bh-muted hover:text-bh-primary transition-colors"
+                          >
+                            <Paperclip size={13} />
+                            <span>Anexar NF</span>
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
                 {fingerRegistros.length > 0 && (
                   <tr className="bg-bh-surface2">
                     <td colSpan={5} className="font-bold text-bh-text">TOTAL</td>
@@ -299,6 +363,7 @@ export function RelatorioFinanceiro({ scope = 'sh' }: { scope?: 'sh' | 'finger' 
                     <td className="font-bold text-bh-primary">
                       {formatBRL(fingerRegistros.reduce((s, r) => s + r.valor_finger * 0.8 * (r.porcentagem / 100), 0))}
                     </td>
+                    <td />
                   </tr>
                 )}
               </tbody>

@@ -20,16 +20,16 @@ export async function fetchRelatorioSH(
 
   // Página atual — filtros aplicados ANTES do range
   let pageQ = supabase.from('vw_relatorio_sh').select('*', { count: 'exact' })
-  if (filters.search)  pageQ = pageQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
-  if (filters.mes_ano) pageQ = pageQ.eq('periodo', filters.mes_ano)
+  if (filters.search)                       pageQ = pageQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
+  if (filters.meses && filters.meses.length) pageQ = pageQ.in('periodo', filters.meses)
   pageQ = pageQ.order('software_house').range(from, to)
   const { data, error, count } = await pageQ
   if (error) throw error
 
   // Totais gerais (sem paginação)
   let totQ = supabase.from('vw_relatorio_sh').select('valor_taxa,imposto,valor_sh')
-  if (filters.search)  totQ = totQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
-  if (filters.mes_ano) totQ = totQ.eq('periodo', filters.mes_ano)
+  if (filters.search)                       totQ = totQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
+  if (filters.meses && filters.meses.length) totQ = totQ.in('periodo', filters.meses)
   const { data: allRows, error: e2 } = await totQ
   if (e2) throw e2
 
@@ -55,16 +55,16 @@ export async function fetchRelatorioFingers(
 
   // Página atual — filtros aplicados ANTES do range
   let pageQ = supabase.from('vw_relatorio_fingers').select('*', { count: 'exact' })
-  if (filters.search)  pageQ = pageQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
-  if (filters.mes_ano) pageQ = pageQ.eq('periodo', filters.mes_ano)
+  if (filters.search)                       pageQ = pageQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
+  if (filters.meses && filters.meses.length) pageQ = pageQ.in('periodo', filters.meses)
   pageQ = pageQ.order('finger').range(from, to)
   const { data, error, count } = await pageQ
   if (error) throw error
 
   // Totais gerais (sem paginação)
   let totQ = supabase.from('vw_relatorio_fingers').select('valor_finger,porcentagem,finger')
-  if (filters.search)  totQ = totQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
-  if (filters.mes_ano) totQ = totQ.eq('periodo', filters.mes_ano)
+  if (filters.search)                       totQ = totQ.ilike('busca', `%${filters.search.toLowerCase()}%`)
+  if (filters.meses && filters.meses.length) totQ = totQ.in('periodo', filters.meses)
   const { data: allRows, error: e2 } = await totQ
   if (e2) throw e2
 

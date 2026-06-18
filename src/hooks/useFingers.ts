@@ -26,10 +26,9 @@ export function useFingers() {
     if (!applied) return fingers
     const q = applied.toLowerCase()
     return fingers.filter(f =>
-      f.nome_completo.toLowerCase().includes(q) ||
-      f.email.toLowerCase().includes(q) ||
-      f.cpf.includes(q) ||
-      f.telefone.includes(q)
+      f.razao_social.toLowerCase().includes(q) ||
+      f.cnpj.includes(q) ||
+      f.nome_completo.toLowerCase().includes(q)
     )
   }, [fingers, applied])
 

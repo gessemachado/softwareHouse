@@ -8,6 +8,7 @@ import { VisaoGeral } from './pages/VisaoGeral'
 import { SHDashboard } from './pages/SHDashboard'
 import { Dashboard } from './pages/Dashboard'
 import { InteligeniciaComercial } from './pages/InteligeniciaComercial'
+import { InteligenciaArtificial } from './pages/InteligenciaArtificial'
 import { FingerList } from './pages/FingerList'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/visao-geral" element={<VisaoGeral />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/inteligencia-comercial" element={<InteligeniciaComercial />} />
+        <Route path="/inteligencia-artificial" element={<InteligenciaArtificial />} />
         <Route path="/software-house" element={<SoftwareHouseList />} />
         <Route path="/software-house/nova" element={<SoftwareHouseWizard mode="create" />} />
         <Route path="/software-house/:id/editar" element={<SoftwareHouseWizard mode="edit" />} />

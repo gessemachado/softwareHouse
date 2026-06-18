@@ -6,6 +6,7 @@ import { Pagination } from '../components/ui/Pagination'
 import { TabNav } from '../components/ui/TabNav'
 import { useSoftwareHouses } from '../hooks/useSoftwareHouses'
 import type { SoftwareHouse } from '../types/sh.types'
+import { gerarContrato } from '../utils/gerarContrato'
 
 // ─── Tabela interna ───────────────────────────────────────────────────────────
 
@@ -22,10 +23,12 @@ function SHTable({
   data,
   onDashboard,
   onEdit,
+  onContrato,
 }: {
   data: SoftwareHouse[]
   onDashboard: (id: string) => void
   onEdit: (id: string) => void
+  onContrato: (sh: SoftwareHouse) => void
 }) {
   if (data.length === 0) {
     return (
@@ -91,26 +94,36 @@ function SHTable({
                   </div>
                 </td>
                 <td className="py-5 px-5">
-                  <div className="flex items-center gap-5">
+                  <div className="flex items-center gap-4">
                     <button
+                      title="Dashboard"
                       onClick={() => onDashboard(sh.id)}
-                      className="flex items-center gap-2 text-xs transition-colors duration-150"
+                      className="transition-colors duration-150"
                       style={{ color: 'rgb(var(--bh-muted))' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                       onMouseLeave={e => (e.currentTarget.style.color = 'rgb(var(--bh-muted))')}
                     >
-                      <BarChart2 size={15} />
-                      <span>Dashboard</span>
+                      <BarChart2 size={16} />
                     </button>
                     <button
+                      title="Editar"
                       onClick={() => onEdit(sh.id)}
-                      className="flex items-center gap-2 text-xs transition-colors duration-150"
+                      className="transition-colors duration-150"
                       style={{ color: 'rgb(var(--bh-muted))' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                       onMouseLeave={e => (e.currentTarget.style.color = 'rgb(var(--bh-muted))')}
                     >
-                      <Pencil size={14} />
-                      <span>Editar</span>
+                      <Pencil size={15} />
+                    </button>
+                    <button
+                      title="Gerar Contrato"
+                      onClick={() => onContrato(sh)}
+                      className="transition-colors duration-150"
+                      style={{ color: 'rgb(var(--bh-muted))' }}
+                      onMouseEnter={e => (e.currentTarget.style.color = '#ff6600')}
+                      onMouseLeave={e => (e.currentTarget.style.color = 'rgb(var(--bh-muted))')}
+                    >
+                      <FileText size={15} />
                     </button>
                   </div>
                 </td>
@@ -223,7 +236,12 @@ export function SoftwareHouseList() {
         </div>
 
         {/* Card interno */}
-        <SHTable data={data} onDashboard={id => navigate(`/software-house/${id}/dashboard`)} onEdit={id => navigate(`/software-house/${id}/editar`)} />
+        <SHTable
+          data={data}
+          onDashboard={id => navigate(`/software-house/${id}/dashboard`)}
+          onEdit={id => navigate(`/software-house/${id}/editar`)}
+          onContrato={sh => gerarContrato(sh)}
+        />
 
         <div className="px-6 pb-4 pt-3">
           <Pagination

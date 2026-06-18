@@ -23,6 +23,7 @@ export interface SoftwareHouse {
   status: SHStatus
   created_at: string
   updated_at: string
+  socios?: SocioRepresentante[]
   // computed
   qtd_lojas_vinculadas?: number
   qtd_representantes?: number
@@ -40,18 +41,32 @@ export interface Representante {
   data_vinculo: string
 }
 
+export interface RenovacaoPrazo {
+  data_inicio: string
+  meses: number
+  porcentagem?: number
+}
+
 export interface Finger {
   id: string
   software_house_id: string
-  nome_completo: string
+  cnpj: string
+  razao_social: string
+  nome_fantasia?: string
   email: string
   telefone: string
-  cpf: string
+  cep?: string
+  logradouro?: string
+  numero?: string
+  bairro?: string
+  municipio?: string
+  estado?: string
   porcentagem: number
   prazo_meses?: number
   data_ativacao?: string
-  cidade?: string
-  estado?: string
+  renovacoes?: RenovacaoPrazo[]
+  nome_completo: string
+  cpf: string
   data_vinculo: string
 }
 
@@ -78,6 +93,13 @@ export interface SHCredenciado {
 
 export type WizardStep = 1 | 2 | 3 | 4 | 5
 
+export interface SocioRepresentante {
+  nome: string
+  cpf: string
+  email: string
+  tipo: string
+}
+
 export interface DadosBasicosForm {
   cnpj: string
   nome_fantasia: string
@@ -90,6 +112,7 @@ export interface DadosBasicosForm {
   bairro: string
   municipio: string
   estado: string
+  socios?: SocioRepresentante[]
 }
 
 export interface DadosOperacionaisForm {
@@ -127,7 +150,7 @@ export interface SHFilters {
 export interface RelatorioFilters {
   search: string
   grupo_economico?: string
-  mes_ano?: string
+  meses?: string[]   // ex: ['04/2026', '05/2026']
 }
 
 // ─── Pagination ───────────────────────────────────────────────────────────────

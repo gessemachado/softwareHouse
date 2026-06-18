@@ -1,10 +1,11 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, AlignJustify, BarChart2, Lightbulb, Fingerprint } from 'lucide-react'
+import { LayoutDashboard, AlignJustify, BarChart2, Lightbulb, Fingerprint, Sparkles } from 'lucide-react'
 
 const tabs = [
   { label: 'Visão Geral',              path: '/visao-geral',              icon: LayoutDashboard },
   { label: 'Index',                     path: '/dashboard',                icon: BarChart2       },
   { label: 'Inteligência Comercial',   path: '/inteligencia-comercial',   icon: Lightbulb       },
+  { label: 'Inteligência Artificial',  path: '/inteligencia-artificial',  icon: Sparkles        },
   { label: 'Software House',           path: '/software-house',           icon: AlignJustify    },
   { label: 'Finger',                   path: '/finger',                   icon: Fingerprint     },
 ]

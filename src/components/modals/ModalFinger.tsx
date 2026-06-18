@@ -4,9 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
   Fingerprint, User, Mail, Phone, CreditCard, Percent, MapPin, Globe,
-  Save, Calendar, Clock, Search, X, Trash2, Link2,
-  SlidersHorizontal, ChevronRight, ChevronLeft, Check,
+  Save, Calendar, Clock, Search, X, Trash2, Link2, Building2, Home, Hash,
+  SlidersHorizontal, ChevronRight, ChevronLeft, Check, Briefcase, Tag, FileText, Settings, RotateCcw,
 } from 'lucide-react'
+import type { RenovacaoPrazo } from '../../types/sh.types'
 import { Modal } from '../ui/Modal'
 import { WizardStepper } from '../sh/WizardStepper'
 import { mockCredenciadosDisponiveis, mockCredenciadosVinculados } from '../../mocks/credenciados'
@@ -14,38 +15,52 @@ import type { FingerForm, Credenciado } from '../../types/sh.types'
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
 
-const fmtCPF = (v: string) => v.replace(/\D/g,'').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2').slice(0,14)
-const fmtTel = (v: string) => v.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d{1,4})$/,'$1-$2').slice(0,15)
+const fmtCPF  = (v: string) => v.replace(/\D/g,'').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2').slice(0,14)
+const fmtTel  = (v: string) => v.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d{1,4})$/,'$1-$2').slice(0,15)
+const fmtCNPJ = (v: string) => v.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2').slice(0,18)
+const fmtCEP  = (v: string) => v.replace(/\D/g,'').replace(/^(\d{5})(\d)/,'$1-$2').slice(0,9)
 
 const ESTADOS = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 
 const schema = z.object({
-  nome_completo: z.string().min(2, 'Nome obrigatório'),
+  cnpj:          z.string().min(18, 'CNPJ inválido'),
+  razao_social:  z.string().min(2, 'Razão Social obrigatória'),
+  nome_fantasia: z.string().optional(),
   email:         z.string().email('E-mail inválido'),
   telefone:      z.string().min(14, 'Telefone inválido'),
-  cpf:           z.string().min(14, 'CPF inválido'),
-  porcentagem:   z.number().min(0).max(100, 'Entre 0 e 100'),
-  data_ativacao: z.string().optional(),
-  prazo_meses:   z.number().min(1).max(120).optional().or(z.nan().transform(() => undefined)),
-  cidade:        z.string().optional(),
+  cep:           z.string().optional(),
+  logradouro:    z.string().optional(),
+  numero:        z.string().optional(),
+  bairro:        z.string().optional(),
+  municipio:     z.string().optional(),
   estado:        z.string().optional(),
+  nome_completo: z.string().min(2, 'Nome obrigatório'),
+  cpf:           z.string().min(14, 'CPF inválido'),
 })
 
-// ─── Field wrapper ────────────────────────────────────────────────────────────
+// ─── Field helpers ────────────────────────────────────────────────────────────
 
-function Field({ icon: Icon, label, required, children, error }: {
-  icon: React.ElementType; label: string; required?: boolean; children: React.ReactNode; error?: string
+function FIcon({ icon: Icon }: { icon: React.ElementType }) {
+  return <Icon size={12} className="text-bh-primary" />
+}
+
+function SectionCard({ icon: Icon, title, subtitle, children }: {
+  icon: React.ElementType; title: string; subtitle: string; children: React.ReactNode
 }) {
   return (
-    <div>
-      <div className="flex items-center gap-1.5 mb-1.5">
-        <Icon size={13} className="text-bh-primary" />
-        <span className="text-sm text-bh-muted">{label}{required && <span className="text-bh-primary ml-0.5">*</span>}</span>
+    <div className="card-bh p-5">
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-8 h-8 bg-bh-primary/20 rounded flex items-center justify-center text-bh-primary">
+          <Icon size={16} />
+        </div>
+        <div>
+          <h3 className="text-bh-text font-semibold text-sm">{title}</h3>
+          <p className="text-bh-muted text-xs">{subtitle}</p>
+        </div>
       </div>
-      {children}
-      {error && <p className="error-msg">{error}</p>}
+      <div className="space-y-4">{children}</div>
     </div>
   )
 }
@@ -55,8 +70,8 @@ function Field({ icon: Icon, label, required, children, error }: {
 type Tab = 'dados' | 'credenciados'
 
 const FINGER_STEPS = [
-  { label: 'Dados do Finger', sublabel: 'Configurações do Finger'      },
-  { label: 'Credenciados',    sublabel: 'Configurações do Credenciado' },
+  { label: 'Dados do Finger', sublabel: 'CNPJ, endereço e responsável'  },
+  { label: 'Credenciados',    sublabel: 'Configurações do Credenciado'  },
 ]
 
 // ─── Vinculo local type ───────────────────────────────────────────────────────
@@ -69,11 +84,6 @@ interface VinculoLocal {
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
 function Avatar({ nome, color = 'primary' }: { nome: string; color?: 'primary' | 'green' | 'blue' }) {
-  const styles = {
-    primary: 'bg-bh-primary/20 text-bh-primary',
-    green:   'text-green-400',
-    blue:    'text-blue-400',
-  }
   const bgStyle = color === 'green'
     ? { background: 'rgba(34,197,94,0.15)' }
     : color === 'blue'
@@ -82,7 +92,7 @@ function Avatar({ nome, color = 'primary' }: { nome: string; color?: 'primary' |
 
   return (
     <div
-      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 ${color === 'primary' ? styles.primary : ''}`}
+      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 ${color === 'primary' ? 'bg-bh-primary/20 text-bh-primary' : ''}`}
       style={color !== 'primary' ? bgStyle : {}}
     >
       <span style={color !== 'primary' ? { color: color === 'green' ? 'rgb(34,197,94)' : 'rgb(59,130,246)' } : {}}>
@@ -105,17 +115,11 @@ interface ModalVinculoProps {
 }
 
 function ModalConfirmarVinculo({ open, credenciado, fingerNome, fingerEmail, fingerTelefone, onClose, onConfirm }: ModalVinculoProps) {
-  function handleConfirm() {
-    onConfirm()
-    onClose()
-  }
-
   if (!credenciado) return null
-
   return (
     <Modal
       open={open}
-      onClose={() => { onClose() }}
+      onClose={onClose}
       title="Vincular Credenciado"
       subtitle="Confirme o finger para vincular ao credenciado"
       icon={<Link2 size={22} />}
@@ -123,21 +127,14 @@ function ModalConfirmarVinculo({ open, credenciado, fingerNome, fingerEmail, fin
         <>
           <span className="text-xs text-bh-subtle">Confirme o vínculo do credenciado com este finger.</span>
           <div className="flex gap-2">
-            <button type="button" onClick={() => { onClose() }} className="btn-ghost">
-              Cancelar
-            </button>
-            <button
-              type="button"
-              onClick={handleConfirm}
-              className="btn-primary"
-            >
+            <button type="button" onClick={onClose} className="btn-ghost">Cancelar</button>
+            <button type="button" onClick={() => { onConfirm(); onClose() }} className="btn-primary">
               <Check size={14} /> Confirmar Vínculo
             </button>
           </div>
         </>
       }
     >
-      {/* Credenciado selecionado */}
       <div className="bg-bh-surface2 border border-bh-border rounded-lg p-4">
         <p className="text-bh-muted text-xs mb-2">Credenciado Selecionado</p>
         <div className="flex items-center gap-3">
@@ -148,8 +145,6 @@ function ModalConfirmarVinculo({ open, credenciado, fingerNome, fingerEmail, fin
           </div>
         </div>
       </div>
-
-      {/* Finger pré-preenchido */}
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Fingerprint size={14} className="text-bh-primary" />
@@ -173,17 +168,17 @@ function ModalConfirmarVinculo({ open, credenciado, fingerNome, fingerEmail, fin
 // ─── Credenciados tab ─────────────────────────────────────────────────────────
 
 interface CredenciadosTabProps {
-  fingerId?:       string
-  fingerNome:      string
-  fingerEmail:     string
-  fingerTelefone:  string
-  shId?:           string
+  fingerId?:      string
+  fingerNome:     string
+  fingerEmail:    string
+  fingerTelefone: string
+  shId?:          string
 }
 
 function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: CredenciadosTabProps) {
-  const [search, setSearch]   = useState('')
-  const [applied, setApplied] = useState('')
-  const [page, setPage]       = useState(1)
+  const [search, setSearch]     = useState('')
+  const [applied, setApplied]   = useState('')
+  const [page, setPage]         = useState(1)
   const [pageSize, setPageSize] = useState(5)
   const [vinculos, setVinculos] = useState<VinculoLocal[]>(() => {
     if (!fingerId) return []
@@ -198,32 +193,20 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: 
   const available = useMemo(() => {
     const q = applied.toLowerCase()
     return mockCredenciadosDisponiveis.filter(c =>
-      !linkedIds.has(c.id) &&
-      (!q || c.nome.toLowerCase().includes(q) || c.cnpj.includes(q))
+      !linkedIds.has(c.id) && (!q || c.nome.toLowerCase().includes(q) || c.cnpj.includes(q))
     )
   }, [linkedIds, applied])
 
-  const totalPages  = Math.max(1, Math.ceil(available.length / pageSize))
+  const totalPages = Math.max(1, Math.ceil(available.length / pageSize))
   const paginatedAvailable = useMemo(() => {
     const from = (page - 1) * pageSize
     return available.slice(from, from + pageSize)
   }, [available, page, pageSize])
 
-  function handleConfirmVinculo() {
-    if (!pendingCred) return
-    setVinculos(prev => [...prev, { credenciadoId: pendingCred.id, representanteId: null }])
-    setPendingCred(null)
-  }
-
-  function removeVinculo(credenciadoId: string) {
-    setVinculos(prev => prev.filter(v => v.credenciadoId !== credenciadoId))
-  }
-
   function getCredenciado(id: string) { return mockCredenciadosDisponiveis.find(c => c.id === id) }
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Disponíveis */}
       <div className="card-bh">
         <div className="p-4 border-b border-bh-border">
           <div className="flex items-center gap-2 mb-1">
@@ -231,13 +214,9 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: 
             <span className="text-bh-text text-sm font-medium">Filtros</span>
           </div>
           <p className="text-bh-muted text-xs mb-3">Pesquise credenciados disponíveis</p>
-          <input
-            className="input-bh"
-            placeholder="Credenciado"
-            value={search}
+          <input className="input-bh" placeholder="Credenciado" value={search}
             onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && setApplied(search)}
-          />
+            onKeyDown={e => e.key === 'Enter' && setApplied(search)} />
           <div className="flex gap-2 mt-3">
             <button type="button" onClick={() => setApplied(search)} className="btn-primary text-xs py-1.5 px-3">
               <Search size={13} /> Pesquisar
@@ -257,16 +236,11 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: 
             <div className="flex items-center gap-2">
               <span className="text-bh-subtle text-xs">Por página:</span>
               {[5, 10, 15].map(n => (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => { setPageSize(n); setPage(1) }}
+                <button key={n} type="button" onClick={() => { setPageSize(n); setPage(1) }}
                   className="px-2 py-0.5 rounded text-xs font-medium transition-colors"
                   style={pageSize === n
                     ? { background: 'rgb(var(--bh-primary))', color: '#fff' }
-                    : { background: 'rgb(var(--bh-surface2))', color: 'rgb(var(--bh-muted))' }
-                  }
-                >
+                    : { background: 'rgb(var(--bh-surface2))', color: 'rgb(var(--bh-muted))' }}>
                   {n}
                 </button>
               ))}
@@ -295,27 +269,17 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: 
                   </div>
                 ))}
               </div>
-
-              {/* Paginação */}
               <div className="flex items-center justify-end gap-4 pt-3 mt-1 border-t border-bh-border">
-                <button
-                  type="button"
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="text-sm text-bh-muted hover:text-bh-text disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                >
+                <button type="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                  className="text-sm text-bh-muted hover:text-bh-text disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                   Anterior
                 </button>
                 <span className="text-sm text-bh-muted">
                   Página <span className="text-bh-text font-semibold">{page}</span> de{' '}
                   <span className="text-bh-text font-semibold">{totalPages}</span>
                 </span>
-                <button
-                  type="button"
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="text-sm font-bold text-bh-primary hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
-                >
+                <button type="button" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                  className="text-sm font-bold text-bh-primary hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity">
                   Próximo
                 </button>
               </div>
@@ -324,7 +288,6 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: 
         </div>
       </div>
 
-      {/* Vinculados — tabela */}
       <div className="card-bh">
         <div className="p-4 border-b border-bh-border flex items-center gap-3">
           <div className="w-7 h-7 bg-bh-primary/20 rounded flex items-center justify-center text-bh-primary">
@@ -335,7 +298,6 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: 
             <p className="text-bh-muted text-xs">Credenciados vinculados a este Finger</p>
           </div>
         </div>
-
         {vinculos.length === 0 ? (
           <p className="py-8 text-center text-bh-muted text-sm">Nenhum credenciado vinculado ainda.</p>
         ) : (
@@ -369,14 +331,12 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: 
                       </div>
                     </td>
                     <td className="text-bh-muted text-sm">
-                      {cred ? `contato@${cred.nome.toLowerCase().replace(/\s+/g, '').slice(0,20)}.com.br` : '—'}
+                      {cred ? `contato@${cred.nome.toLowerCase().replace(/\s+/g,'').slice(0,20)}.com.br` : '—'}
                     </td>
                     <td>
-                      <button
-                        type="button"
-                        onClick={() => removeVinculo(v.credenciadoId)}
-                        className="text-bh-subtle hover:text-bh-danger transition-colors"
-                      >
+                      <button type="button"
+                        onClick={() => setVinculos(prev => prev.filter(x => x.credenciadoId !== v.credenciadoId))}
+                        className="text-bh-subtle hover:text-bh-danger transition-colors">
                         <Trash2 size={15} />
                       </button>
                     </td>
@@ -388,7 +348,6 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: 
         )}
       </div>
 
-      {/* Modal de confirmação */}
       <ModalConfirmarVinculo
         open={pendingCred !== null}
         credenciado={pendingCred}
@@ -396,7 +355,10 @@ function CredenciadosTab({ fingerId, fingerNome, fingerEmail, fingerTelefone }: 
         fingerEmail={fingerEmail}
         fingerTelefone={fingerTelefone}
         onClose={() => setPendingCred(null)}
-        onConfirm={handleConfirmVinculo}
+        onConfirm={() => {
+          if (pendingCred) setVinculos(prev => [...prev, { credenciadoId: pendingCred.id, representanteId: null }])
+          setPendingCred(null)
+        }}
       />
     </div>
   )
@@ -414,16 +376,25 @@ interface Props {
 }
 
 export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId, shId }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>('dados')
+  const [activeTab, setActiveTab]     = useState<Tab>('dados')
+  const [renovacoes, setRenovacoes]   = useState<RenovacaoPrazo[]>([])
+  const [stagingDate, setStagingDate]   = useState('')
+  const [stagingMeses, setStagingMeses] = useState('')
+  const [stagingPct, setStagingPct]     = useState('')
 
   const { register, handleSubmit, setValue, reset, trigger, watch, formState: { errors } } = useForm<FingerForm>({
-    resolver: zodResolver(schema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(schema) as any,
     defaultValues: defaultValues ?? {},
   })
 
   useEffect(() => {
     if (open) {
       reset(defaultValues ?? {})
+      setRenovacoes(defaultValues?.renovacoes ?? [])
+      setStagingDate('')
+      setStagingMeses('')
+      setStagingPct('')
       setActiveTab('dados')
     }
   }, [open])
@@ -432,25 +403,49 @@ export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId, sh
   const fingerEmail    = watch('email')         || ''
   const fingerTelefone = watch('telefone')      || ''
 
-  async function handleNext() {
-    const valid = await trigger()
+  const stepNumber     = activeTab === 'dados' ? 1 : 2
+  const completedSteps = activeTab === 'credenciados' ? [1] : []
+
+  async function handleNextDados() {
+    const valid = await trigger(['cnpj', 'razao_social', 'email', 'telefone', 'nome_completo', 'cpf'])
     if (valid) setActiveTab('credenciados')
   }
 
+  function addMonths(dateStr: string, months: number): string {
+    const d = new Date(dateStr + 'T00:00:00')
+    d.setMonth(d.getMonth() + months)
+    return d.toISOString().slice(0, 10)
+  }
+
+  function adicionarVigencia() {
+    const meses = parseInt(stagingMeses, 10)
+    if (!stagingDate || !meses || meses < 1) return
+    const pct = parseFloat(stagingPct)
+    setRenovacoes(prev => [...prev, {
+      data_inicio: stagingDate,
+      meses,
+      porcentagem: isNaN(pct) ? undefined : pct,
+    }])
+    setStagingDate('')
+    setStagingMeses('')
+    setStagingPct('')
+  }
+
+  function removerRenovacao(idx: number) {
+    setRenovacoes(prev => prev.filter((_, i) => i !== idx))
+  }
+
+  const totalMeses = renovacoes.reduce((sum, r) => sum + (Number(r.meses) || 0), 0)
+
   function onSubmit(data: FingerForm) {
-    onSave(data)
-    reset()
-    setActiveTab('dados')
-    onClose()
+    onSave({ ...data, renovacoes }); reset(); setRenovacoes([]); setActiveTab('dados'); onClose()
   }
 
   function handleClose() {
-    reset()
-    setActiveTab('dados')
-    onClose()
+    reset(); setActiveTab('dados'); onClose()
   }
 
-  const isEdit = !!defaultValues?.nome_completo
+  const isEdit = !!defaultValues?.cnpj
 
   return (
     <Modal
@@ -466,17 +461,16 @@ export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId, sh
             <button type="button" onClick={handleClose} className="btn-ghost">Cancelar</button>
 
             {activeTab === 'dados' && (
-              <button type="button" onClick={handleNext} className="btn-primary">
-                Próximo: Credenciado <ChevronRight size={15} />
+              <button type="button" onClick={handleNextDados} className="btn-primary">
+                Próximo: Credenciados <ChevronRight size={15} />
               </button>
             )}
-
             {activeTab === 'credenciados' && (
               <>
                 <button type="button" onClick={() => setActiveTab('dados')} className="btn-secondary">
                   <ChevronLeft size={15} /> Voltar
                 </button>
-                <button type="button" onClick={() => handleSubmit(onSubmit)()} className="btn-primary">
+                <button type="button" onClick={() => handleSubmit(onSubmit as any)()} className="btn-primary">
                   <Save size={14} /> {isEdit ? 'Salvar Alterações' : 'Salvar Finger'}
                 </button>
               </>
@@ -487,71 +481,268 @@ export function ModalFinger({ open, onClose, onSave, defaultValues, fingerId, sh
     >
       {/* Stepper */}
       <WizardStepper
-        currentStep={activeTab === 'dados' ? 1 : 2}
-        completedSteps={activeTab === 'credenciados' ? [1] : []}
+        currentStep={stepNumber}
+        completedSteps={completedSteps}
         steps={FINGER_STEPS}
         onStepClick={step => setActiveTab(step === 1 ? 'dados' : 'credenciados')}
         className="card-bh p-5"
       />
 
-      {/* Tab: Dados */}
+      {/* ── Tab: Dados ── */}
       {activeTab === 'dados' && (
-        <form id="form-finger" onSubmit={handleSubmit(onSubmit)} className="contents">
-          <Field icon={User} label="Nome Completo" required error={errors.nome_completo?.message}>
-            <input className="input-bh" placeholder="Digite o nome completo" {...register('nome_completo')} />
-          </Field>
+        <div className="contents">
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field icon={Mail} label="E-mail" required error={errors.email?.message}>
-              <input className="input-bh" type="email" placeholder="exemplo@email.com" {...register('email')} />
-            </Field>
-            <Field icon={Phone} label="Telefone" required error={errors.telefone?.message}>
-              <input className="input-bh" placeholder="(00) 00000-0000" {...register('telefone')}
-                onChange={e => setValue('telefone', fmtTel(e.target.value))} />
-            </Field>
-          </div>
-
-          <Field icon={CreditCard} label="CPF" required error={errors.cpf?.message}>
-            <input className="input-bh" placeholder="000.000.000-00" {...register('cpf')}
-              onChange={e => setValue('cpf', fmtCPF(e.target.value))} />
-          </Field>
-
-          <Field icon={Percent} label="Porcentagem" required error={errors.porcentagem?.message}>
-            <div className="relative">
-              <input type="number" step="0.01" className="input-bh pr-8" placeholder="0.00"
-                {...register('porcentagem', { valueAsNumber: true })} />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-bh-muted text-sm">%</span>
+          {/* Dados Básicos */}
+          <SectionCard icon={Briefcase} title="Dados Básicos" subtitle="Informações da empresa">
+            <div>
+              <label className="label-bh flex items-center gap-1.5">
+                <FIcon icon={CreditCard} /> CNPJ <span className="text-bh-primary">*</span>
+              </label>
+              <input className="input-bh" placeholder="00.000.000/0000-00" {...register('cnpj')}
+                onChange={e => setValue('cnpj', fmtCNPJ(e.target.value))} />
+              {errors.cnpj && <p className="error-msg">{errors.cnpj.message}</p>}
             </div>
-          </Field>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field icon={Calendar} label="Data de Ativação" error={errors.data_ativacao?.message}>
-              <input type="date" className="input-bh" {...register('data_ativacao')} />
-            </Field>
-            <Field icon={Clock} label="Prazo (meses)" error={errors.prazo_meses?.message}>
-              <div className="relative">
-                <input type="number" min={1} max={120} className="input-bh pr-12" placeholder="Ex: 12"
-                  {...register('prazo_meses', { valueAsNumber: true })} />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-bh-muted text-xs">meses</span>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label-bh flex items-center gap-1.5">
+                  <FIcon icon={Tag} /> Nome Fantasia <span className="text-bh-primary">*</span>
+                </label>
+                <input className="input-bh" placeholder="Nome fantasia" {...register('nome_fantasia')} />
               </div>
-            </Field>
-          </div>
+              <div>
+                <label className="label-bh flex items-center gap-1.5">
+                  <FIcon icon={FileText} /> Razão Social <span className="text-bh-primary">*</span>
+                </label>
+                <input className="input-bh" placeholder="Razão social completa" {...register('razao_social')} />
+                {errors.razao_social && <p className="error-msg">{errors.razao_social.message}</p>}
+              </div>
+            </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field icon={MapPin} label="Cidade">
-              <input className="input-bh" placeholder="Nome da cidade" {...register('cidade')} />
-            </Field>
-            <Field icon={Globe} label="Estado">
-              <select className="input-bh" {...register('estado')}>
-                <option value="">Selecione</option>
-                {ESTADOS.map(uf => <option key={uf} value={uf}>{uf}</option>)}
-              </select>
-            </Field>
-          </div>
-        </form>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label-bh flex items-center gap-1.5">
+                  <FIcon icon={Mail} /> E-mail <span className="text-bh-primary">*</span>
+                </label>
+                <input className="input-bh" type="email" placeholder="exemplo@email.com" {...register('email')} />
+                {errors.email && <p className="error-msg">{errors.email.message}</p>}
+              </div>
+              <div>
+                <label className="label-bh flex items-center gap-1.5">
+                  <FIcon icon={Phone} /> Telefone <span className="text-bh-primary">*</span>
+                </label>
+                <input className="input-bh" placeholder="(00) 00000-0000" {...register('telefone')}
+                  onChange={e => setValue('telefone', fmtTel(e.target.value))} />
+                {errors.telefone && <p className="error-msg">{errors.telefone.message}</p>}
+              </div>
+            </div>
+          </SectionCard>
+
+          {/* Endereço e Localização */}
+          <SectionCard icon={MapPin} title="Endereço e Localização" subtitle="Localização da empresa">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label-bh flex items-center gap-1.5">
+                  <FIcon icon={Home} /> CEP
+                </label>
+                <input className="input-bh" placeholder="00000-000" {...register('cep')}
+                  onChange={e => setValue('cep', fmtCEP(e.target.value))} />
+              </div>
+              <div>
+                <label className="label-bh flex items-center gap-1.5">
+                  <FIcon icon={MapPin} /> Logradouro
+                </label>
+                <input className="input-bh" placeholder="Rua, Avenida, etc." {...register('logradouro')} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label-bh flex items-center gap-1.5">
+                  <FIcon icon={Hash} /> Número
+                </label>
+                <input className="input-bh" placeholder="Nº" {...register('numero')} />
+              </div>
+              <div>
+                <label className="label-bh flex items-center gap-1.5">
+                  <FIcon icon={Building2} /> Bairro
+                </label>
+                <input className="input-bh" placeholder="Nome do bairro" {...register('bairro')} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label-bh flex items-center gap-1.5">
+                  <FIcon icon={Globe} /> Estado
+                </label>
+                <select className="input-bh" {...register('estado')}>
+                  <option value="">Selecione</option>
+                  {ESTADOS.map(uf => <option key={uf} value={uf}>{uf}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="label-bh flex items-center gap-1.5">
+                  <FIcon icon={Building2} /> Município
+                </label>
+                <input className="input-bh" placeholder="Nome do município" {...register('municipio')} />
+              </div>
+            </div>
+          </SectionCard>
+
+          {/* Configurações Comerciais */}
+          <SectionCard icon={Settings} title="Configurações Comerciais" subtitle="Vigências e porcentagem por período">
+
+            {/* Vigências — staging area */}
+            <div className="pt-1">
+              <div className="flex items-center gap-1.5 mb-3">
+                <RotateCcw size={12} className="text-bh-primary" />
+                <span className="label-bh">Vigências</span>
+                {renovacoes.length > 0 && (
+                  <span className="text-xs tabular-nums" style={{ color: 'rgb(var(--bh-muted))' }}>
+                    · Total: <strong className="text-bh-text">{totalMeses}m</strong>
+                  </span>
+                )}
+              </div>
+
+              <div className="rounded-lg border border-bh-border p-3 mb-3"
+                style={{ background: 'rgb(var(--bh-surface2))' }}>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  <div>
+                    <label className="label-bh flex items-center gap-1.5 mb-1">
+                      <FIcon icon={Calendar} /> Data de Início
+                    </label>
+                    <input
+                      type="date"
+                      className="input-bh text-sm"
+                      value={stagingDate}
+                      onChange={e => setStagingDate(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
+                    />
+                  </div>
+                  <div>
+                    <label className="label-bh flex items-center gap-1.5 mb-1">
+                      <FIcon icon={Clock} /> Prazo (meses)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min={1}
+                        className="input-bh text-sm pr-12"
+                        placeholder="Ex: 24"
+                        value={stagingMeses}
+                        onChange={e => setStagingMeses(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-bh-muted text-xs">meses</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="label-bh flex items-center gap-1.5 mb-1">
+                      <FIcon icon={Percent} /> Porcentagem
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min={0}
+                        max={100}
+                        step={0.01}
+                        className="input-bh text-sm pr-7"
+                        placeholder="0.00"
+                        value={stagingPct}
+                        onChange={e => setStagingPct(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-bh-muted text-xs">%</span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={e => { e.preventDefault(); e.stopPropagation(); adicionarVigencia(); }}
+                  disabled={!stagingDate || !parseInt(stagingMeses, 10)}
+                  className="btn-primary text-xs py-1.5 px-3 flex items-center gap-1.5 w-full justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <RotateCcw size={12} /> Adicionar Vigência
+                </button>
+              </div>
+
+              {renovacoes.length === 0 ? (
+                <p className="text-bh-subtle text-xs py-2.5 text-center border border-dashed border-bh-border rounded-lg">
+                  Nenhuma vigência adicionada
+                </p>
+              ) : (
+                <table className="w-full text-xs border border-bh-border rounded-lg overflow-hidden">
+                  <thead>
+                    <tr style={{ background: 'rgb(var(--bh-surface2))' }}>
+                      <th className="text-left px-3 py-2 text-bh-muted font-medium">#</th>
+                      <th className="text-left px-3 py-2 text-bh-muted font-medium">Data de Início</th>
+                      <th className="text-left px-3 py-2 text-bh-muted font-medium">Data Fim</th>
+                      <th className="text-left px-3 py-2 text-bh-muted font-medium">Prazo</th>
+                      <th className="text-left px-3 py-2 text-bh-muted font-medium">Porcentagem</th>
+                      <th className="text-left px-3 py-2 text-bh-muted font-medium">Acumulado</th>
+                      <th className="px-3 py-2" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {renovacoes.map((r, i) => {
+                      const acumulado = renovacoes.slice(0, i + 1).reduce((s, x) => s + (Number(x.meses) || 0), 0)
+                      const dataFim = r.data_inicio ? addMonths(r.data_inicio, r.meses) : '—'
+                      return (
+                        <tr key={i} className="border-t border-bh-border">
+                          <td className="px-3 py-2 text-bh-muted font-semibold">{i + 1}</td>
+                          <td className="px-3 py-2 text-bh-text tabular-nums">{r.data_inicio || '—'}</td>
+                          <td className="px-3 py-2 text-bh-muted tabular-nums">{dataFim}</td>
+                          <td className="px-3 py-2">
+                            <span className="px-1.5 py-0.5 rounded font-semibold tabular-nums"
+                              style={{ background: 'rgba(255,102,0,0.12)', color: '#ff6600' }}>
+                              {r.meses}m
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 text-bh-text tabular-nums">
+                            {r.porcentagem != null ? `${r.porcentagem}%` : '—'}
+                          </td>
+                          <td className="px-3 py-2 text-bh-muted tabular-nums">{acumulado}m</td>
+                          <td className="px-3 py-2 text-right">
+                            <button
+                              type="button"
+                              onClick={() => removerRenovacao(i)}
+                              className="text-bh-subtle hover:text-bh-danger transition-colors"
+                            >
+                              <X size={13} />
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </SectionCard>
+
+          {/* Responsável */}
+          <SectionCard icon={User} title="Dados do Responsável" subtitle="Pessoa responsável pelo finger">
+            <div>
+              <label className="label-bh flex items-center gap-1.5">
+                <FIcon icon={User} /> Nome Completo <span className="text-bh-primary">*</span>
+              </label>
+              <input className="input-bh" placeholder="Digite o nome completo" {...register('nome_completo')} />
+              {errors.nome_completo && <p className="error-msg">{errors.nome_completo.message}</p>}
+            </div>
+            <div>
+              <label className="label-bh flex items-center gap-1.5">
+                <FIcon icon={CreditCard} /> CPF <span className="text-bh-primary">*</span>
+              </label>
+              <input className="input-bh" placeholder="000.000.000-00" {...register('cpf')}
+                onChange={e => setValue('cpf', fmtCPF(e.target.value))} />
+              {errors.cpf && <p className="error-msg">{errors.cpf.message}</p>}
+            </div>
+          </SectionCard>
+        </div>
       )}
 
-      {/* Tab: Credenciados */}
+      {/* ── Tab: Credenciados ── */}
       {activeTab === 'credenciados' && (
         <CredenciadosTab
           fingerId={fingerId}

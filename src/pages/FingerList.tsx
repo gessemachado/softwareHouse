@@ -16,16 +16,13 @@ function fmtData(iso?: string) {
 // ─── Tabela interna ───────────────────────────────────────────────────────────
 
 const COLS = [
-  { label: 'Nome',        w: '18%' },
-  { label: 'CPF',         w: '11%' },
-  { label: 'E-mail',      w: '16%' },
-  { label: 'Telefone',    w: '11%' },
-  { label: 'Percentual',  w: '9%'  },
-  { label: 'Lojas',       w: '7%'  },
-  { label: 'Cidade/UF',   w: '10%' },
-  { label: 'Prazo',       w: '7%'  },
-  { label: 'Ativação',    w: '7%'  },
-  { label: 'Ações',       w: '14%' },
+  { label: 'Finger',       w: '28%' },
+  { label: 'Responsável',  w: '16%' },
+  { label: 'Percentual',   w: '9%'  },
+  { label: 'Lojas',        w: '7%'  },
+  { label: 'Prazo',        w: '7%'  },
+  { label: 'Ativação',     w: '9%'  },
+  { label: 'Ações',        w: '14%' },
 ]
 
 function FingerTable({
@@ -78,17 +75,15 @@ function FingerTable({
               >
                 <td className="py-5 px-5">
                   <div className="font-bold text-bh-text uppercase text-xs tracking-wide leading-tight">
-                    {finger.nome_completo}
+                    {finger.razao_social}
+                  </div>
+                  <div className="text-xs mt-0.5" style={{ color: 'rgb(var(--bh-muted))' }}>
+                    {[finger.municipio, finger.estado].filter(Boolean).join('/') || '—'}
+                    {finger.cnpj ? ` · ${finger.cnpj}` : ''}
                   </div>
                 </td>
-                <td className="py-5 px-5 tabular-nums text-xs" style={{ color: 'rgb(var(--bh-muted))' }}>
-                  {finger.cpf}
-                </td>
-                <td className="py-5 px-5 text-xs truncate" style={{ color: 'rgb(var(--bh-muted))', maxWidth: 0 }}>
-                  {finger.email}
-                </td>
-                <td className="py-5 px-5 tabular-nums text-xs" style={{ color: 'rgb(var(--bh-muted))' }}>
-                  {finger.telefone}
+                <td className="py-5 px-5 text-xs" style={{ color: 'rgb(var(--bh-muted))' }}>
+                  {finger.nome_completo}
                 </td>
                 <td className="py-5 px-5">
                   <span
@@ -102,35 +97,32 @@ function FingerTable({
                   {finger.qtd_lojas_vinculadas}
                 </td>
                 <td className="py-5 px-5 text-xs" style={{ color: 'rgb(var(--bh-muted))' }}>
-                  {[finger.cidade, finger.estado].filter(Boolean).join('/') || '—'}
-                </td>
-                <td className="py-5 px-5 text-xs" style={{ color: 'rgb(var(--bh-muted))' }}>
                   {finger.prazo_meses ? `${finger.prazo_meses}m` : '—'}
                 </td>
                 <td className="py-5 px-5 text-xs" style={{ color: 'rgb(var(--bh-muted))' }}>
                   {fmtData(finger.data_ativacao)}
                 </td>
                 <td className="py-5 px-5">
-                  <div className="flex items-center gap-5">
+                  <div className="flex items-center gap-4">
                     <button
+                      title="Editar"
                       onClick={() => onEdit(finger)}
-                      className="flex items-center gap-2 text-xs transition-colors duration-150"
+                      className="transition-colors duration-150"
                       style={{ color: 'rgb(var(--bh-muted))' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                       onMouseLeave={e => (e.currentTarget.style.color = 'rgb(var(--bh-muted))')}
                     >
-                      <Pencil size={14} />
-                      <span>Editar</span>
+                      <Pencil size={15} />
                     </button>
                     <button
+                      title="Excluir"
                       onClick={() => onDelete(finger.id)}
-                      className="flex items-center gap-2 text-xs transition-colors duration-150"
+                      className="transition-colors duration-150"
                       style={{ color: 'rgb(var(--bh-muted))' }}
                       onMouseEnter={e => (e.currentTarget.style.color = 'rgb(var(--bh-danger))')}
                       onMouseLeave={e => (e.currentTarget.style.color = 'rgb(var(--bh-muted))')}
                     >
-                      <Trash2 size={14} />
-                      <span>Excluir</span>
+                      <Trash2 size={15} />
                     </button>
                   </div>
                 </td>
@@ -183,15 +175,22 @@ export function FingerList() {
 
   const defaultValues: Partial<FingerForm> | undefined = editingFinger
     ? {
-        nome_completo: editingFinger.nome_completo,
+        cnpj:          editingFinger.cnpj,
+        razao_social:  editingFinger.razao_social,
+        nome_fantasia: editingFinger.nome_fantasia,
         email:         editingFinger.email,
         telefone:      editingFinger.telefone,
-        cpf:           editingFinger.cpf,
+        cep:           editingFinger.cep,
+        logradouro:    editingFinger.logradouro,
+        numero:        editingFinger.numero,
+        bairro:        editingFinger.bairro,
+        municipio:     editingFinger.municipio,
+        estado:        editingFinger.estado,
         porcentagem:   editingFinger.porcentagem,
         prazo_meses:   editingFinger.prazo_meses,
         data_ativacao: editingFinger.data_ativacao,
-        cidade:        editingFinger.cidade,
-        estado:        editingFinger.estado,
+        nome_completo: editingFinger.nome_completo,
+        cpf:           editingFinger.cpf,
       }
     : undefined
 
@@ -236,7 +235,7 @@ export function FingerList() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <input
             type="text"
-            placeholder="Buscar por nome, CPF, e-mail ou telefone..."
+            placeholder="Buscar por razão social, CNPJ ou responsável..."
             className="input-bh"
             style={{ background: 'rgb(var(--bh-bg))' }}
             value={search}
